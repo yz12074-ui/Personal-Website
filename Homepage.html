@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amanda Z — Designer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+         :root {
+            --apricot: #FAF5EF;
+            --apricot-mid: #F3EAE0;
+            --apricot-warm: #E8D9C8;
+            --apricot-deep: #D4C0A8;
+            --ink: #2C2118;
+            --ink-mid: #6B5A4A;
+            --ink-light: #9E8E7E;
+            --accent: #C4785A;
+            --accent-light: #E8A882;
+            --white: #FEFCFA;
+            --card-bg: rgba(255, 255, 255, 0.72);
+            --sidebar-w: 160px;
+            --transition: 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--apricot);
+            color: var(--ink);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        /* Subtle grain texture */
+        
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            background-size: 200px;
+            pointer-events: none;
+            z-index: 0;
+        }
+        /* ─── SIDEBAR ─── */
+        
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-w);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 0 0 36px;
+            z-index: 100;
+            gap: 10px;
+        }
+        
+        .sidebar-logo {
+            position: absolute;
+            top: 32px;
+            left: 36px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 15px;
+            font-weight: 300;
+            color: var(--ink);
+            letter-spacing: 0.02em;
+            text-decoration: none;
+            opacity: 0.7;
+        }
+        
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .nav-item {
+            font-size: 13px;
+            font-weight: 400;
+            color: var(--ink-light);
+            cursor: pointer;
+            letter-spacing: 0.01em;
+            transition: color 0.25s ease, transform 0.25s ease;
+            padding: 2px 0;
+            text-decoration: none;
+            width: fit-content;
+            position: relative;
+        }
+        
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 0;
+            height: 0.5px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-item:hover {
+            color: var(--ink);
+            transform: translateX(4px);
+        }
+        
+        .nav-item:hover::after {
+            width: 100%;
+        }
+        
+        .nav-item.active {
+            color: var(--ink);
+        }
+        
+        .nav-item.active::after {
+            width: 100%;
+        }
+        /* ─── MAIN ─── */
+        
+        .main {
+            margin-left: var(--sidebar-w);
+            padding: 0 60px 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+        /* ─── HERO ─── */
+        
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 80px 0;
+            opacity: 0;
+            transform: translateY(24px);
+            animation: fadeUp 1s ease 0.2s forwards;
+        }
+        
+        .hero-eyebrow {
+            font-size: 12px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--ink-light);
+            margin-bottom: 28px;
+            font-weight: 400;
+        }
+        
+        .hero-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(52px, 7vw, 88px);
+            font-weight: 300;
+            line-height: 1.0;
+            letter-spacing: -0.02em;
+            color: var(--ink);
+            margin-bottom: 12px;
+        }
+        
+        .hero-name em {
+            font-style: italic;
+            color: var(--accent);
+        }
+        
+        .hero-sub {
+            font-size: 15px;
+            color: var(--ink-mid);
+            font-weight: 300;
+            margin-top: 20px;
+            max-width: 420px;
+            line-height: 1.65;
+        }
+        
+        .hero-tags {
+            display: flex;
+            gap: 10px;
+            margin-top: 36px;
+            flex-wrap: wrap;
+        }
+        
+        .tag {
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--ink-mid);
+            border: 0.5px solid var(--apricot-deep);
+            padding: 5px 14px;
+            border-radius: 100px;
+            background: var(--card-bg);
+        }
+        
+        .scroll-hint {
+            position: absolute;
+            bottom: 36px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 11px;
+            color: var(--ink-light);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            animation: bounceY 2.5s ease-in-out infinite;
+        }
+        
+        .scroll-hint-line {
+            width: 32px;
+            height: 0.5px;
+            background: var(--ink-light);
+        }
+        /* ─── SECTIONS ─── */
+        
+        .section {
+            padding: 80px 0;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .section-label {
+            font-size: 11px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--ink-light);
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .section-label::after {
+            content: '';
+            flex: 1;
+            height: 0.5px;
+            background: var(--apricot-warm);
+            max-width: 80px;
+        }
+        /* ─── PROJECT CARDS ─── */
+        
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .project-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 0.5px solid var(--apricot-warm);
+            cursor: pointer;
+            transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            position: relative;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .project-card:hover {
+            transform: scale(1.025) translateY(-4px);
+            border-color: var(--accent-light);
+            box-shadow: 0 16px 48px rgba(196, 120, 90, 0.14);
+        }
+        
+        .project-card:active {
+            transform: scale(1.01);
+        }
+        
+        .project-card.featured {
+            grid-column: span 2;
+        }
+        
+        .card-image {
+            width: 100%;
+            aspect-ratio: 16/10;
+            background: var(--apricot-mid);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .featured .card-image {
+            aspect-ratio: 16/8;
+        }
+        
+        .card-image-inner {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 48px;
+            font-weight: 300;
+            color: var(--apricot-deep);
+            position: relative;
+            overflow: hidden;
+        }
+        /* Placeholder visuals for each project */
+        
+        .proj-visual-1 {
+            background: linear-gradient(135deg, #F0E6D8 0%, #E2CDB8 100%);
+        }
+        
+        .proj-visual-2 {
+            background: linear-gradient(135deg, #E8D5C4 0%, #D4C0A8 100%);
+        }
+        
+        .proj-visual-3 {
+            background: linear-gradient(135deg, #EAE0D4 0%, #D8CCBE 100%);
+        }
+        
+        .proj-visual-4 {
+            background: linear-gradient(135deg, #F0E8DC 0%, #E0D0C0 100%);
+        }
+        
+        .proj-visual-5 {
+            background: linear-gradient(135deg, #E4DAD0 0%, #CDBBA8 100%);
+        }
+        
+        .proj-glyph {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 72px;
+            font-weight: 300;
+            color: rgba(196, 120, 90, 0.2);
+            position: absolute;
+            bottom: -12px;
+            right: 12px;
+            line-height: 1;
+        }
+        
+        .proj-mockup {
+            width: 52%;
+            height: 88%;
+            border-radius: 10px;
+            background: var(--white);
+            border: 0.5px solid rgba(196, 120, 90, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: var(--ink-light);
+            font-family: 'DM Sans', sans-serif;
+            letter-spacing: 0.04em;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .proj-mockup-wide {
+            width: 70%;
+            height: 78%;
+        }
+        /* Card content */
+        
+        .card-content {
+            padding: 20px 24px 24px;
+            background: var(--card-bg);
+        }
+        
+        .card-tag {
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .card-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 20px;
+            font-weight: 400;
+            color: var(--ink);
+            margin-bottom: 8px;
+            line-height: 1.25;
+            letter-spacing: -0.01em;
+        }
+        
+        .card-desc {
+            font-size: 13px;
+            color: var(--ink-mid);
+            line-height: 1.6;
+            font-weight: 300;
+        }
+        
+        .card-arrow {
+            display: inline-block;
+            margin-top: 12px;
+            font-size: 11px;
+            color: var(--ink-light);
+            letter-spacing: 0.04em;
+            transition: color 0.25s, transform 0.25s;
+        }
+        
+        .project-card:hover .card-arrow {
+            color: var(--accent);
+            transform: translateX(4px);
+        }
+        /* ─── PLAYGROUND ─── */
+        
+        .playground-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+        }
+        
+        .play-card {
+            background: var(--card-bg);
+            border-radius: 14px;
+            overflow: hidden;
+            border: 0.5px solid var(--apricot-warm);
+            cursor: pointer;
+            transition: transform var(--transition), border-color var(--transition);
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .play-card:hover {
+            transform: scale(1.04);
+            border-color: var(--accent-light);
+        }
+        
+        .play-card-inner {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            color: var(--ink-light);
+            font-weight: 300;
+            letter-spacing: 0.02em;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .play-label {
+            position: absolute;
+            bottom: 12px;
+            left: 14px;
+            font-size: 11px;
+            color: var(--ink-mid);
+            letter-spacing: 0.03em;
+        }
+        
+        .play-visual-1 {
+            background: linear-gradient(160deg, #F5E8D8 0%, #EAD4BE 100%);
+        }
+        
+        .play-visual-2 {
+            background: linear-gradient(160deg, #DDE8E0 0%, #C8D8CC 100%);
+        }
+        
+        .play-visual-3 {
+            background: linear-gradient(160deg, #E8DDF5 0%, #D4C8EA 100%);
+        }
+        
+        .play-visual-4 {
+            background: linear-gradient(160deg, #F5E8D8 0%, #E0CCBA 100%);
+        }
+        
+        .play-visual-5 {
+            background: linear-gradient(160deg, #F5DDD8 0%, #E8C8C4 100%);
+        }
+        
+        .play-visual-6 {
+            background: linear-gradient(160deg, #D8E8F5 0%, #C4D4E8 100%);
+        }
+        /* ─── CONNECT ─── */
+        
+        .connect-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            align-items: start;
+        }
+        
+        .about-photo {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: var(--apricot-warm);
+            margin-bottom: 24px;
+            border: 2px solid var(--apricot-deep);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 24px;
+            color: var(--accent);
+            font-weight: 300;
+        }
+        
+        .about-text {
+            font-size: 14px;
+            color: var(--ink-mid);
+            line-height: 1.75;
+            font-weight: 300;
+            max-width: 360px;
+        }
+        
+        .about-text p+p {
+            margin-top: 14px;
+        }
+        
+        .connect-links {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding-top: 8px;
+        }
+        
+        .connect-link {
+            font-size: 16px;
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 300;
+            color: var(--ink-mid);
+            text-decoration: none;
+            letter-spacing: 0.01em;
+            transition: color 0.25s, transform 0.25s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 0;
+            border-bottom: 0.5px solid transparent;
+            transition: all 0.25s;
+        }
+        
+        .connect-link:hover {
+            color: var(--accent);
+            transform: translateX(6px);
+            border-bottom-color: var(--apricot-warm);
+        }
+        
+        .connect-link-arrow {
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.25s;
+        }
+        
+        .connect-link:hover .connect-link-arrow {
+            opacity: 1;
+        }
+        /* ─── FOOTER ─── */
+        
+        .footer {
+            padding: 48px 0 60px;
+            border-top: 0.5px solid var(--apricot-warm);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .footer-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 13px;
+            font-weight: 300;
+            color: var(--ink-light);
+        }
+        
+        .footer-year {
+            font-size: 12px;
+            color: var(--ink-light);
+        }
+        /* ─── ANIMATIONS ─── */
+        
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes bounceY {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(6px);
+            }
+        }
+        /* Stagger children */
+        
+        .hero-eyebrow {
+            animation: fadeUp 0.8s ease 0.1s both;
+        }
+        
+        .hero-name {
+            animation: fadeUp 0.9s ease 0.25s both;
+        }
+        
+        .hero-sub {
+            animation: fadeUp 0.9s ease 0.4s both;
+        }
+        
+        .hero-tags {
+            animation: fadeUp 0.9s ease 0.55s both;
+        }
+        
+        .scroll-hint {
+            animation: fadeUp 0.9s ease 0.7s both, bounceY 2.5s ease-in-out 1.5s infinite;
+        }
+        /* Card stagger */
+        
+        .project-card:nth-child(1) {
+            transition-delay: 0s;
+        }
+        
+        .project-card:nth-child(2) {
+            transition-delay: 0.08s;
+        }
+        
+        .project-card:nth-child(3) {
+            transition-delay: 0.16s;
+        }
+        
+        .project-card:nth-child(4) {
+            transition-delay: 0.24s;
+        }
+        
+        .play-card:nth-child(1) {
+            transition-delay: 0s;
+        }
+        
+        .play-card:nth-child(2) {
+            transition-delay: 0.06s;
+        }
+        
+        .play-card:nth-child(3) {
+            transition-delay: 0.12s;
+        }
+        
+        .play-card:nth-child(4) {
+            transition-delay: 0.18s;
+        }
+        
+        .play-card:nth-child(5) {
+            transition-delay: 0.24s;
+        }
+        
+        .play-card:nth-child(6) {
+            transition-delay: 0.30s;
+        }
+        /* Pixel art decorative element */
+        
+        .pixel-dots {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            display: grid;
+            grid-template-columns: repeat(4, 5px);
+            gap: 3px;
+        }
+        
+        .pixel-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 1px;
+            background: var(--apricot-deep);
+            opacity: 0.5;
+        }
+        
+        .pixel-dot:nth-child(odd) {
+            opacity: 0.3;
+        }
+        /* Divider decorative */
+        
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--apricot-warm) 30%, var(--apricot-warm) 70%, transparent);
+            margin: 0;
+        }
+        /* Responsive */
+        
+        @media (max-width: 768px) {
+             :root {
+                --sidebar-w: 0px;
+            }
+            .sidebar {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                top: auto;
+                width: 100%;
+                height: 56px;
+                flex-direction: row;
+                justify-content: center;
+                padding: 0 24px;
+                background: var(--apricot);
+                border-top: 0.5px solid var(--apricot-warm);
+                z-index: 100;
+            }
+            .sidebar-logo {
+                display: none;
+            }
+            .sidebar-nav {
+                flex-direction: row;
+                gap: 28px;
+            }
+            .main {
+                margin-left: 0;
+                padding: 0 24px;
+            }
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            .project-card.featured {
+                grid-column: span 1;
+            }
+            .playground-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .connect-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <span class="sidebar-logo">玥妍</span>
+        <div class="sidebar-nav">
+            <a href="#projects" class="nav-item active" onclick="setActive(this)">Projects</a>
+            <a href="#playground" class="nav-item" onclick="setActive(this)">Playground</a>
+            <a href="#connect" class="nav-item" onclick="setActive(this)">Connect</a>
+        </div>
+    </nav>
+
+    <!-- Main -->
+    <div class="main">
+
+        <!-- Hero -->
+        <section class="hero" id="top">
+            <p class="hero-eyebrow">Portfolio · 2025</p>
+            <h1 class="hero-name">
+                Amanda —<br>
+                <em>designer</em> crafting<br> quiet moments.
+            </h1>
+            <p class="hero-sub">
+                Multidisciplinary designer exploring the space between form, function, and feeling. Drawn to interactions that breathe.
+            </p>
+            <div class="hero-tags">
+                <span class="tag">Interaction Design</span>
+                <span class="tag">Visual Design</span>
+                <span class="tag">Brand</span>
+                <span class="tag">Motion</span>
+            </div>
+            <div class="scroll-hint">
+                <span class="scroll-hint-line"></span> scroll
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section class="section" id="projects">
+            <div class="section-label">Selected Work</div>
+
+            <div class="projects-grid">
+
+                <!-- Featured project -->
+                <a href="microstep.html" class="project-card featured">
+                    <div class="card-image">
+                        <div class="card-image-inner proj-visual-1">
+                            <div class="proj-mockup proj-mockup-wide">
+                                <div style="text-align:center; padding: 16px;">
+                                    <div style="width:32px;height:4px;background:var(--apricot-warm);border-radius:2px;margin:0 auto 10px;"></div>
+                                    <div style="width:80px;height:6px;background:var(--apricot-mid);border-radius:2px;margin:0 auto 6px;"></div>
+                                    <div style="width:56px;height:6px;background:var(--apricot-mid);border-radius:2px;margin:0 auto;"></div>
+                                    <div style="margin-top:12px;display:flex;gap:6px;justify-content:center;">
+                                        <div style="width:20px;height:20px;border-radius:4px;background:var(--apricot-warm);"></div>
+                                        <div style="width:20px;height:20px;border-radius:4px;background:var(--apricot-warm);"></div>
+                                        <div style="width:20px;height:20px;border-radius:4px;background:var(--accent-light);opacity:0.4;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="proj-glyph">01</span>
+                            <div class="pixel-dots">
+                                <div class="pixel-dot"></div>
+                                <div class="pixel-dot"></div>
+                                <div class="pixel-dot"></div>
+                                <div class="pixel-dot"></div>
+                                <div class="pixel-dot"></div>
+                                <div class="pixel-dot"></div>
+                                <div class="pixel-dot"></div>
+                                <div class="pixel-dot"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <p class="card-tag">Interaction Design · App</p>
+                        <h3 class="card-title">Microstep — Blueprint for reaching your goal</h3>
+                        <p class="card-desc">Long-term goal completion with AI-driven adaptation based on users. Designing habit loops that feel natural and encouraging through micro-interactions.</p>
+                        <span class="card-arrow">View case study →</span>
+                    </div>
+                </a>
+
+                <!-- Project 2 -->
+                <a href="olive.html" class="project-card">
+                    <div class="card-image">
+                        <div class="card-image-inner proj-visual-2">
+                            <div class="proj-mockup" style="flex-direction:column;gap:8px;">
+                                <div style="width:36px;height:36px;border-radius:50%;background:var(--apricot-mid);"></div>
+                                <div style="display:flex;gap:10px;">
+                                    <div style="text-align:center;">
+                                        <div style="font-size:9px;font-weight:500;color:var(--ink);">90</div>
+                                        <div style="font-size:7px;color:var(--ink-light);">score</div>
+                                    </div>
+                                    <div style="text-align:center;">
+                                        <div style="font-size:9px;font-weight:500;color:var(--ink);">72</div>
+                                        <div style="font-size:7px;color:var(--ink-light);">following</div>
+                                    </div>
+                                    <div style="text-align:center;">
+                                        <div style="font-size:9px;font-weight:500;color:var(--ink);">38</div>
+                                        <div style="font-size:7px;color:var(--ink-light);">follower</div>
+                                    </div>
+                                </div>
+                                <div style="width:70%;height:1px;background:var(--apricot-warm);"></div>
+                                <div style="font-size:7px;color:var(--ink-light);">history</div>
+                            </div>
+                            <span class="proj-glyph">02</span>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <p class="card-tag">Brand · App Redesign · Client</p>
+                        <h3 class="card-title">Olive — Brand & App Redesign</h3>
+                        <p class="card-desc">Rapid 1–2 week redesign of Olive's holistic food scanner app (350k+ users). Balancing clarity with warmth.</p>
+                        <span class="card-arrow">View case study →</span>
+                    </div>
+                </a>
+
+                <!-- Project 3 -->
+                <a href="softconstruct.html" class="project-card">
+                    <div class="card-image">
+                        <div class="card-image-inner proj-visual-3">
+                            <div class="proj-mockup" style="flex-direction:column;gap:6px;">
+                                <div style="width:80%;height:5px;background:var(--apricot-warm);border-radius:2px;"></div>
+                                <div style="width:60%;height:5px;background:var(--apricot-mid);border-radius:2px;"></div>
+                                <div style="width:72%;height:5px;background:var(--apricot-warm);border-radius:2px;"></div>
+                                <div style="margin-top:6px;width:60%;height:14px;border-radius:3px;background:var(--accent-light);opacity:0.4;"></div>
+                            </div>
+                            <span class="proj-glyph">03</span>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <p class="card-tag">Web Design · Internship</p>
+                        <h3 class="card-title">SoftConstruct — First Run Landing</h3>
+                        <p class="card-desc">Designed a landing website for a mobile game called "First Run" — blending playful motion with structured information hierarchy.</p>
+                        <span class="card-arrow">View case study →</span>
+                    </div>
+                </a>
+
+                <!-- Project 4 -->
+                <a href="sonic-archive.html" class="project-card">
+                    <div class="card-image">
+                        <div class="card-image-inner proj-visual-4">
+                            <div class="proj-mockup" style="flex-direction:column;align-items:flex-start;gap:5px;padding:12px;">
+                                <div style="font-size:8px;font-weight:500;color:var(--ink);letter-spacing:0.06em;">SONIC</div>
+                                <div style="width:100%;height:1px;background:var(--apricot-warm);"></div>
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;width:100%;">
+                                    <div style="height:18px;background:var(--apricot-mid);border-radius:2px;"></div>
+                                    <div style="height:18px;background:var(--apricot-warm);border-radius:2px;"></div>
+                                    <div style="height:18px;background:var(--apricot-warm);border-radius:2px;"></div>
+                                    <div style="height:18px;background:var(--apricot-mid);border-radius:2px;"></div>
+                                </div>
+                            </div>
+                            <span class="proj-glyph">04</span>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <p class="card-tag">Web Archive · Concept</p>
+                        <h3 class="card-title">Archive of Sonic the Hedgehog</h3>
+                        <p class="card-desc">Designed a web archive concept for Sonic's franchise — exploring nostalgic interaction patterns with modern structural clarity.</p>
+                        <span class="card-arrow">View case study →</span>
+                    </div>
+                </a>
+
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- Playground Section -->
+        <section class="section" id="playground">
+            <div class="section-label">Playground</div>
+
+            <div class="playground-grid">
+
+                <div class="play-card" onclick="void(0)">
+                    <div class="card-image-inner play-visual-1" style="width:100%;height:100%;">
+                        <div style="display:flex;flex-direction:column;gap:4px;align-items:center;">
+                            <div style="display:flex;gap:3px;">
+                                <div style="width:8px;height:8px;background:rgba(196,120,90,0.4);border-radius:1px;"></div>
+                                <div style="width:8px;height:8px;background:rgba(196,120,90,0.6);border-radius:1px;"></div>
+                                <div style="width:8px;height:8px;background:rgba(196,120,90,0.3);border-radius:1px;"></div>
+                                <div style="width:8px;height:8px;background:rgba(196,120,90,0.5);border-radius:1px;"></div>
+                            </div>
+                            <div style="display:flex;gap:3px;">
+                                <div style="width:8px;height:8px;background:rgba(196,120,90,0.5);border-radius:1px;"></div>
+                                <div style="width:8px;height:8px;background:rgba(196,120,90,0.2);border-radius:1px;"></div>
+                                <div style="width:8px;height:8px;background:rgba(196,120,90,0.7);border-radius:1px;"></div>
+                                <div style="width:8px;height:8px;background:rgba(196,120,90,0.4);border-radius:1px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="play-label">Droplets — Fragrance UI</span>
+                </div>
+
+                <div class="play-card" onclick="void(0)">
+                    <div class="card-image-inner play-visual-2" style="width:100%;height:100%;">
+                        <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:rgba(80,100,90,0.4);text-align:center;line-height:1.2;">
+                            Gen<br>erative
+                        </div>
+                    </div>
+                    <span class="play-label">Processing / p5.js</span>
+                </div>
+
+                <div class="play-card" onclick="void(0)">
+                    <div class="card-image-inner play-visual-3" style="width:100%;height:100%;">
+                        <div style="display:flex;flex-direction:column;gap:3px;">
+                            <div style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(80,60,120,0.5);">Every Byte</div>
+                            <div style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(80,60,120,0.4);">is Action</div>
+                        </div>
+                    </div>
+                    <span class="play-label">Pixel Art Poster</span>
+                </div>
+
+                <div class="play-card" onclick="void(0)">
+                    <div class="card-image-inner play-visual-4" style="width:100%;height:100%;">
+                        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                            <div style="width:28px;height:48px;border-radius:4px;background:rgba(196,120,90,0.2);border:1px solid rgba(196,120,90,0.3);"></div>
+                            <div style="font-size:8px;color:rgba(120,80,60,0.5);letter-spacing:0.06em;">3D Scene</div>
+                        </div>
+                    </div>
+                    <span class="play-label">Twinmotion / VR</span>
+                </div>
+
+                <div class="play-card" onclick="void(0)">
+                    <div class="card-image-inner play-visual-5" style="width:100%;height:100%;">
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
+                            <div style="height:24px;background:rgba(196,100,90,0.2);border-radius:3px;"></div>
+                            <div style="height:24px;background:rgba(196,100,90,0.3);border-radius:3px;"></div>
+                            <div style="height:24px;background:rgba(196,100,90,0.15);border-radius:3px;"></div>
+                            <div style="height:24px;background:rgba(196,100,90,0.25);border-radius:3px;"></div>
+                        </div>
+                    </div>
+                    <span class="play-label">iOS Explorations</span>
+                </div>
+
+                <div class="play-card" onclick="void(0)">
+                    <div class="card-image-inner play-visual-6" style="width:100%;height:100%;">
+                        <div style="display:flex;flex-direction:column;gap:5px;align-items:center;">
+                            <div style="width:40px;height:2px;background:rgba(60,100,160,0.3);border-radius:1px;transform:rotate(-20deg);"></div>
+                            <div style="width:32px;height:2px;background:rgba(60,100,160,0.2);border-radius:1px;transform:rotate(-20deg);"></div>
+                            <div style="width:40px;height:2px;background:rgba(60,100,160,0.4);border-radius:1px;transform:rotate(-20deg);"></div>
+                        </div>
+                    </div>
+                    <span class="play-label">Motion Studies</span>
+                </div>
+
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- Connect Section -->
+        <section class="section" id="connect">
+            <div class="section-label">Connect</div>
+
+            <div class="connect-grid">
+
+                <div>
+                    <div class="about-photo">悦</div>
+                    <p class="about-text">
+                        <p>I'm Yueyan (Amanda) Zhang — a multidisciplinary designer interested in the quiet space between interaction and emotion. Started in visual design, drawn into motion and micro-interactions.</p>
+                        <p>I believe good design feels inevitable. Currently exploring new work and collaborations.</p>
+                    </p>
+                </div>
+
+                <div class="connect-links">
+                    <a href="#" class="connect-link">
+          Resume <span class="connect-link-arrow">↗</span>
+        </a>
+                    <a href="#" class="connect-link">
+          LinkedIn <span class="connect-link-arrow">↗</span>
+        </a>
+                    <a href="#" class="connect-link">
+          Email <span class="connect-link-arrow">↗</span>
+        </a>
+                    <a href="#" class="connect-link">
+          Instagram <span class="connect-link-arrow">↗</span>
+        </a>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <span class="footer-name">Yueyan · 玥妍</span>
+            <span class="footer-year">© 2025</span>
+        </footer>
+
+    </div>
+
+    <script>
+        // Intersection observer for section reveal
+        const sections = document.querySelectorAll('.section');
+        const cards = document.querySelectorAll('.project-card, .play-card');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -60px 0px'
+        });
+
+        sections.forEach(s => observer.observe(s));
+
+        // Card fade-in observer
+        const cardObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, 0);
+                }
+            });
+        }, {
+            threshold: 0.05
+        });
+
+        cards.forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(16px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease, box-shadow 0.45s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.45s cubic-bezier(0.4, 0, 0.2, 1), scale 0.45s cubic-bezier(0.4, 0, 0.2, 1)';
+            cardObserver.observe(card);
+        });
+
+        // Active nav
+        function setActive(el) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        // Scroll-based active nav
+        const sectionIds = ['projects', 'playground', 'connect'];
+        const navItems = document.querySelectorAll('.nav-item');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sectionIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el && window.scrollY >= el.offsetTop - 200) {
+                    current = id;
+                }
+            });
+            navItems.forEach(n => {
+                n.classList.remove('active');
+                if (n.getAttribute('href') === '#' + current) {
+                    n.classList.add('active');
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>
