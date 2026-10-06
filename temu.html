@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethical Redesign of Temu — Amanda</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+         :root {
+            --apricot: #FAF5EF;
+            --apricot-mid: #F3EAE0;
+            --apricot-warm: #E8D9C8;
+            --apricot-deep: #D4C0A8;
+            --ink: #2C2118;
+            --ink-mid: #6B5A4A;
+            --ink-light: #9E8E7E;
+            --accent: #C4785A;
+            --accent-light: #E8A882;
+            --white: #FEFCFA;
+            --card-bg: rgba(255, 255, 255, 0.72);
+            --sidebar-w: 160px;
+            --content-max: 900px;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--apricot);
+            color: var(--ink);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            background-size: 200px;
+            pointer-events: none;
+            z-index: 0;
+        }
+        /* ─── SIDEBAR ─── */
+        
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-w);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 0 0 36px;
+            z-index: 100;
+            gap: 10px;
+        }
+        
+        .sidebar-logo {
+            position: absolute;
+            top: 32px;
+            left: 36px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 15px;
+            font-weight: 300;
+            color: var(--ink);
+            letter-spacing: 0.02em;
+            text-decoration: none;
+            opacity: 0.7;
+            transition: opacity 0.25s;
+        }
+        
+        .sidebar-logo:hover {
+            opacity: 1;
+        }
+        
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .nav-item {
+            font-size: 13px;
+            font-weight: 400;
+            color: var(--ink-light);
+            cursor: pointer;
+            letter-spacing: 0.01em;
+            transition: color 0.25s ease, transform 0.25s ease;
+            padding: 2px 0;
+            text-decoration: none;
+            width: fit-content;
+            position: relative;
+        }
+        
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 0;
+            height: 0.5px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-item:hover {
+            color: var(--ink);
+            transform: translateX(4px);
+        }
+        
+        .nav-item:hover::after {
+            width: 100%;
+        }
+        /* ─── BACK BUTTON ─── */
+        
+        .back-btn {
+            position: fixed;
+            top: 32px;
+            left: calc(var(--sidebar-w) + 40px);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--ink-light);
+            text-decoration: none;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            z-index: 50;
+            transition: color 0.25s, transform 0.25s;
+            opacity: 0;
+            animation: fadeIn 0.6s ease 0.3s forwards;
+        }
+        
+        .back-btn:hover {
+            color: var(--accent);
+            transform: translateX(-3px);
+        }
+        
+        .back-btn svg {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.5;
+        }
+        /* ─── MAIN ─── */
+        
+        .main {
+            margin-left: var(--sidebar-w);
+            padding: 0 80px 0 60px;
+            position: relative;
+            z-index: 1;
+            max-width: calc(var(--sidebar-w) + var(--content-max) + 80px);
+        }
+        /* ─── HERO SECTION ─── */
+        
+        .project-hero {
+            padding: 100px 0 60px;
+            opacity: 0;
+            animation: fadeUp 0.9s ease 0.15s forwards;
+        }
+        
+        .project-tag {
+            font-size: 11px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .project-tag::before {
+            content: '';
+            width: 24px;
+            height: 0.5px;
+            background: var(--accent);
+        }
+        
+        .project-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(40px, 5vw, 64px);
+            font-weight: 300;
+            line-height: 1.05;
+            letter-spacing: -0.02em;
+            color: var(--ink);
+            margin-bottom: 28px;
+        }
+        
+        .project-title em {
+            font-style: italic;
+            color: var(--accent);
+        }
+        
+        .project-meta {
+            display: flex;
+            gap: 36px;
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        
+        .meta-label {
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--ink-light);
+        }
+        
+        .meta-value {
+            font-size: 13px;
+            color: var(--ink-mid);
+            font-weight: 300;
+        }
+        /* ─── DIVIDER ─── */
+        
+        .divider {
+            height: 0.5px;
+            background: linear-gradient(90deg, var(--apricot-warm), transparent);
+            margin: 48px 0;
+            opacity: 0;
+            animation: fadeIn 0.8s ease 0.5s forwards;
+        }
+        /* ─── HERO IMAGE GRID ─── */
+        
+        .hero-image-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: auto auto;
+            gap: 12px;
+            margin-bottom: 80px;
+            opacity: 0;
+            animation: fadeUp 0.9s ease 0.35s forwards;
+        }
+        
+        .img-placeholder {
+            border-radius: 14px;
+            background: var(--apricot-mid);
+            border: 0.5px solid var(--apricot-warm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .img-placeholder.tall {
+            grid-row: span 2;
+        }
+        
+        .img-placeholder.wide {
+            grid-column: span 2;
+        }
+        
+        .img-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: 14px;
+        }
+        
+        .img-inner-label {
+            position: absolute;
+            bottom: 14px;
+            left: 16px;
+            font-size: 11px;
+            color: rgba(44, 33, 24, 0.4);
+            letter-spacing: 0.05em;
+            background: var(--card-bg);
+            padding: 3px 10px;
+            border-radius: 100px;
+        }
+        /* Placeholder visuals */
+        
+        .ph-olive-1 {
+            background: linear-gradient(160deg, #F0E8D4 0%, #C8BA90 100%);
+            min-height: 340px;
+        }
+        
+        .ph-olive-2 {
+            background: #4A6741;
+            min-height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .ph-olive-3 {
+            background: #8B2E1A;
+            min-height: 160px;
+        }
+        
+        .ph-olive-4 {
+            background: linear-gradient(160deg, #8B9E45 0%, #6B7A35 100%);
+            min-height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .ph-olive-5 {
+            background: linear-gradient(160deg, #E8DEC8 0%, #D4C89A 100%);
+            min-height: 160px;
+        }
+        
+        .stat-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 18px;
+            font-weight: 400;
+            color: #E8D89A;
+            text-align: center;
+            line-height: 1.4;
+            padding: 24px;
+        }
+        
+        .cta-pill {
+            background: #E8D89A;
+            color: #4A6741;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 10px 24px;
+            border-radius: 100px;
+            letter-spacing: 0.02em;
+        }
+        /* ─── BRIEF SECTION ─── */
+        
+        .brief-section {
+            display: grid;
+            grid-template-columns: 1fr 1.4fr;
+            gap: 60px;
+            margin-bottom: 80px;
+            opacity: 0;
+            animation: fadeUp 0.8s ease 0.55s forwards;
+        }
+        
+        .brief-left {
+            display: flex;
+            flex-direction: column;
+            gap: 36px;
+        }
+        
+        .brief-block {}
+        
+        .brief-block-label {
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--ink-light);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 0.5px solid var(--apricot-warm);
+        }
+        
+        .brief-block-text {
+            font-size: 13.5px;
+            color: var(--ink-mid);
+            line-height: 1.75;
+            font-weight: 300;
+        }
+        
+        .brief-right {}
+        
+        .challenge-label {
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--ink-light);
+            margin-bottom: 20px;
+        }
+        
+        .challenge-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(28px, 3.5vw, 44px);
+            font-weight: 300;
+            line-height: 1.2;
+            color: var(--ink);
+            letter-spacing: -0.01em;
+        }
+        /* ─── APPROACH SECTION ─── */
+        
+        .approach-section {
+            margin-bottom: 80px;
+            opacity: 0;
+        }
+        
+        .section-heading {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 32px;
+            font-weight: 300;
+            color: var(--ink);
+            margin-bottom: 32px;
+            letter-spacing: -0.01em;
+        }
+        
+        .two-col-text {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 36px;
+        }
+        
+        .col-block-title {
+            font-size: 12px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--ink-mid);
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+        
+        .col-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .col-list li {
+            font-size: 13.5px;
+            color: var(--ink-mid);
+            font-weight: 300;
+            padding-left: 16px;
+            position: relative;
+            line-height: 1.6;
+        }
+        
+        .col-list li::before {
+            content: '—';
+            position: absolute;
+            left: 0;
+            color: var(--apricot-deep);
+            font-size: 11px;
+        }
+        /* ─── IMAGE PLACEHOLDER FULL ─── */
+        
+        .img-full {
+            width: 100%;
+            border-radius: 16px;
+            background: var(--apricot-mid);
+            border: 0.5px solid var(--apricot-warm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .img-full-label {
+            position: absolute;
+            bottom: 16px;
+            left: 20px;
+            font-size: 11px;
+            color: var(--ink-light);
+            letter-spacing: 0.05em;
+        }
+        
+        .ph-screens {
+            background: linear-gradient(160deg, #8B9E45 0%, #4A6741 100%);
+            min-height: 360px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            padding: 24px;
+            align-items: center;
+        }
+        
+        .screen-mini {
+            background: #E8DEC8;
+            border-radius: 6px;
+            aspect-ratio: 9/19;
+            display: flex;
+            flex-direction: column;
+            padding: 6px 4px;
+            gap: 3px;
+        }
+        
+        .screen-mini-bar {
+            height: 3px;
+            background: rgba(74, 103, 65, 0.3);
+            border-radius: 2px;
+        }
+        
+        .screen-mini-bar.accent-bar {
+            background: rgba(74, 103, 65, 0.6);
+            width: 60%;
+        }
+        /* ─── MEDIA SECTION ─── */
+        
+        .media-section {
+            margin-bottom: 80px;
+            opacity: 0;
+        }
+        
+        .media-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .video-placeholder {
+            width: 100%;
+            border-radius: 14px;
+            background: var(--ink);
+            aspect-ratio: 16/9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: opacity 0.25s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .video-placeholder:hover {
+            opacity: 0.88;
+        }
+        
+        .play-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .play-icon svg {
+            width: 18px;
+            height: 18px;
+            fill: white;
+            margin-left: 3px;
+        }
+        
+        .video-label {
+            position: absolute;
+            bottom: 14px;
+            left: 16px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        
+        .link-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .ext-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--ink-light);
+            text-decoration: none;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 10px 18px;
+            border-radius: 100px;
+            border: 0.5px solid var(--apricot-warm);
+            background: var(--card-bg);
+            transition: color 0.25s, border-color 0.25s, transform 0.25s;
+        }
+        
+        .ext-link:hover {
+            color: var(--accent);
+            border-color: var(--accent-light);
+            transform: translateY(-2px);
+        }
+        
+        .ext-link svg {
+            width: 11px;
+            height: 11px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.5;
+        }
+        /* ─── CONCLUSION ─── */
+        
+        .conclusion-section {
+            margin-bottom: 80px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            opacity: 0;
+        }
+        
+        .concl-block {}
+        
+        .concl-label {
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--ink-light);
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 0.5px solid var(--apricot-warm);
+        }
+        
+        .concl-text {
+            font-size: 13.5px;
+            color: var(--ink-mid);
+            font-weight: 300;
+            line-height: 1.75;
+        }
+        /* ─── SEE NEXT ─── */
+        
+        .see-next-section {
+            padding: 60px 0 0;
+            border-top: 0.5px solid var(--apricot-warm);
+            opacity: 0;
+        }
+        
+        .see-next-label {
+            font-size: 10px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--ink-light);
+            margin-bottom: 28px;
+        }
+        
+        .next-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 60px;
+        }
+        
+        .next-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 0.5px solid var(--apricot-warm);
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.4s;
+            display: block;
+        }
+        
+        .next-card:hover {
+            transform: translateY(-4px) scale(1.01);
+            border-color: var(--accent-light);
+        }
+        
+        .next-card-img {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: var(--apricot-mid);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .next-card-body {
+            padding: 16px 20px 20px;
+        }
+        
+        .next-card-direction {
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--ink-light);
+            margin-bottom: 6px;
+        }
+        
+        .next-card-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 18px;
+            font-weight: 400;
+            color: var(--ink);
+            line-height: 1.25;
+            margin-bottom: 6px;
+        }
+        
+        .next-card-desc {
+            font-size: 12px;
+            color: var(--ink-light);
+            font-weight: 300;
+            line-height: 1.5;
+        }
+        /* Placeholder visuals for next cards */
+        
+        .ph-next-1 {
+            background: linear-gradient(135deg, #2C2118 0%, #4A3828 100%);
+        }
+        
+        .ph-next-2 {
+            background: linear-gradient(135deg, #E8DEC8 0%, #D4C89A 100%);
+        }
+        /* ─── VIBE FOOTER ─── */
+        
+        .vibe-footer {
+            background: var(--ink);
+            margin: 0 -80px 0 -60px;
+            padding: 80px 80px 64px 60px;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+        }
+        
+        .vibe-footer::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 80% 50%, rgba(196, 120, 90, 0.08) 0%, transparent 60%);
+        }
+        
+        .vibe-pretext {
+            font-size: 11px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.3);
+            margin-bottom: 28px;
+        }
+        
+        .vibe-headline {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(36px, 4.5vw, 60px);
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.95);
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            margin-bottom: 40px;
+        }
+        
+        .vibe-headline em {
+            font-style: italic;
+            color: var(--accent-light);
+        }
+        
+        .vibe-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 52px;
+        }
+        
+        .vibe-tag {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            border: 0.5px solid rgba(255, 255, 255, 0.15);
+            padding: 6px 16px;
+            border-radius: 100px;
+            letter-spacing: 0.04em;
+            transition: color 0.25s, border-color 0.25s;
+        }
+        
+        .vibe-tag:hover {
+            color: var(--accent-light);
+            border-color: rgba(232, 168, 130, 0.4);
+        }
+        
+        .vibe-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-top: 0.5px solid rgba(255, 255, 255, 0.08);
+            padding-top: 28px;
+        }
+        
+        .vibe-copy {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.25);
+            letter-spacing: 0.04em;
+        }
+        
+        .vibe-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .vibe-link {
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.35);
+            text-decoration: none;
+            transition: color 0.25s;
+        }
+        
+        .vibe-link:hover {
+            color: var(--accent-light);
+        }
+        /* ─── ANIMATIONS ─── */
+        
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* Progress bar */
+        
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 1.5px;
+            background: var(--accent);
+            z-index: 200;
+            transition: width 0.1s linear;
+            width: 0%;
+        }
+        /* Mobile */
+        
+        @media (max-width: 768px) {
+             :root {
+                --sidebar-w: 0px;
+            }
+            .sidebar {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                top: auto;
+                width: 100%;
+                height: 56px;
+                flex-direction: row;
+                justify-content: center;
+                padding: 0 24px;
+                background: var(--apricot);
+                border-top: 0.5px solid var(--apricot-warm);
+            }
+            .sidebar-logo {
+                display: none;
+            }
+            .sidebar-nav {
+                flex-direction: row;
+                gap: 28px;
+            }
+            .main {
+                margin-left: 0;
+                padding: 0 24px 80px;
+            }
+            .hero-image-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .img-placeholder.tall {
+                grid-row: auto;
+            }
+            .brief-section {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+            .two-col-text {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            .media-grid {
+                grid-template-columns: 1fr;
+            }
+            .conclusion-section {
+                grid-template-columns: 1fr;
+            }
+            .next-cards {
+                grid-template-columns: 1fr;
+            }
+            .vibe-footer {
+                margin: 0 -24px;
+                padding: 60px 24px 48px;
+            }
+            .vibe-bottom {
+                flex-direction: column;
+                gap: 16px;
+                align-items: flex-start;
+            }
+        }
+
+        /* ─── TEMU: content left, scroll-synced prototype right ─── */
+        :root { --content-max: 1080px; }
+        .split { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 64px; align-items: start; }
+        .screen-sec { min-height: 78vh; display: flex; flex-direction: column; justify-content: center; padding: 48px 0; opacity: .35; transition: opacity .4s; }
+        .screen-sec.on { opacity: 1; }
+        .screen-sec .section-heading { margin-bottom: 20px; }
+        .sec-k { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+        .sec-why { margin-top: 20px; font-size: 14px; color: var(--ink-light); font-style: italic; }
+        .scroll-cue { margin-top: 32px; font-size: 12px; color: var(--ink-light); letter-spacing: .04em; }
+        .phone-dock { position: sticky; top: 24px; height: min(720px, calc(100vh - 48px)); }
+        .phone-dock iframe { width: 100%; height: 100%; border: 0; display: block; }
+        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .stats div { border-top: 1px solid var(--apricot-warm); padding-top: 12px; }
+        .stats b { display: block; font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 34px; color: var(--ink); }
+        .stats span { font-size: 12px; color: var(--ink-light); }
+        .locked-card { display: flex; gap: 20px; align-items: center; margin: 40px 0 80px; padding: 28px 32px; border-radius: 16px; border: 0.5px solid var(--apricot-warm); background: var(--apricot-mid); text-decoration: none; color: var(--ink); }
+        .locked-card > span:nth-child(2) { flex: 1; display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--ink-light); line-height: 1.6; }
+        .locked-card b { font-size: 16px; font-weight: 500; color: var(--ink); }
+        .locked-icon { font-size: 22px; }
+        @media (max-width: 1100px) {
+            .split { grid-template-columns: 1fr; }
+            .phone-dock { display: none; }
+            .screen-sec { min-height: 0; opacity: 1; }
+        }
+        @media (max-width: 768px) {
+            .stats { grid-template-columns: 1fr; }
+            .locked-card { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Progress bar -->
+    <div class="reading-progress" id="progress"></div>
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <a href="index.html" class="sidebar-logo">玥妍</a>
+        <div class="sidebar-nav">
+            <a href="index.html#projects" class="nav-item">Projects</a>
+            <a href="index.html#playground" class="nav-item">Playground</a>
+            <a href="index.html#connect" class="nav-item">Connect</a>
+        </div>
+    </nav>
+
+    <!-- Back button -->
+    <a href="index.html" class="back-btn">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Back
+    </a>
+
+    <!-- Main content -->
+    <div class="main">
+
+        <!-- ── HERO ── -->
+        <section class="project-hero">
+            <p class="project-tag">UX Research · Ethical Design · Prototype</p>
+            <h1 class="project-title">
+                Ethical Redesign<br>
+                of <em>Temu</em>
+            </h1>
+            <div class="project-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Course</span>
+                    <span class="meta-value">Dark Patterns</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Date</span>
+                    <span class="meta-value">September 2026</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Deliverable</span>
+                    <span class="meta-value">Clickable prototype</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Role</span>
+                    <span class="meta-value">Research · UX · Prototype</span>
+                </div>
+            </div>
+            <div class="link-row">
+                <a href="https://www.figma.com/proto/pZAnarTcl8uMECRHm96UmL/Temu-%E5%BC%B9%E7%AA%97%E9%87%8D%E8%AE%BE%E8%AE%A1-%C2%B7-Case-Study?node-id=16-3&amp;p=f&amp;t=0Vs0neroPpKBcstY-0&amp;scaling=min-zoom&amp;content-scaling=fixed&amp;page-id=16%3A2&amp;starting-point-node-id=16%3A3" class="ext-link" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Open in Figma</a>
+                <a href="temu-prototype.html" class="ext-link" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Prototype full screen</a>
+                <a href="temu-full.html" class="ext-link"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Full case study 🔒</a>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <div class="split">
+            <div class="split-content">
+
+                <section class="screen-sec" data-screen="product">
+                    <p class="brief-block-label">The problem</p>
+                    <h2 class="challenge-text" style="margin-bottom:20px;">Keep the promotion. Remove the tricks around it.</h2>
+                    <p class="brief-block-text">Temu's coupon event turned a $51 bean bag chair into a $151 checkout, across 16 screens of prize wheels, fake rewards and blocked exits. I kept the real offer (spend $100, get $20 off + 1 gift) and rebuilt everything around it on three principles:</p>
+                    <ul class="col-list" style="margin-top:20px;">
+                        <li><b>Item first</b>: the user can always buy what they came for</li>
+                        <li><b>Rules visible</b>: real prices, running total, no fine print</li>
+                        <li><b>Exit everywhere</b>: same spot, every screen, no guilt</li>
+                    </ul>
+                    <p class="scroll-cue">Scroll — the phone on the right follows along →</p>
+                </section>
+
+                <section class="screen-sec" data-screen="product">
+                    <p class="sec-k">Entry</p>
+                    <h2 class="section-heading">Product page: buy what you came for</h2>
+                    <ul class="col-list">
+                        <li>The offer is a quiet, optional note. Tapping it opens the coupon</li>
+                        <li>After "Add to cart", the coupon appears once</li>
+                        <li>"Buy now" goes straight to checkout, with no event screens in between</li>
+                    </ul>
+                </section>
+
+                <section class="screen-sec" data-screen="popup">
+                    <p class="sec-k">Pop-up</p>
+                    <h2 class="section-heading">Fix the pop-up, don't kill it</h2>
+                    <ul class="col-list">
+                        <li>Shows once, after add to cart, never when the user tries to leave</li>
+                        <li>Nothing preselected; the ticket is selected only when tapped</li>
+                        <li>"No time limit · optional" replaces the countdown</li>
+                        <li>"No thanks, just my item" carries equal weight to "Claim"</li>
+                        <li>×, tap outside or Esc closes it, and it stays closed</li>
+                    </ul>
+                    <p class="sec-why">The business still gets exposure; the user keeps their autonomy.</p>
+                </section>
+
+                <section class="screen-sec" data-screen="pick">
+                    <p class="sec-k">Step 1 of 2</p>
+                    <h2 class="section-heading">Rules first, then pick items</h2>
+                    <ul class="col-list">
+                        <li>Full rules at the top, at body-text size; the 20-day check-in is off by default</li>
+                        <li>On scroll, rules collapse to one line you can tap to reopen</li>
+                        <li>Real prices, ratings and reviews on every card</li>
+                        <li>Pinned footer: "You pay so far" incl. tax, distance to $100, and a skip button</li>
+                    </ul>
+                </section>
+
+                <section class="screen-sec" data-screen="detail">
+                    <p class="sec-k">Details</p>
+                    <h2 class="section-heading">Every item can be inspected</h2>
+                    <ul class="col-list">
+                        <li>Real price, reviews, delivery dates and return policy</li>
+                        <li>One button to select or remove, then back to the same spot in the feed</li>
+                    </ul>
+                </section>
+
+                <section class="screen-sec" data-screen="review">
+                    <p class="sec-k">Step 2 of 2</p>
+                    <h2 class="section-heading">What you pay, what you get</h2>
+                    <ul class="col-list">
+                        <li>Split into: you pay / your gift / you receive / not included</li>
+                        <li>The gift unlocks at $100 and shows its real value</li>
+                        <li>Short of $100? It says so plainly; the coupon isn't silently dropped</li>
+                        <li>No preselected payment method</li>
+                    </ul>
+                </section>
+
+                <section class="screen-sec" data-screen="done">
+                    <p class="sec-k">Done</p>
+                    <h2 class="section-heading">An honest confirmation</h2>
+                    <ul class="col-list">
+                        <li>Delivery date for every item and gift</li>
+                        <li>A single "Keep shopping" button, with no "reward expired" bait</li>
+                        <li>If you joined check-in, it tells you where to leave</li>
+                    </ul>
+                    <p class="sec-why">From my own experience: receiving things I didn't remember buying, and that were hard to return.</p>
+                </section>
+
+                <section class="screen-sec" data-screen="checkout">
+                    <p class="sec-k">Branch</p>
+                    <h2 class="section-heading">Leaving is one tap</h2>
+                    <ul class="col-list">
+                        <li>× on any step lands here, with no retention pop-up</li>
+                        <li>One neutral line of copy; the cart is kept</li>
+                        <li>The offer stays available as step 2 of checkout</li>
+                    </ul>
+                </section>
+
+                <section class="screen-sec" data-screen="review">
+                    <p class="sec-k">Outcome</p>
+                    <h2 class="section-heading">Same offer, honest flow</h2>
+                    <div class="stats">
+                        <div><b>2 steps</b><span>down from 16 screens</span></div>
+                        <div><b>$93.76</b><span>total known from screen one</span></div>
+                        <div><b>0</b><span>exit interceptions</span></div>
+                    </div>
+                    <p class="brief-block-text" style="margin-top:24px;">"I didn't remove the promotion. I removed the tricks around it, and moved the offer to checkout, where purchase intent is highest." Success would be measured by completed orders, refund rate and 30-day repeat purchases, not order value alone.</p>
+                </section>
+
+            </div>
+
+            <aside class="phone-dock" aria-label="Clickable prototype">
+                <iframe src="temu-prototype.html?embed" title="Clickable prototype of the redesigned Temu checkout" id="proto"></iframe>
+            </aside>
+        </div>
+
+        <!-- ── LOCKED FULL CASE STUDY ── -->
+        <a href="temu-full.html" class="locked-card reveal">
+            <span class="locked-icon">🔒</span>
+            <span>
+                <b>Full case study</b>
+                <span>Research, the original 16-screen flow, 7 dark patterns, wireframes and process. Password protected; ask me for access.</span>
+            </span>
+            <span class="card-arrow">Unlock →</span>
+        </a>
+
+        <!-- ── SEE NEXT ── -->
+        <section class="see-next-section reveal" style="padding-bottom:80px;">
+            <p class="see-next-label">See next</p>
+            <div class="next-cards">
+                <a href="microstep.html" class="next-card">
+                    <div class="next-card-img ph-next-1"></div>
+                    <div class="next-card-body">
+                        <p class="next-card-direction">Next →</p>
+                        <h3 class="next-card-title">Microstep — Blueprint for reaching your goal</h3>
+                        <p class="next-card-desc">AI-adaptive goal completion app</p>
+                    </div>
+                </a>
+                <a href="olive.html" class="next-card">
+                    <div class="next-card-img ph-next-2"></div>
+                    <div class="next-card-body">
+                        <p class="next-card-direction">Next →</p>
+                        <h3 class="next-card-title">Olive — Brand &amp; App Redesign</h3>
+                        <p class="next-card-desc">Food scanner app redesign</p>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- /main -->
+
+    <!-- ── VIBE FOOTER ── -->
+    <div class="main" style="padding:0;max-width:100%;margin-left:var(--sidebar-w);">
+        <footer class="vibe-footer reveal">
+            <p class="vibe-pretext">About the designer</p>
+            <h2 class="vibe-headline">
+                Fashion-forward,<br>
+                <em>empathy-driven</em> —<br> UX that feels alive.
+            </h2>
+            <div class="vibe-tags">
+                <span class="vibe-tag">Fashion + Design</span>
+                <span class="vibe-tag">Empathy Coder</span>
+                <span class="vibe-tag">Fast Learner</span>
+                <span class="vibe-tag">Micro-interactions</span>
+                <span class="vibe-tag">Brand Systems</span>
+                <span class="vibe-tag">Motion & Prototyping</span>
+                <span class="vibe-tag">Human Psychology</span>
+                <span class="vibe-tag">Visual Storytelling</span>
+            </div>
+            <div class="vibe-bottom">
+                <span class="vibe-copy">© Amanda · 玥妍 · 2025</span>
+                <div class="vibe-links">
+                    <a href="#" class="vibe-link">Resume</a>
+                    <a href="#" class="vibe-link">LinkedIn</a>
+                    <a href="#" class="vibe-link">Instagram</a>
+                    <a href="index.html" class="vibe-link">↑ Back to top</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Reading progress
+        const progress = document.getElementById('progress');
+        window.addEventListener('scroll', () => {
+            const h = document.documentElement.scrollHeight - window.innerHeight;
+            const pct = (window.scrollY / h) * 100;
+            progress.style.width = Math.min(pct, 100) + '%';
+        });
+
+        // Scroll reveal
+        const reveals = document.querySelectorAll('.reveal');
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.classList.add('visible');
+                    obs.unobserve(e.target);
+                }
+            });
+        }, {
+            threshold: 0.08,
+            rootMargin: '0px 0px -40px 0px'
+        });
+
+        reveals.forEach(el => obs.observe(el));
+    </script>
+
+
+    <script>
+        // Scroll-synced prototype: the section in the middle of the viewport drives the phone
+        const proto = document.getElementById('proto');
+        let current = null;
+        const secObs = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (!e.isIntersecting) return;
+                document.querySelectorAll('.screen-sec.on').forEach(s => s.classList.remove('on'));
+                e.target.classList.add('on');
+                const id = e.target.dataset.screen;
+                if (id !== current) {
+                    current = id;
+                    proto.contentWindow.postMessage({ jump: id }, location.origin);
+                }
+            });
+        }, { rootMargin: '-45% 0px -45% 0px' });
+        proto.addEventListener('load', () => document.querySelectorAll('.screen-sec').forEach(s => secObs.observe(s)));
+    </script>
+</body>
+
+</html>
