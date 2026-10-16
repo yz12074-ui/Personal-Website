@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;font-size:14px;font-family:system-ui,-apple-system,sans-serif;-webkit-text-size-adjust:100%}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<title>Cookie Thief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Instrument+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: phone prototype (browser offline page) on the left, presenter panel on the right; stacks on narrow screens. One deliberate light look. */
+:root{
+  --bg:#eceeea; --panel:#ffffff; --line:#d9ddd8; --fg:#1b1f1d; --muted:#69716d;
+  --page:#ffffff; --pg-ink:#202124; --pg-sub:#5f6368; --pixel-ink:#535353;
+  --load:#4a8ff0; --accent:#1f5c46; --accent-2:#e9f2ee; --warn:#c2410c; --ok:#1f7a4a;
+  --pixel:"Silkscreen", ui-monospace, Menlo, monospace;
+  --ui:"Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --sys:-apple-system, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color-scheme:light;
+}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--ui);font-size:14px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px;box-sizing:border-box}
+*{box-sizing:border-box}
+button{font:inherit;cursor:pointer}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.stage{display:flex;gap:40px;justify-content:center;align-items:flex-start;flex-wrap:wrap;max-width:1040px;margin:0 auto}
+.phone-wrap{position:relative;flex:0 0 auto}
+.phone{position:absolute;left:0;top:0;width:380px;height:760px;padding:10px;border-radius:52px;background:#1d2120;transform-origin:top left;box-shadow:0 30px 60px rgba(20,30,25,.25)}
+.screen{position:relative;width:360px;height:740px;border-radius:42px;overflow:hidden;background:var(--page);user-select:none;-webkit-user-select:none;touch-action:manipulation;font-family:var(--sys)}
+
+/* ---- browser chrome ---- */
+.status{position:absolute;inset:0 0 auto;height:48px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 30px 8px 36px;font:600 15px/1 var(--sys);color:#000;z-index:6}
+.icons{display:flex;align-items:center;gap:6px}
+.bars{display:flex;gap:2px;align-items:flex-end;height:11px}
+.bars i{display:block;width:3px;border-radius:1px;background:#000}
+.bars i:nth-child(1){height:4px}.bars i:nth-child(2){height:6px}.bars i:nth-child(3){height:8px}.bars i:nth-child(4){height:11px}
+.bars i.dim{background:#c4c4c4}
+.wifi{width:15px;height:11px}
+.batt{display:inline-flex;align-items:center;justify-content:center;width:25px;height:12px;border-radius:4px;background:#000;color:#fff;font:700 9px/1 var(--sys)}
+.url{position:absolute;top:56px;left:10px;right:10px;height:34px;border-radius:17px;background:#e9ebee;display:flex;align-items:center;justify-content:center;gap:5px;color:#111;font-size:14px;z-index:6}
+.url svg{width:13px;height:13px}
+.url .share{position:absolute;right:13px;width:15px;height:15px;color:#555}
+.progress{position:absolute;top:98px;left:0;height:2px;width:0;background:var(--load);z-index:6;opacity:.85;transition:opacity .4s}
+.rule{position:absolute;top:100px;left:0;right:0;height:1px;background:#e3e3e3;z-index:5}
+.toolbar{position:absolute;left:0;right:0;bottom:0;height:64px;border-top:1px solid #e3e3e3;background:#fff;display:flex;justify-content:space-around;align-items:flex-start;padding-top:10px;z-index:6;color:#5f6368}
+.toolbar svg{width:20px;height:20px}
+.toolbar .plus{width:34px;height:34px;border-radius:50%;background:#e9ebee;display:grid;place-items:center;margin-top:-6px}
+.toolbar .tabs{width:20px;height:18px;border:1.8px solid currentColor;border-radius:4px;font:700 9px/14px var(--sys);text-align:center}
+.home-ind{position:absolute;bottom:6px;left:50%;width:120px;height:5px;margin-left:-60px;border-radius:3px;background:#111;z-index:30}
+
+/* ---- pages ---- */
+.content{position:absolute;top:101px;left:0;right:0;bottom:64px;overflow:hidden;background:var(--page)}
+.offline{position:absolute;inset:0;padding:0 22px}
+.offline canvas{display:block;width:316px;height:170px;margin-top:22px}
+.offline h2{margin:22px 0 14px;font:400 23px/1.2 var(--sys);color:var(--pg-ink)}
+.offline .try{margin:0;color:var(--pg-sub);font-size:14px}
+.offline ul{margin:6px 0 16px;padding-left:36px;color:var(--pg-sub);font-size:14px;line-height:1.75}
+.offline .code{font-size:11.5px;color:var(--pg-sub);letter-spacing:.01em}
+
+.site{position:absolute;inset:0;background:#fff;color:#111}
+.site header{height:58px;background:var(--accent);display:flex;align-items:center;gap:14px;padding:0 18px;color:#fff}
+.site header .burger{width:20px;height:14px;border-top:2px solid #fff;border-bottom:2px solid #fff;position:relative}
+.site header .burger::after{content:"";position:absolute;left:0;right:0;top:4px;border-top:2px solid #fff}
+.site header b{font:700 21px/1 var(--ui);letter-spacing:-.01em}
+.site .body{padding:22px 18px}
+.site h1{margin:0 0 10px;font:700 24px/1.15 var(--ui)}
+.site p{margin:0 0 16px;font:400 15px/1.5 var(--ui);color:#333}
+.site .jump{background:#f5f6f4;padding:12px 14px;color:var(--accent);font:500 14px var(--ui);display:flex;justify-content:space-between}
+.site h3{margin:26px 0 12px;font:700 19px var(--ui)}
+.site .btns{display:flex;gap:8px}
+.site .btns span{padding:11px 12px;font:500 13px var(--ui);border:1.5px solid var(--accent);color:var(--accent)}
+.site .btns span:first-child{background:var(--accent);color:#fff}
+
+/* ---- trap banner: card is placed so its only button lands on the last tap ---- */
+.trap{position:absolute;inset:0;z-index:20}
+.trap .card{position:absolute;left:12px;right:12px;background:#fff;border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.28),0 0 0 1px rgba(0,0,0,.05);padding:18px 18px}
+.trap h3{margin:0 0 6px;font:700 16px/1.25 var(--ui);color:#111}
+.trap p{margin:0;font:400 12px/1.5 var(--ui);color:#555}
+.trap .accept{position:absolute;width:220px;height:54px;margin:-27px 0 0 -110px;border:0;border-radius:27px;background:var(--accent);color:#fff;font:700 16px var(--ui)}
+
+/* ---- honest version ---- */
+.toast{position:absolute;left:12px;right:12px;bottom:76px;z-index:20;background:#202124;color:#fff;border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;font:500 14px var(--sys)}
+.toast button{border:0;background:none;color:#8ab4f8;font-weight:700;font-size:14px;padding:6px 4px}
+.sheet{position:absolute;left:0;right:0;bottom:64px;z-index:20;background:#fff;border-top:1px solid #ddd;box-shadow:0 -8px 30px rgba(0,0,0,.12);padding:16px 16px 18px}
+.sheet h3{margin:0 0 6px;font:700 15px var(--ui)}
+.sheet p{margin:0 0 12px;font:400 12px/1.5 var(--ui);color:#555}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pair button{height:44px;border-radius:10px;border:1.5px solid #111;background:#fff;color:#111;font:600 14px var(--ui)}
+.pair button:disabled{opacity:.35;cursor:default}
+
+/* ---- reveal ---- */
+.reveal{position:absolute;inset:0;z-index:40;background:#111614;color:#e8ece9;padding:64px 24px 30px;overflow-y:auto;font-family:var(--ui);scrollbar-width:none;-ms-overflow-style:none;overscroll-behavior:contain}
+.reveal::-webkit-scrollbar{display:none;width:0;height:0}
+.reveal .tag{font:700 10px/1 var(--pixel);letter-spacing:.08em;color:#f08a6c}
+.reveal .tag.ok{color:#79d29d}
+.reveal h2{margin:10px 0;font:700 32px/1.05 var(--ui);letter-spacing:-.01em;text-wrap:balance}
+.reveal h2 em{font-style:normal;color:#f2c94c;font-variant-numeric:tabular-nums}
+.reveal p{margin:0 0 16px;color:#c3cbc6;font-size:14px}
+.reveal h4{margin:20px 0 8px;font:700 10px/1 var(--pixel);letter-spacing:.08em;color:#8d9792}
+.reveal ul{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.reveal li{padding:10px 12px;border:1px solid #2c3532;border-radius:10px;font-size:13px}
+.ask{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ask button,.again button{height:46px;border-radius:12px;border:1px solid #2c3532;background:transparent;color:#e8ece9;font-weight:600;font-size:14px}
+.ask button[aria-pressed="true"]{background:#e8ece9;color:#111614}
+.again{display:grid;gap:10px;margin-top:22px}
+.again button.primary{background:#f2c94c;border-color:#f2c94c;color:#221c05;font-weight:700}
+
+/* ---- presenter panel ---- */
+.panel{flex:1 1 320px;max-width:430px;min-width:0;padding-top:10px}
+.eyebrow{font:700 10px/1 var(--pixel);letter-spacing:.1em;color:var(--accent);margin:0 0 12px}
+.panel h1{margin:0 0 10px;font:700 40px/1 var(--ui);letter-spacing:-.02em}
+.panel > p{margin:0 0 22px;color:#454c48;max-width:60ch}
+.field{margin-bottom:18px}
+.label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:8px}
+.seg{display:inline-grid;grid-template-columns:1fr 1fr;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:3px}
+.seg button{border:0;background:none;color:var(--muted);padding:8px 18px;border-radius:9px;font-weight:600}
+.seg button[aria-pressed="true"]{background:var(--fg);color:#fff}
+.outage{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.outage strong{font-variant-numeric:tabular-nums;font-size:15px;flex:1}
+.outage button{border:0;background:none;color:var(--accent);font-weight:600}
+.phase{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.phase span{font-size:11px;font-weight:600;padding:4px 9px;border-radius:999px;background:#e2e6e2;color:#6a726e}
+.phase span.on{background:var(--accent);color:#fff}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:26px}
+.row button{border:1px solid var(--line);background:var(--panel);color:var(--fg);padding:10px 14px;border-radius:10px;font-weight:600}
+.row button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.panel h2{font:700 10px/1 var(--pixel);letter-spacing:.1em;color:var(--muted);margin:0 0 10px}
+.logwrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-weight:600;color:var(--muted);font-size:11px}
+tr:last-child td{border-bottom:0}
+td.bad{color:var(--warn);font-weight:600} td.good{color:var(--ok);font-weight:600}
+.empty td{color:var(--muted);white-space:normal}
+.note{margin:12px 0 0;font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="phone-wrap" id="wrap">
+    <div class="phone" id="phone">
+      <div class="screen" id="screen">
+        <div class="status">
+          <span id="clock">11:38</span>
+          <span class="icons">
+            <span class="bars" id="bars"><i></i><i></i><i class="dim"></i><i class="dim"></i></span>
+            <svg class="wifi" id="wifi" viewBox="0 0 15 11" hidden><path fill="#000" d="M7.5 2.2c2.1 0 4 .8 5.5 2.2l1.2-1.3A9.6 9.6 0 0 0 7.5.4 9.6 9.6 0 0 0 .8 3.1L2 4.4a7.9 7.9 0 0 1 5.5-2.2Zm0 3.4c1.2 0 2.3.5 3.1 1.2l1.2-1.3a6.3 6.3 0 0 0-8.6 0l1.2 1.3c.8-.7 1.9-1.2 3.1-1.2Zm0 3.3c-.5 0-1 .2-1.3.5l1.3 1.6 1.3-1.6c-.3-.3-.8-.5-1.3-.5Z"/></svg>
+            <span class="batt">59</span>
+          </span>
+        </div>
+        <div class="url">
+          <svg id="info" viewBox="0 0 14 14" hidden><circle cx="7" cy="7" r="6" fill="none" stroke="#111" stroke-width="1.4"/><rect x="6.3" y="6" width="1.4" height="4.2" fill="#111"/><rect x="6.3" y="3.6" width="1.4" height="1.4" fill="#111"/></svg>
+          <span>coursehub.edu</span>
+          <svg class="share" viewBox="0 0 16 16"><path fill="none" stroke="currentColor" stroke-width="1.5" d="M8 1.5v9M4.8 4.5 8 1.5l3.2 3M3 7.5v6.5h10V7.5"/></svg>
+        </div>
+        <div class="progress" id="progress"></div>
+        <div class="rule"></div>
+
+        <div class="content" id="content">
+          <div class="offline" id="offline" hidden>
+            <canvas id="game" aria-label="Offline game: a pixel rat jumping over hydrants and cones"></canvas>
+            <h2>Tap the rat to play</h2>
+            <p class="try">Try:</p>
+            <ul><li>Turning off airplane mode</li><li>Turning on mobile data or Wi-Fi</li><li>Checking the signal in your area</li></ul>
+            <div class="code">ERR_INTERNET_DISCONNECTED</div>
+          </div>
+          <div class="site" id="site">
+            <header><span class="burger"></span><b>Course Hub</b></header>
+            <div class="body">
+              <h1>Course Hub</h1>
+              <p>Course Hub is the college's learning system. Open your courses, chat with classmates, check grades and assignments, join class video calls, and get announcements.</p>
+              <div class="jump"><span>Jump to</span><span>⌄</span></div>
+              <h3>Start using Course Hub</h3>
+              <div class="btns"><span>Log in to Course Hub</span><span>See what's new</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="trap" id="trap" hidden>
+          <div class="card" id="card">
+            <div id="cardText">
+              <h3>Cookies on Course Hub</h3>
+              <p id="trapText">We and our 214 partners use cookies and your precise location to personalize ads and measure what you do across sites and apps. Tap Accept to continue to your page.</p>
+            </div>
+          </div>
+          <button class="accept" id="accept">Accept</button>
+        </div>
+
+        <div class="toast" id="toast" hidden><span>You're back online</span><button id="reload">Reload</button></div>
+        <div class="sheet" id="sheet" hidden>
+          <h3>Cookies on Course Hub</h3>
+          <p>We'd like to use cookies and share your activity with 214 ad partners. Rejecting won't change anything on this page.</p>
+          <div class="pair"><button id="hReject" disabled>Reject all</button><button id="hAccept" disabled>Accept all</button></div>
+        </div>
+
+        <div class="toolbar">
+          <svg viewBox="0 0 20 20"><path fill="none" stroke="currentColor" stroke-width="1.8" d="M17 10H3m6-6-6 6 6 6"/></svg>
+          <svg viewBox="0 0 20 20" style="opacity:.45"><path fill="none" stroke="currentColor" stroke-width="1.8" d="M3 10h14m-6-6 6 6-6 6"/></svg>
+          <span class="plus"><svg viewBox="0 0 20 20"><path stroke="currentColor" stroke-width="2" d="M10 3v14M3 10h14"/></svg></span>
+          <span class="tabs">80</span>
+          <svg viewBox="0 0 20 20"><circle cx="4" cy="10" r="1.6" fill="currentColor"/><circle cx="10" cy="10" r="1.6" fill="currentColor"/><circle cx="16" cy="10" r="1.6" fill="currentColor"/></svg>
+        </div>
+
+        <div class="reveal" id="reveal" hidden></div>
+        <div class="home-ind"></div>
+      </div>
+    </div>
+  </div>
+
+  <aside class="panel">
+    <p class="eyebrow">DARK PATTERNS · PROTOTYPE</p>
+    <h1>Signal Trap</h1>
+    <p>The signal drops between stations and the browser shows its offline game. While the player taps, a thin blue bar quietly reloads the page. The moment signal returns, the page swaps in with a cookie card whose only button sits under the player's thumb.</p>
+
+    <div class="field">
+      <span class="label">Version</span>
+      <div class="seg" role="group" aria-label="Version">
+        <button id="mTrap" aria-pressed="true">Trap</button>
+        <button id="mHonest" aria-pressed="false">Honest</button>
+      </div>
+    </div>
+    <div class="field">
+      <span class="label">Outage this run (random, 8 to 25 s)</span>
+      <div class="outage"><strong id="outv">Hidden</strong><button id="showOut">Show</button></div>
+      <div class="phase" id="phase"><span data-p="site">Page</span><span data-p="offline">Offline game</span><span data-p="loading">Quiet reload</span><span data-p="popup">Cookie card</span><span data-p="done">Result</span></div>
+    </div>
+    <div class="row">
+      <button class="primary" id="restart">New run</button>
+      <button id="now">End outage now</button>
+    </div>
+
+    <h2>TEST LOG</h2>
+    <div class="logwrap">
+      <table>
+        <thead><tr><th>#</th><th>Version</th><th>Outage</th><th>Choice</th><th>Tap after</th><th>Saw the bar?</th></tr></thead>
+        <tbody id="log"><tr class="empty"><td colspan="6">Hand the phone to a tester and press New run. Each result lands here.</td></tr></tbody>
+      </table>
+    </div>
+    <p class="note">A tap under about 250 ms is faster than a person can see and react, so it was already on its way before the card appeared.</p>
+  </aside>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const screenEl = $('#screen');
+let mode = 'trap', runs = [], showOut = false, scale = 1, S, timers = [];
+const later = (fn, ms) => timers.push(setTimeout(fn, ms));
+
+/* ---------- layout ---------- */
+function fit(){
+  const wide = window.innerWidth > 820;
+  const availW = $('.stage').clientWidth;
+  const availH = wide ? window.innerHeight - 48 : 99999;
+  scale = Math.min(1, availW / 380, availH / 760);
+  $('#phone').style.transform = `scale(${scale})`;
+  $('#wrap').style.width = 380 * scale + 'px';
+  $('#wrap').style.height = 760 * scale + 'px';
+}
+window.addEventListener('resize', fit); fit();
+function tick(){ const d = new Date(); $('#clock').textContent = d.getHours() + ':' + String(d.getMinutes()).padStart(2,'0'); }
+tick(); setInterval(tick, 30000);
+
+/* ---------- network look ---------- */
+function setNet(on){
+  const b = [...$('#bars').children];
+  b.forEach((i, k) => i.classList.toggle('dim', on ? false : k > 1));
+  $('#wifi').hidden = !on;
+}
+function setProgress(p, visible = true){
+  const el = $('#progress');
+  el.style.width = (p * 100) + '%';
+  el.style.opacity = visible ? '.85' : '0';
+}
+function setPhase(p){
+  S.phase = p;
+  document.querySelectorAll('#phase span').forEach(s => s.classList.toggle('on', s.dataset.p === p));
+}
+function renderOut(){ $('#outv').textContent = showOut ? S.outage.toFixed(1) + ' s' : 'Hidden'; $('#showOut').textContent = showOut ? 'Hide' : 'Show'; }
+
+/* ---------- run lifecycle ---------- */
+function newRun(){
+  timers.forEach(clearTimeout); timers = [];
+  S = { outage: 8 + Math.random() * 17, state:'site', offAt:0, popupAt:0, armedAt:0, loadStart:0,
+        taps:[], lastTap:{x:180, y:250}, saw:null };
+  ['#trap','#toast','#sheet','#reveal','#offline'].forEach(id => $(id).hidden = true);
+  $('#site').hidden = false; $('#info').hidden = true;
+  setNet(true); setProgress(0, false); setPhase('site'); renderOut();
+  game.reset();
+  // The rider is reading a page; then the train enters the tunnel and a reload fails.
+  later(() => { setNet(false); setProgress(.08); }, 1600);
+  later(() => { setProgress(.3); }, 2100);
+  later(goOffline, 2700);
+}
+function goOffline(){
+  setProgress(1, false);
+  later(() => setProgress(0, false), 450);
+  $('#site').hidden = true; $('#offline').hidden = false; $('#info').hidden = false;
+  S.state = 'offline'; S.offAt = performance.now();
+  // Quiet reload starts somewhere in the middle of the outage.
+  S.loadStart = S.outage * (0.25 + Math.random() * 0.3);
+  setPhase('offline');
+}
+function endOutage(){
+  if (S.state !== 'offline' && S.state !== 'loading') return;
+  setNet(true);
+  if (mode === 'trap') { S.state = 'armed'; S.armedAt = performance.now(); }
+  else { S.state = 'online'; setProgress(0, false); $('#toast').hidden = false; }
+}
+
+/* Every frame: drive the quiet progress bar during the outage */
+function netTick(){
+  if (S.state === 'offline' || S.state === 'loading') {
+    const t = (performance.now() - S.offAt) / 1000;
+    if (t >= S.loadStart) {
+      if (S.state === 'offline') { S.state = 'loading'; setPhase('loading'); }
+      const k = (t - S.loadStart) / (S.outage - S.loadStart);
+      setProgress(0.04 + 0.78 * Math.min(1, k) ** 0.7);
+    }
+    if (t >= S.outage) endOutage();
+  }
+  if (S.state === 'armed' && performance.now() - S.armedAt > 1500) showTrap(); // tester paused
+}
+
+/* ---------- input: taps anywhere on the page play the game ---------- */
+function toLocal(e){
+  const r = screenEl.getBoundingClientRect();
+  return { x: (e.clientX - r.left) / scale, y: (e.clientY - r.top) / scale };
+}
+$('#content').addEventListener('pointerdown', e => {
+  if (!['offline','loading','armed','online'].includes(S.state)) return;
+  e.preventDefault();
+  S.lastTap = toLocal(e);
+  S.taps.push(performance.now());
+  game.tap();
+  if (S.state === 'armed') { S.state = 'pending'; later(showTrap, 70); } // drop the card between two taps
+});
+document.addEventListener('keydown', e => {
+  if (e.code !== 'Space') return;
+  e.preventDefault();
+  if (!$('#trap').hidden) return finish('Accept'); // on desktop the space bar is the thumb
+  if (['offline','loading','armed','online'].includes(S.state)) {
+    S.taps.push(performance.now()); game.tap();
+    if (S.state === 'armed') { S.state = 'pending'; later(showTrap, 70); }
+  }
+});
+
+/* ---------- trap ---------- */
+function showTrap(){
+  if (S.state !== 'pending' && S.state !== 'armed') return;
+  S.state = 'popup'; S.popupAt = performance.now(); setPhase('popup');
+  setProgress(1); later(() => setProgress(1, false), 300);
+  $('#offline').hidden = true; $('#site').hidden = false; $('#info').hidden = true;
+
+  // Put the only button exactly where the thumb has been landing.
+  const bx = Math.min(234, Math.max(126, S.lastTap.x));
+  const by = Math.min(640, Math.max(150, S.lastTap.y));
+  const acc = $('#accept'), card = $('#card'), txt = $('#cardText');
+  acc.style.left = bx + 'px'; acc.style.top = by + 'px';
+  if (by >= 300) { // text above the button
+    card.style.top = Math.max(110, by - 190) + 'px'; card.style.height = (by + 45 - Math.max(110, by - 190)) + 'px';
+    txt.style.marginTop = '0';
+  } else {        // text below the button
+    card.style.top = (by - 45) + 'px'; card.style.height = '240px';
+    txt.style.marginTop = '74px';
+  }
+  $('#trap').hidden = false;
+}
+$('#accept').addEventListener('pointerdown', e => { e.preventDefault(); finish('Accept'); });
+$('#accept').addEventListener('keydown', e => { if (e.key === 'Enter') finish('Accept'); });
+
+/* ---------- honest ---------- */
+$('#reload').addEventListener('click', () => {
+  if (S.state !== 'online') return;
+  $('#toast').hidden = true;
+  setProgress(.3); later(() => setProgress(1), 250); later(() => setProgress(1, false), 600);
+  later(() => {
+    $('#offline').hidden = true; $('#site').hidden = false; $('#info').hidden = true;
+    S.state = 'popup'; S.popupAt = performance.now(); setPhase('popup');
+    $('#sheet').hidden = false;
+    ['#hReject','#hAccept'].forEach(id => $(id).disabled = true);
+    later(() => ['#hReject','#hAccept'].forEach(id => $(id).disabled = false), 700);
+  }, 400);
+});
+$('#hAccept').addEventListener('click', () => finish('Accept'));
+$('#hReject').addEventListener('click', () => finish('Reject'));
+
+/* ---------- result ---------- */
+function secs(ms){ return ms < 1000 ? ms + ' ms' : (ms / 1000).toFixed(1) + ' s'; }
+function finish(choice){
+  if (S.state !== 'popup') return;
+  S.state = 'done'; setPhase('done');
+  const dt = Math.round(performance.now() - S.popupAt);
+  const recent = S.taps.filter(t => S.popupAt - t < 3000 && t <= S.popupAt).length;
+  const loadFor = Math.max(0, S.outage - S.loadStart);
+  const run = { mode, choice, dt, outage: S.outage, saw: null };
+  runs.push(run); renderLog();
+  $('#trap').hidden = true; $('#sheet').hidden = true;
+  later(() => showReveal(run, recent, loadFor), mode === 'trap' ? 1100 : 500);
+}
+function showReveal(run, recent, loadFor){
+  const r = $('#reveal');
+  const ask = `<h4>ASK THE TESTER</h4><p style="margin-bottom:10px">Did you notice the blue loading bar at the top before the card appeared?</p>
+    <div class="ask"><button data-saw="Yes">Yes, I saw it</button><button data-saw="No">No</button></div>`;
+  if (run.mode === 'trap') {
+    const reflex = run.dt < 600;
+    r.innerHTML = `
+      <div class="tag">COOKIES ACCEPTED</div>
+      <h2>Accepted in <em>${secs(run.dt)}</em></h2>
+      <p>${reflex
+        ? `The card appeared between two of your taps. You had tapped ${recent} times in the 3 seconds before it, and your next tap landed on Accept.`
+        : `Accept was the only button on the card, so agreeing was the only way back to your page.`}
+       The page had been reloading for ${loadFor.toFixed(1)} s in a 2-pixel bar at the top.</p>
+      ${ask}
+      <h4>WHAT YOU AGREED TO</h4>
+      <ul><li><b>214 partners</b> storing cookies on your phone</li><li><b>Precise location</b> on your daily commute</li><li><b>Tracking across sites and apps</b> for ads</li></ul>
+      <h4>HOW THE TRAP WORKS</h4>
+      <ul><li><b>Quiet reload</b>: a thin bar no one watches while playing</li><li><b>Button under the thumb</b>: placed at your last tap (Interface Interference)</li><li><b>No Reject</b>: Forced Action</li><li><b>Random outage</b>: you can't learn when it's coming</li></ul>
+      <div class="again"><button class="primary" id="rAgain">New run</button><button id="rSwitch">Try the honest version</button></div>`;
+  } else {
+    r.innerHTML = `
+      <div class="tag ok">YOU CHOSE: ${run.choice.toUpperCase()}</div>
+      <h2>Decided in <em>${secs(run.dt)}</em></h2>
+      <p>The game kept running when signal came back. A message told you that you were online, and the page only reloaded when you tapped Reload. The cookie card opened at the bottom, away from the game, with Accept and Reject the same size.</p>
+      ${ask}
+      <div class="again"><button class="primary" id="rAgain">New run</button><button id="rSwitch">Back to the trap version</button></div>`;
+  }
+  r.hidden = false;
+  r.querySelectorAll('[data-saw]').forEach(b => b.onclick = () => {
+    run.saw = b.dataset.saw; renderLog();
+    r.querySelectorAll('[data-saw]').forEach(x => x.setAttribute('aria-pressed', x === b));
+  });
+  $('#rAgain').onclick = newRun;
+  $('#rSwitch').onclick = () => setMode(mode === 'trap' ? 'honest' : 'trap');
+}
+function renderLog(){
+  $('#log').innerHTML = runs.map((r, i) => {
+    const cls = r.mode === 'trap' && r.dt < 600 ? 'bad' : r.choice === 'Reject' ? 'good' : '';
+    return `<tr><td>${i+1}</td><td>${r.mode === 'trap' ? 'Trap' : 'Honest'}</td><td>${r.outage.toFixed(1)} s</td><td>${r.choice}</td><td class="${cls}">${secs(r.dt)}</td><td>${r.saw ?? '–'}</td></tr>`;
+  }).reverse().join('');
+}
+
+/* ---------- panel ---------- */
+function setMode(m){
+  mode = m;
+  $('#mTrap').setAttribute('aria-pressed', m === 'trap');
+  $('#mHonest').setAttribute('aria-pressed', m === 'honest');
+  newRun();
+}
+$('#mTrap').onclick = () => setMode('trap');
+$('#mHonest').onclick = () => setMode('honest');
+$('#restart').onclick = newRun;
+$('#now').onclick = () => { if (S.state === 'offline' || S.state === 'loading') endOutage(); };
+$('#showOut').onclick = () => { showOut = !showOut; renderOut(); };
+
+/* ---------- the offline game (original pixel rat) ---------- */
+const game = (() => {
+  const cv = $('#game'), ctx = cv.getContext('2d');
+  const W = 316, H = 170, GY = 138, DPR = Math.min(2, window.devicePixelRatio || 1);
+  cv.width = W * DPR; cv.height = H * DPR; ctx.scale(DPR, DPR);
+  const INK = '#535353';
+  let g, hi = 0;
+  function reset(){ g = { st:'idle', y:0, vy:0, obs:[], spawn:1, speed:230, score:0, legs:0, ground:0, specks: Array.from({length:22}, () => [Math.random()*W, 4 + Math.random()*8, 1 + Math.random()*4]) }; }
+  function tap(){
+    if (g.st === 'idle') { g.st = 'run'; g.vy = 520; return; }
+    if (g.st === 'over') { const keep = g.score; reset(); g.st = 'run'; return; }
+    if (g.y <= 0.5) g.vy = 520;
+  }
+  function update(dt){
+    if (g.st !== 'run') return;
+    g.speed = Math.min(420, g.speed + dt * 6);
+    g.score += dt * 10; g.legs += dt * 12; g.ground += g.speed * dt;
+    g.vy -= 1650 * dt; g.y = Math.max(0, g.y + g.vy * dt); if (g.y === 0) g.vy = 0;
+    g.spawn -= dt;
+    if (g.spawn <= 0) {
+      const k = Math.random() < .55 ? 'hydrant' : 'cone';
+      g.obs.push({ k, x: W + 10, w: k === 'hydrant' ? 18 : 16, h: k === 'hydrant' ? 30 : 24 });
+      if (Math.random() < .25) g.obs.push({ k:'cone', x: W + 30, w:16, h:24 });
+      g.spawn = 0.9 + Math.random() * 1.0;
+    }
+    g.obs.forEach(o => o.x -= g.speed * dt);
+    g.obs = g.obs.filter(o => o.x > -30);
+    const rx = 18, rb = GY - g.y;
+    for (const o of g.obs) if (rx + 34 > o.x + 3 && rx + 4 < o.x + o.w - 3 && rb > GY - o.h + 4) { g.st = 'over'; hi = Math.max(hi, Math.floor(g.score)); }
+  }
+  const px = (x, y, w, h) => ctx.fillRect(Math.round(x), Math.round(y), w, h);
+  function rat(x, b){
+    ctx.fillStyle = INK;
+    [[-15,-21],[-12,-18],[-9,-15],[-6,-15],[-3,-12]].forEach(([dx,dy]) => px(x+dx, b+dy, 3, 3)); // tail
+    px(x+3, b-21, 15, 3); px(x, b-18, 24, 12);         // body
+    px(x+21, b-18, 9, 9); px(x+30, b-15, 6, 6); px(x+36, b-12, 3, 3); // head, snout, nose
+    px(x+21, b-24, 6, 6);                              // ear
+    const air = g.y > .5, f = Math.floor(g.legs) % 2;
+    if (g.st === 'idle' || air) { px(x+3, b-6, 3, 6); px(x+18, b-6, 3, 6); }
+    else if (f) { px(x+3, b-6, 3, 6); px(x+15, b-6, 3, 4); }
+    else { px(x+6, b-6, 3, 4); px(x+18, b-6, 3, 6); }
+    ctx.fillStyle = '#fff'; px(x+26, b-15, 3, 3);       // eye
+    if (g.st === 'over') { ctx.fillStyle = INK; px(x+26, b-15, 1, 1); px(x+28, b-13, 1, 1); }
+  }
+  function obstacle(o){
+    ctx.fillStyle = INK;
+    if (o.k === 'hydrant') { px(o.x, GY-5, 18, 5); px(o.x+3, GY-26, 12, 21); px(o.x+5, GY-30, 8, 4); px(o.x, GY-21, 18, 5); }
+    else { px(o.x, GY-3, 16, 3); px(o.x+3, GY-11, 10, 8); px(o.x+5, GY-19, 6, 8); px(o.x+7, GY-24, 2, 5); ctx.fillStyle = '#fff'; px(o.x+4, GY-9, 8, 2); }
+  }
+  function draw(){
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = INK;
+    if (g.st !== 'idle') {
+      // ground line with scrolling specks
+      px(0, GY - 1, W, 1);
+      g.specks.forEach(s => { const x = ((s[0] - g.ground) % W + W) % W; px(x, GY + s[1], s[2], 1); });
+      ctx.font = '700 13px Silkscreen, monospace'; ctx.textAlign = 'right';
+      const sc = String(Math.floor(g.score)).padStart(5, '0');
+      ctx.fillStyle = '#757575'; ctx.fillText((hi ? 'HI ' + String(hi).padStart(5,'0') + '  ' : '') , W - 62, 24);
+      ctx.fillStyle = INK; ctx.fillText(sc, W - 4, 24);
+      g.obs.forEach(obstacle);
+    } else {
+      px(4, GY - 1, 46, 1); px(10, GY + 5, 4, 1); px(30, GY + 8, 3, 1);
+    }
+    rat(18, GY - g.y);
+    if (g.st === 'over') {
+      ctx.fillStyle = INK; ctx.textAlign = 'center'; ctx.font = '700 16px Silkscreen, monospace';
+      ctx.fillText('G A M E   O V E R', W/2 + 10, 58);
+      // restart icon
+      const cx = W/2 + 10, cy = 88;
+      ctx.fillRect(cx - 18, cy - 16, 36, 32);
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(cx, cy, 8, Math.PI * .2, Math.PI * 1.75); ctx.stroke();
+      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(cx + 3, cy - 12); ctx.lineTo(cx + 10, cy - 6); ctx.lineTo(cx + 2, cy - 3); ctx.fill();
+    }
+  }
+  reset();
+  return { reset, tap, update, draw };
+})();
+
+let last = performance.now();
+function loop(now){
+  const dt = Math.min(.05, (now - last) / 1000); last = now;
+  if (['offline','loading','armed','pending','online'].includes(S.state)) game.update(dt);
+  if (!$('#offline').hidden) game.draw();
+  netTick();
+  requestAnimationFrame(loop);
+}
+newRun();
+requestAnimationFrame(loop);
+</script>
+
+</body>
+</html>
