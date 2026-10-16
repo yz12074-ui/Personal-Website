@@ -286,7 +286,18 @@ function setPhase(p){
 function renderOut(){ $('#outv').textContent = showOut ? S.outage.toFixed(1) + ' s' : 'Hidden'; $('#showOut').textContent = showOut ? 'Hide' : 'Show'; }
 
 /* ---------- run lifecycle ---------- */
+/* ---------- save each run to the Google Sheet ---------- */
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxQLkqmBrL0OgLnN5X6LY6BKB83ODS_RMRpbIK1zb2vgDs1bNEriGbHacCTbxgSVhBS/exec';
+let unsent = null;
+function save(){
+  if (!unsent) return;
+  const r = unsent; unsent = null;
+  navigator.sendBeacon(SHEET_URL, JSON.stringify({ mode: r.mode, outage: +r.outage.toFixed(1), choice: r.choice, dt: r.dt, saw: r.saw ?? '' }));
+}
+window.addEventListener('pagehide', save); // tester closed the page without answering
+
 function newRun(){
+  save();
   timers.forEach(clearTimeout); timers = [];
   S = { outage: 8 + Math.random() * 17, state:'site', offAt:0, popupAt:0, armedAt:0, loadStart:0,
         taps:[], lastTap:{x:180, y:250}, saw:null };
@@ -401,7 +412,7 @@ function finish(choice){
   const recent = S.taps.filter(t => S.popupAt - t < 3000 && t <= S.popupAt).length;
   const loadFor = Math.max(0, S.outage - S.loadStart);
   const run = { mode, choice, dt, outage: S.outage, saw: null };
-  runs.push(run); renderLog();
+  runs.push(run); renderLog(); unsent = run;
   $('#trap').hidden = true; $('#sheet').hidden = true;
   later(() => showReveal(run, recent, loadFor), mode === 'trap' ? 1100 : 500);
 }
@@ -434,7 +445,7 @@ function showReveal(run, recent, loadFor){
   }
   r.hidden = false;
   r.querySelectorAll('[data-saw]').forEach(b => b.onclick = () => {
-    run.saw = b.dataset.saw; renderLog();
+    run.saw = b.dataset.saw; renderLog(); save();
     r.querySelectorAll('[data-saw]').forEach(x => x.setAttribute('aria-pressed', x === b));
   });
   $('#rAgain').onclick = newRun;
