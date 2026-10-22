@@ -168,9 +168,15 @@ function render(){
       <button class="btn" type="submit">Finish</button></form>`;
   if(step===6){
     const sent=SHEET_URL&&navigator.sendBeacon(SHEET_URL,JSON.stringify({project:"temu",...Object.fromEntries(KEYS.map(k=>[k,R[k]??""]))}));
-    app.innerHTML=`<span class="prog">Done</span><h1>Thank you!</h1>
-      <div class="card">${sent?`<p>Your answers were saved. You can close this page.</p>`
-        :`<p>Please copy this line and send it to the researcher.</p><pre id="row">${rowText()}</pre><button class="btn ghost" id="copy">Copy</button>`}</div>`;
+    const redesign=ORDER.indexOf("B")+1; // which "App N" was the redesign
+    app.innerHTML=sent?`<span class="prog">Done · answers saved</span><h1>Thank you!</h1>
+      <div class="card"><p>You just helped test an ethical redesign of Temu’s coupon pop-up. <b>App ${redesign}</b> was the redesign; App ${3-redesign} was rebuilt from the real Temu flow.</p>
+        <p class="muted" aria-live="polite">Taking you to my portfolio in <b id="count">6</b>…</p>
+        <a class="btn" href="index.html#projects">Go to my portfolio now</a></div>`
+      :`<span class="prog">Done</span><h1>Thank you!</h1>
+      <div class="card"><p>Please copy this line and send it to the researcher.</p><pre id="row">${rowText()}</pre><button class="btn ghost" id="copy">Copy</button>
+        <a class="btn" href="index.html#projects">Go to my portfolio</a></div>`;
+    if(sent){let n=6;const t=setInterval(()=>{n--;const c=$("#count");if(c)c.textContent=n;if(n<=0){clearInterval(t);location.href="index.html#projects"}},1000)}
   }
   wire();
 }
