@@ -7,7 +7,7 @@
     <title data-zh="张玥妍 Amanda — 设计师">Amanda Z — Designer</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&family=Bagel+Fat+One&display=swap" rel="stylesheet">
 
     <style>
         *,
@@ -755,6 +755,56 @@
         .about-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; border-radius: 50%; }
         .about-photo { overflow: hidden; }
         @media (max-width: 768px) { .lang-toggle { margin: 0 0 0 20px; align-self: center; } }
+        /* ─── CLIMBING WALL HERO ─── */
+        .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+        .climb-hero { display: grid; grid-template-columns: minmax(260px, 0.8fr) 1.7fr; gap: 40px; align-items: center; min-height: 100vh; padding: 48px 0; position: relative; }
+        .climb-hero .hero-name { font-size: clamp(36px, 4vw, 58px); }
+        html:lang(zh-CN) .climb-hero .hero-name { font-size: clamp(30px, 3.2vw, 46px); line-height: 1.2; }
+        .skip-climb { display: inline-block; margin-top: 28px; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-light); text-decoration: none; border-bottom: 0.5px solid var(--apricot-deep); padding-bottom: 2px; }
+        .skip-climb:hover { color: var(--accent); }
+        .climb { position: relative; border-radius: 22px; background: #F3EADF; border: 0.5px solid var(--apricot-warm); overflow: hidden; outline: none;
+            background-image: radial-gradient(circle, rgba(196, 120, 90, 0.18) 2.5px, transparent 3px); background-size: 42px 42px; background-position: 21px 21px; }
+        .climb svg { display: block; width: 100%; height: auto; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+        .climb-bar { position: absolute; top: 12px; left: 14px; right: 14px; display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; z-index: 2; pointer-events: none; }
+        .climb-bar .hint { font-size: 12px; line-height: 1.5; color: var(--ink-mid); background: var(--card-bg); border-radius: 100px; padding: 5px 12px; max-width: 70%; }
+        .climb-bar .moves { font-size: 12px; color: var(--ink-mid); background: var(--card-bg); border-radius: 100px; padding: 5px 12px; white-space: nowrap; }
+        .climb .shape { filter: url(#resin); }
+        .climb .letter { font-family: 'Bagel Fat One', 'Arial Rounded MT Bold', sans-serif; }
+        .climb .mat { fill: #E2CDB8; }
+        .climb .tape-text { font: 700 15px 'DM Sans', sans-serif; letter-spacing: 0.12em; fill: #4a4060; }
+        .climb .hold { outline: none; }
+        .climb .ring { fill: none; stroke: transparent; stroke-width: 3; stroke-dasharray: 7 7; pointer-events: none; }
+        .climb .hold.reach { cursor: pointer; }
+        .climb .hold.reach .ring { stroke: #fff; animation: ringspin 6s linear infinite, ringpulse 1.6s ease-in-out infinite; }
+        .climb .hold.reach:hover .ring, .climb .hold.reach:focus-visible .ring { stroke: var(--accent); stroke-width: 4; }
+        .climb .hold.nope { animation: nope 0.35s ease; transform-box: fill-box; transform-origin: center; }
+        .climb .hold:not(.reach) { cursor: not-allowed; }
+        .climb.won .hold { cursor: default; }
+        @keyframes ringspin { to { stroke-dashoffset: -140; } }
+        @keyframes ringpulse { 50% { stroke-opacity: 0.35; } }
+        @keyframes nope { 25% { translate: -5px 0; } 75% { translate: 5px 0; } }
+        .climber { pointer-events: none; }
+        .climber .limb { fill: none; stroke: #4a4060; stroke-width: 6; stroke-linecap: round; }
+        .climber .limb.arm { stroke: #FFD9C2; }
+        .climber .climber-body { animation: sway 2.6s ease-in-out infinite; transform-origin: 0 0; }
+        .climber.moving .climber-body { animation: none; }
+        @keyframes sway { 50% { rotate: 4deg; } }
+        .bubble { opacity: 0; transition: opacity 0.25s; pointer-events: none; }
+        .bubble.on { opacity: 1; }
+        .bubble-text { font: 500 15px 'DM Sans', 'PingFang SC', sans-serif; fill: #4a4060; }
+        .bell.ring { animation: bell 0.5s ease-in-out 4; }
+        @keyframes bell { 25% { rotate: 18deg; } 75% { rotate: -18deg; } }
+        .fireworks { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; }
+        .reward { position: absolute; left: 50%; top: 50%; translate: -50% -50%; z-index: 4; width: min(360px, calc(100% - 32px)); background: var(--white); border: 0.5px solid var(--apricot-warm); border-radius: 18px; padding: 22px 22px 18px; text-align: center; box-shadow: 0 18px 48px rgba(44, 33, 24, 0.16); animation: pop 0.45s cubic-bezier(.3, 1.5, .5, 1); }
+        .reward-title { font-family: 'Cormorant Garamond', serif; font-size: 34px; line-height: 1.1; color: var(--ink); }
+        .reward-moves { font-size: 13px; color: var(--ink-mid); margin: 8px 0 16px; }
+        .reward-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+        .reward-btn { font: inherit; font-size: 12px; letter-spacing: 0.04em; border: 0.5px solid var(--apricot-deep); border-radius: 100px; padding: 7px 14px; background: none; color: var(--ink); text-decoration: none; cursor: pointer; }
+        .reward-btn.primary { background: var(--ink); color: var(--white); border-color: var(--ink); }
+        @keyframes pop { from { scale: 0.7; opacity: 0; } }
+        @media (max-width: 1000px) { .climb-hero { grid-template-columns: 1fr; min-height: 0; padding: 72px 0 40px; } }
+        @media (max-width: 768px) { .climb-bar { position: static; padding: 10px 10px 0; } .climb-bar .hint { font-size: 11px; max-width: none; border-radius: 12px; } .climb-hero { padding-top: 40px; } }
+        @media (prefers-reduced-motion: reduce) { .climb .ring, .climber-body, .bell.ring { animation: none !important; } }
     </style>
 </head>
 
@@ -775,23 +825,51 @@
     <div class="main">
 
         <!-- Hero -->
-        <section class="hero" id="top">
-            <p class="hero-eyebrow" data-zh="作品集 · 2025">Portfolio · 2025</p>
-            <h1 class="hero-name" data-zh="Amanda ——&lt;br&gt;&lt;em&gt;设计师&lt;/em&gt;，&lt;br&gt;捕捉安静的瞬间。">
-                Amanda —<br>
-                <em>designer</em> crafting<br> quiet moments.
-            </h1>
-            <p class="hero-sub" data-zh="跨领域设计师，探索形式、功能与感受之间的空间。偏爱会呼吸的交互。">
-                Multidisciplinary designer exploring the space between form, function, and feeling. Drawn to interactions that breathe.
-            </p>
-            <div class="hero-tags">
-                <span class="tag" data-zh="交互设计">Interaction Design</span>
-                <span class="tag" data-zh="视觉设计">Visual Design</span>
-                <span class="tag" data-zh="品牌">Brand</span>
-                <span class="tag" data-zh="动效">Motion</span>
+        <section class="hero climb-hero" id="top">
+            <div class="climb-text">
+                <p class="hero-eyebrow" data-zh="作品集 · 2026">Portfolio · 2026</p>
+                <h1 class="hero-name" data-zh="&lt;span class=&quot;sr-only&quot;&gt;张玥妍 Amanda —— &lt;/span&gt;&lt;em&gt;设计师&lt;/em&gt;，&lt;br&gt;捕捉安静的瞬间。"><span class="sr-only">Amanda — </span><em>designer</em> crafting<br> quiet moments.</h1>
+                <p class="hero-sub" data-zh="跨领域设计师，探索形式、功能与感受之间的空间。偏爱会呼吸的交互。">
+                    Multidisciplinary designer exploring the space between form, function, and feeling. Drawn to interactions that breathe.
+                </p>
+                <div class="hero-tags">
+                    <span class="tag" data-zh="交互设计">Interaction Design</span>
+                    <span class="tag" data-zh="视觉设计">Visual Design</span>
+                    <span class="tag" data-zh="品牌">Brand</span>
+                    <span class="tag" data-zh="动效">Motion</span>
+                </div>
+                <a class="skip-climb" href="#projects" data-zh="跳过，直接看作品 ↓">Skip to my work ↓</a>
             </div>
-            <div class="scroll-hint">
-                <span class="scroll-hint-line"></span> <span data-zh="向下滑动">scroll</span>
+
+            <!-- Climbing wall: AMANDA is spelled in holds; climb to the bell. Built by assets/climb.js -->
+            <div class="climb" id="climb">
+                <div class="climb-bar"><span class="hint"></span><span class="moves"></span></div>
+                <svg viewBox="0 0 1000 720" role="group" aria-label="Climbing wall game: climb the holds spelling AMANDA up to the bell" data-zh-aria="攀岩小游戏：沿着拼出 AMANDA 的岩点爬到铃铛">
+                    <defs>
+                        <filter id="resin" x="-25%" y="-25%" width="150%" height="160%" color-interpolation-filters="sRGB">
+                            <feGaussianBlur in="SourceAlpha" stdDeviation="5" result="blur"/>
+                            <feDiffuseLighting in="blur" surfaceScale="4" diffuseConstant="1.15" lighting-color="#ffffff" result="diff"><feDistantLight azimuth="235" elevation="55"/></feDiffuseLighting>
+                            <feComposite in="SourceGraphic" in2="diff" operator="arithmetic" k1="1.05" k2="0" k3="0" k4="0" result="shaded"/>
+                            <feSpecularLighting in="blur" surfaceScale="6" specularConstant=".75" specularExponent="20" lighting-color="#ffffff" result="spec"><feDistantLight azimuth="235" elevation="48"/></feSpecularLighting>
+                            <feComposite in="spec" in2="SourceAlpha" operator="in" result="specIn"/>
+                            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" seed="4" result="grain"/>
+                            <feColorMatrix in="grain" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 7 -4.9" result="chalk"/>
+                            <feComposite in="chalk" in2="SourceAlpha" operator="in" result="chalkIn"/>
+                            <feMerge result="lit"><feMergeNode in="shaded"/><feMergeNode in="chalkIn"/><feMergeNode in="specIn"/></feMerge>
+                            <feDropShadow in="lit" dx="0" dy="7" stdDeviation="4" flood-color="#2C2118" flood-opacity=".22"/>
+                        </filter>
+                    </defs>
+                </svg>
+                <canvas class="fireworks" aria-hidden="true"></canvas>
+                <div class="reward" role="dialog" aria-labelledby="reward-title" hidden>
+                    <p class="reward-title" id="reward-title" data-zh="登顶成功！🎉">Sent it! 🎉</p>
+                    <p class="reward-moves"></p>
+                    <div class="reward-actions">
+                        <a href="#projects" class="reward-btn primary" data-zh="看看我的作品 ↓">See my work ↓</a>
+                        <a href="wall.html" class="reward-btn" data-zh="在墙上签个名 ✎">Sign the wall ✎</a>
+                        <button type="button" class="reward-btn again" data-zh="再爬一次 ↺">Climb again ↺</button>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -1041,6 +1119,7 @@
     </script>
 
     <script src="assets/i18n.js" defer></script>
+    <script src="assets/climb.js" defer></script>
 </body>
 
 </html>
