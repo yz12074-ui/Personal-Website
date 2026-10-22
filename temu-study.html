@@ -61,17 +61,18 @@ pre{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding
 <div class="wrap" id="app"></div>
 
 <script>
-/* ===== Google Form hookup =====
-   Paste the form's "viewform" URL and each question's entry id here (from the form's "Get pre-filled link").
-   Until it is filled in, the last screen shows a copyable result row instead. */
-const FORM={url:"",entries:{order:"",A_outcome:"",A_taps:"",A_seconds:"",A_paid:"",A_guess:"",A_trust:"",A_leave:"",B_outcome:"",B_taps:"",B_seconds:"",B_paid:"",B_guess:"",B_trust:"",B_leave:"",prefer:"",comment:""}};
+/* ===== Save each session to the "Temu AB test" Google Sheet =====
+   Same approach as cookie-thief.html: a Google Apps Script web app bound to the sheet.
+   Paste its /exec URL here. Until then, the last screen shows a copyable row instead. */
+const SHEET_URL='';
+const KEYS=["order","A_outcome","A_taps","A_seconds","A_paid","A_guess","A_trust","A_leave","B_outcome","B_taps","B_seconds","B_paid","B_guess","B_trust","B_leave","prefer","comment"];
 
 const $=s=>document.querySelector(s);
 const app=$("#app");
 const tok=location.hash.slice(1).toLowerCase();
 const ORDER=tok.includes("ba")?"BA":tok.includes("ab")?"AB":(Math.random()<.5?"AB":"BA");
 const DEBUG=tok.includes("debug");
-const R={order:ORDER};               // every recorded value, keyed like FORM.entries
+const R={order:ORDER};               // every recorded value, keyed like KEYS
 let step=0;                          // 0 intro, 1 app1, 2 q1, 3 app2, 4 q2, 5 final, 6 done
 const which=n=>ORDER[n-1];           // "A" or "B" for App 1 / App 2
 
@@ -166,9 +167,9 @@ function render(){
       <div class="q"><label for="comment">Anything that annoyed or surprised you? (optional)</label><textarea id="comment"></textarea></div>
       <button class="btn" type="submit">Finish</button></form>`;
   if(step===6){
-    const url=formUrl();
+    const sent=SHEET_URL&&navigator.sendBeacon(SHEET_URL,JSON.stringify(Object.fromEntries(KEYS.map(k=>[k,R[k]??""]))));
     app.innerHTML=`<span class="prog">Done</span><h1>Thank you!</h1>
-      <div class="card">${url?`<p>One last tap: open the form and press <b>Submit</b> to send your answers.</p><a class="btn" href="${url}" target="_blank" rel="noopener">Open form to send</a>`
+      <div class="card">${sent?`<p>Your answers were saved. You can close this page.</p>`
         :`<p>Please copy this line and send it to the researcher.</p><pre id="row">${rowText()}</pre><button class="btn ghost" id="copy">Copy</button>`}</div>`;
   }
   wire();
@@ -193,12 +194,7 @@ function wire(){
     step++;render();scrollTo(0,0)};
   $("#copy")&&($("#copy").onclick=()=>{navigator.clipboard.writeText(rowText()).then(()=>$("#copy").textContent="Copied",()=>{const r=document.createRange();r.selectNodeContents($("#row"));getSelection().removeAllRanges();getSelection().addRange(r)})});
 }
-const KEYS=Object.keys(FORM.entries);
 function rowText(){return KEYS.map(k=>R[k]??"").join("\t")}
-function formUrl(){
-  if(!FORM.url||KEYS.some(k=>!FORM.entries[k]))return "";
-  return FORM.url+"?usp=pp_url&"+KEYS.map(k=>FORM.entries[k]+"="+encodeURIComponent(R[k]??"")).join("&");
-}
 render();
 </script>
 </body>
