@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-zh="足迹 — 张玥妍">Footprints — Amanda</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Nunito:wght@400;600;700&family=Silkscreen&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<style>
+/* Soft crayon palette. Borders are drawn on a ::before layer through an SVG "crayon" filter,
+   so outlines wobble like crayon while text stays crisp. */
+:root {
+  --paper: #FBF7F2; --ink: #4A4060; --ink-soft: #8A80A0;
+  --lavender: #B9A7F2; --mist: #A8D8F0; --apricot: #FFC8A8;
+  --sea: #E3F2FA; --land: #D9CFFA; --land-2: #CDBFF6;
+  --hand: 'Gaegu', 'ZCOOL KuaiLe', cursive; --body: 'Nunito', 'PingFang SC', system-ui, sans-serif;
+  --pixel: 'Silkscreen', monospace;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html:lang(zh-CN) { --hand: 'ZCOOL KuaiLe', 'Gaegu', cursive; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.6 var(--body); padding: 0 max(16px, 4vw) 64px; }
+button, input, textarea { font: inherit; color: inherit; }
+a { color: inherit; }
+.crayon { position: relative; isolation: isolate; }
+.crayon::before { content: ''; position: absolute; inset: 0; border: 2.5px solid var(--ink); border-radius: inherit; filter: url(#crayon); pointer-events: none; z-index: 2; }
+:focus-visible { outline: 3px dashed var(--lavender); outline-offset: 4px; }
+
+/* top bar */
+.top { display: flex; align-items: center; justify-content: space-between; max-width: 1100px; margin: 0 auto; padding: 18px 0; }
+.top a { text-decoration: none; font: 700 20px var(--hand); }
+.lang-toggle { background: #fff; border: 0; border-radius: 999px; padding: 4px 14px; cursor: pointer; font: 700 16px var(--hand); color: var(--ink-soft); }
+.lang-toggle b { color: var(--ink); }
+
+/* header with avatar */
+header { max-width: 1100px; margin: 12px auto 28px; display: flex; gap: 24px; align-items: center; }
+.avatar { flex: none; width: 112px; height: 112px; border-radius: 50%; background: var(--apricot); display: grid; place-items: center; animation: bob 3s ease-in-out infinite; }
+.avatar img, .avatar svg { width: 84%; height: 84%; }
+h1 { font: 700 clamp(36px, 6vw, 60px)/1.05 var(--hand); margin: 0 0 6px; }
+.sub { margin: 0; color: var(--ink-soft); max-width: 52ch; }
+.count { display: inline-block; margin-top: 10px; background: var(--mist); border-radius: 999px; padding: 2px 14px; font: 700 18px var(--hand); }
+@keyframes bob { 50% { transform: translateY(-6px) rotate(-3deg); } }
+
+/* map */
+.map-wrap { max-width: 1100px; margin: 0 auto; border-radius: 22px; background: var(--sea); padding: 14px; }
+.map-scroll { overflow-x: auto; border-radius: 12px; }
+.map { position: relative; min-width: 640px; cursor: crosshair; }
+.map canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+.fp { position: absolute; width: 22px; height: 22px; margin: -11px 0 0 -11px; padding: 0; border: 0; background: none; cursor: pointer; transition: transform .2s; }
+.fp svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 2px 0 rgba(74,64,96,.25)); }
+.fp:hover, .fp.on { transform: scale(1.35) rotate(-8deg); z-index: 3; }
+.fp.ghost { opacity: .55; animation: wiggle .6s ease-in-out infinite alternate; pointer-events: none; }
+.fp.new { animation: stamp .5s cubic-bezier(.3,1.6,.5,1); }
+@keyframes wiggle { to { transform: rotate(10deg) scale(1.1); } }
+@keyframes stamp { from { transform: scale(2.4); opacity: 0; } }
+.hint { max-width: 1100px; margin: 10px auto 0; font: 13px var(--pixel); color: var(--ink-soft); text-align: center; }
+
+/* note card shown on a footprint */
+.note { position: absolute; z-index: 5; width: 230px; background: #fff; border-radius: 16px; padding: 12px 14px 10px; transform: translate(-50%, calc(-100% - 18px)); box-shadow: 0 6px 0 rgba(74,64,96,.08); }
+.note.below { transform: translate(-50%, 18px); }
+.note b { font: 700 20px/1.1 var(--hand); display: block; }
+.note small { color: var(--ink-soft); font-size: 12px; }
+.note p { margin: 6px 0 8px; font-size: 14px; word-wrap: break-word; }
+.wave { border: 0; background: var(--apricot); border-radius: 999px; padding: 2px 12px; cursor: pointer; font: 700 16px var(--hand); }
+.wave[disabled] { opacity: .6; cursor: default; }
+
+/* form */
+dialog { border: 0; border-radius: 24px; padding: 22px; width: min(420px, calc(100vw - 32px)); background: var(--paper); color: var(--ink); overflow: visible; }
+dialog::backdrop { background: rgba(74, 64, 96, .35); }
+dialog h2 { font: 700 30px var(--hand); margin: 0 0 4px; }
+label { display: block; font: 700 18px var(--hand); margin-top: 12px; }
+input[type=text], textarea { width: 100%; border: 0; background: #fff; border-radius: 14px; padding: 10px 12px; margin-top: 4px; resize: none; }
+.swatches { display: flex; gap: 10px; margin-top: 6px; }
+.swatches label { margin: 0; }
+.swatches input { position: absolute; opacity: 0; }
+.swatches span { display: block; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; }
+.swatches input:checked + span { outline: 3px solid var(--ink); outline-offset: 3px; }
+.swatches input:focus-visible + span { outline: 3px dashed var(--lavender); outline-offset: 3px; }
+.row { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
+.btn { border: 0; border-radius: 999px; padding: 8px 20px; cursor: pointer; font: 700 20px var(--hand); background: #fff; }
+.btn.primary { background: var(--lavender); }
+.err { color: #C0506A; font-size: 14px; min-height: 1.4em; margin: 6px 0 0; }
+.fine { font-size: 12px; color: var(--ink-soft); margin: 10px 0 0; }
+
+/* recent list */
+.recent { max-width: 1100px; margin: 40px auto 0; }
+.recent h2 { font: 700 30px var(--hand); margin: 0 0 14px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+.card { background: #fff; border-radius: 18px; padding: 14px 16px; }
+.card:nth-child(3n+1) { transform: rotate(-1deg); } .card:nth-child(3n+2) { transform: rotate(.8deg); }
+.card .who { display: flex; align-items: center; gap: 8px; font: 700 20px var(--hand); }
+.card .who svg { width: 20px; height: 20px; flex: none; }
+.card p { margin: 6px 0 0; font-size: 14px; word-wrap: break-word; }
+.card small { color: var(--ink-soft); font-size: 12px; }
+.demo { max-width: 1100px; margin: 0 auto 14px; background: #fff; border-radius: 14px; padding: 8px 14px; font-size: 13px; color: var(--ink-soft); }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="crayon"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="3"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter>
+</svg>
+
+<div class="top">
+  <a href="index.html" data-zh="← 玥妍的作品集">← Amanda’s portfolio</a>
+  <button class="lang-toggle" type="button"><b>EN</b> / 中文</button>
+</div>
+
+<header>
+  <!-- TODO(Amanda): replace with your own cartoon avatar (images/me/avatar-wave.png) -->
+  <div class="avatar crayon" aria-hidden="true">
+    <svg viewBox="0 0 100 100"><circle cx="50" cy="52" r="34" fill="#FBF7F2" stroke="#4A4060" stroke-width="3"/><circle cx="38" cy="50" r="4" fill="#4A4060"/><circle cx="62" cy="50" r="4" fill="#4A4060"/><path d="M40 63q10 9 20 0" fill="none" stroke="#4A4060" stroke-width="3" stroke-linecap="round"/><circle cx="31" cy="60" r="5" fill="#FFC8A8"/><circle cx="69" cy="60" r="5" fill="#FFC8A8"/></svg>
+  </div>
+  <div>
+    <h1 data-zh="来留个脚印吧！">Leave a footprint!</h1>
+    <p class="sub" data-zh="点一下地图上你所在的地方，留下名字和一句话。每一个脚印都会留在这里。">Tap the map where you are, leave your name and a little note. Every footprint stays here.</p>
+    <span class="count" id="count"></span>
+  </div>
+</header>
+
+<p class="demo" id="demo" hidden data-zh="演示模式：现在的脚印只保存在你自己的浏览器里，连接数据库后所有人都能看到。">Demo mode: footprints are only saved in your own browser until the database is connected.</p>
+
+<div class="map-wrap crayon">
+  <div class="map-scroll">
+    <div class="map" id="map" role="application" aria-label="World map. Click to leave a footprint.">
+      <canvas id="canvas"></canvas>
+    </div>
+  </div>
+</div>
+<p class="hint" data-zh="点击地图留下脚印 · 点击脚印打个招呼">click the map to stamp · click a footprint to say hi</p>
+
+<section class="recent">
+  <h2 data-zh="最近来过的朋友">Recent visitors</h2>
+  <div class="cards" id="cards"></div>
+</section>
+
+<dialog id="form-dlg" class="crayon">
+  <form id="form" method="dialog">
+    <h2 data-zh="盖个脚印 ✿">Stamp your footprint ✿</h2>
+    <label><span data-zh="昵称">Your name</span> <input type="text" name="name" maxlength="20" required autocomplete="nickname"></label>
+    <label><span data-zh="城市（选填）">City (optional)</span> <input type="text" name="city" maxlength="30"></label>
+    <label><span data-zh="想说的话">A little note</span> <textarea name="msg" rows="3" maxlength="80" required></textarea></label>
+    <label><span data-zh="脚印颜色">Footprint color</span></label>
+    <div class="swatches" id="swatches"></div>
+    <p class="fine" data-zh="不会记录你的真实位置，只保存你点的格子。请不要写邮箱、电话等个人信息。">We never read your real location — only the square you clicked. Please don’t share emails or phone numbers.</p>
+    <p class="err" id="err" role="alert"></p>
+    <div class="row">
+      <button class="btn" type="button" id="cancel" data-zh="算了">Cancel</button>
+      <button class="btn primary" type="submit" data-zh="盖章！">Stamp it!</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+/* ---------- config ---------- */
+// TODO(Amanda): paste the Apps Script web-app URL here. Empty = demo mode (saved in this browser only).
+const ENDPOINT = '';
+const COLORS = ['#B9A7F2', '#A8D8F0', '#FFC8A8', '#F7A8C8', '#A8E0B8'];
+const COOLDOWN_MS = 10 * 60 * 1000;   // one footprint per browser per 10 minutes
+
+/* ---------- pixel world (96 × 44 land mask from Natural Earth via world-atlas) ---------- */
+const W = 96, H = 44;
+const LAND = 'AAAA///gAAAAAAAAAAAD///gHgAAcAAAAAD34//gAAGA/AQAAAP38H/gAAI//+cAf///////9xo////gf///////8HgQAAAAD///XjggP///////D//+HgAAe//////cBA//nwADM/////hwAAf/34AHf/////xgAAP//8AB//////4AAAH//0AB//////gAAAH//gAD/zv///YAAAH/+AAHL/v//+QAAAH/8AAD4f///2wAAAD/8AAD4H///xgAAAB/4AAH/////4AAAAB8IAAP/////wAAAAA8AAAP//8//4AAAAAMkAAf//8f/AAAAAAPiAAf/94ceIAAAAABwAAf//wMOIAAAAAATAAP//wIOEAAAAAAPwAP//wEIEAAAAAAH8AHf/gAMwAAAAAAH+AAP/AANwAAAAAAP/AAP+AAF5AAAAAAP/wAH+AAGI6AAAAAH/4AH+AADAcAAAAAH/wAH+AAABAAAAAAD/wAH+wAAHoAAAAAB/wAH9gAAP4AAAAAB/gAH9gAAf8AAAAAB/AAD9gAA/+AAAAAB+AAD4AAA/+AAAAAB+AADwAAAf+AAAAAB8AABgAAAY+AAAAAD4AAAAAAAAcCAAAADwAAAAAAAAACAAAADgAAAAAAAAAEAAAADAAAAAAAAAAAAAAADAAAAAAAAAAAAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+const bits = [...atob(LAND)].map(c => c.charCodeAt(0).toString(2).padStart(8, '0')).join('').slice(-W * H);
+const isLand = (x, y) => bits[y * W + x] === '1';
+
+const $ = s => document.querySelector(s);
+const zh = () => document.documentElement.lang === 'zh-CN';
+const tr = (en, z) => (zh() ? z : en);
+const footSVG = c => `<svg viewBox="0 0 7 8" shape-rendering="crispEdges" aria-hidden="true"><path fill="${c}" stroke="#4A4060" stroke-width=".5" d="M1 0h1v1H1zM3 0h1v1H3zM5 1h1v1H5zM0 2h1v1H0zM1 3h5v2h1v2H6v1H2V7H1V5H0V4h1z"/></svg>`;
+
+function drawMap() {
+  const cv = $('#canvas'), S = 10;           // 10 device px per cell, scaled by CSS
+  cv.width = W * S; cv.height = H * S;
+  const g = cv.getContext('2d');
+  g.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--sea'); g.fillRect(0, 0, cv.width, cv.height);
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    if (!isLand(x, y)) continue;
+    g.fillStyle = (x * 7 + y * 13) % 5 ? '#D9CFFA' : '#CDBFF6';   // a little crayon unevenness
+    g.fillRect(x * S + 1, y * S + 1, S - 2, S - 2);
+  }
+}
+
+/* ---------- storage: Apps Script when configured, else localStorage demo ---------- */
+const SEED = [
+  { id: 'demo1', x: 28, y: 13, name: 'Amanda', city: 'New York', msg: 'Hi! Welcome to my little world ✿', color: '#B9A7F2', waves: 3 },
+  { id: 'demo2', x: 88, y: 16, name: '小羊', city: '上海', msg: '路过打卡～作品好可爱！', color: '#FFC8A8', waves: 1 },
+];
+const store = {
+  get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+};
+async function load() {
+  if (!ENDPOINT) return store.get('fp-demo', SEED);
+  const r = await fetch(ENDPOINT); return (await r.json()).items;
+}
+async function send(body) {
+  if (!ENDPOINT) return;
+  // text/plain keeps this a "simple" request (no CORS preflight); Apps Script still reads the JSON body.
+  await fetch(ENDPOINT, { method: 'POST', mode: 'no-cors', body: JSON.stringify(body) });
+}
+
+/* ---------- render ---------- */
+let items = [], open = null, pending = null;
+const waved = new Set(store.get('fp-waved', []));
+function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+function render() {
+  const map = $('#map');
+  map.querySelectorAll('.fp, .note').forEach(n => n.remove());
+  for (const f of items) {
+    const b = el('button', 'fp' + (f.isNew ? ' new' : '') + (open === f.id ? ' on' : ''));
+    b.innerHTML = footSVG(f.color);
+    b.style.left = (f.x + 0.5) / W * 100 + '%'; b.style.top = (f.y + 0.5) / H * 100 + '%';
+    b.setAttribute('aria-label', `${f.name}${f.city ? ', ' + f.city : ''}`);
+    b.onclick = e => { e.stopPropagation(); open = open === f.id ? null : f.id; render(); };
+    map.append(b);
+    if (open === f.id) map.append(note(f));
+  }
+  if (pending) { const g = el('span', 'fp ghost'); g.innerHTML = footSVG(pending.color || COLORS[0]); g.style.left = (pending.x + .5) / W * 100 + '%'; g.style.top = (pending.y + .5) / H * 100 + '%'; map.append(g); }
+  $('#count').textContent = tr(`${items.length} friends have visited`, `已有 ${items.length} 位朋友来过`);
+  const cards = $('#cards'); cards.replaceChildren();
+  for (const f of [...items].reverse().slice(0, 12)) {
+    const c = el('div', 'card crayon'), who = el('div', 'who');
+    who.innerHTML = footSVG(f.color); who.append(el('span', '', f.name));
+    c.append(who, el('p', '', f.msg), el('small', '', [f.city, `👋 ${f.waves || 0}`].filter(Boolean).join(' · ')));
+    cards.append(c);
+  }
+}
+function note(f) {
+  const n = el('div', 'note crayon' + (f.y < 10 ? ' below' : ''));
+  n.style.left = Math.min(88, Math.max(12, (f.x + .5) / W * 100)) + '%'; n.style.top = (f.y + .5) / H * 100 + '%';
+  n.onclick = e => e.stopPropagation();
+  const w = el('button', 'wave', `👋 ${f.waves || 0}`);
+  w.disabled = waved.has(f.id);
+  w.title = w.disabled ? tr('You said hi already', '已经打过招呼啦') : tr('Say hi', '打个招呼');
+  w.onclick = () => {
+    f.waves = (f.waves || 0) + 1; waved.add(f.id); store.set('fp-waved', [...waved]);
+    if (!ENDPOINT) store.set('fp-demo', items); else send({ action: 'wave', id: f.id });
+    render();
+  };
+  n.append(el('b', '', f.name), el('small', '', f.city || ''), el('p', '', f.msg), w);
+  return n;
+}
+
+/* ---------- interactions ---------- */
+$('#map').addEventListener('click', e => {
+  if (open) { open = null; return render(); }
+  const r = e.currentTarget.getBoundingClientRect();
+  pending = { x: Math.floor((e.clientX - r.left) / r.width * W), y: Math.floor((e.clientY - r.top) / r.height * H) };
+  render();
+  $('#err').textContent = '';
+  $('#form-dlg').showModal();
+});
+$('#cancel').onclick = () => { $('#form-dlg').close(); };
+$('#form-dlg').addEventListener('close', () => { pending = null; render(); });
+$('#swatches').innerHTML = COLORS.map((c, i) => `<label><input type="radio" name="color" value="${c}"${i ? '' : ' checked'} aria-label="${c}"><span style="background:${c}"></span></label>`).join('');
+$('#swatches').addEventListener('change', e => { if (pending) { pending.color = e.target.value; render(); } });
+
+$('#form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const fd = new FormData(e.target), last = store.get('fp-last', 0);
+  if (Date.now() - last < COOLDOWN_MS) { $('#err').textContent = tr('You just left one — come back in a few minutes!', '你刚刚留过脚印啦，过几分钟再来吧！'); return; }
+  const f = { id: 'local-' + Date.now(), x: pending.x, y: pending.y, color: fd.get('color'), waves: 0,
+    name: fd.get('name').trim().slice(0, 20), city: fd.get('city').trim().slice(0, 30), msg: fd.get('msg').trim().slice(0, 80) };
+  if (!f.name || !f.msg) return;
+  items.push({ ...f, isNew: true }); store.set('fp-last', Date.now());
+  if (!ENDPOINT) store.set('fp-demo', items.map(({ isNew, ...x }) => x));
+  else send({ action: 'add', ...f }).catch(() => {});
+  e.target.reset(); pending = null; $('#form-dlg').close(); render();
+});
+
+// Re-render dynamic text when the EN / 中文 switch flips <html lang>
+new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+
+drawMap();
+$('#demo').hidden = !!ENDPOINT;
+load().then(d => { items = d; render(); }).catch(() => { items = []; render(); });
+</script>
+<script src="assets/i18n.js" defer></script>
+</body>
+</html>
