@@ -258,7 +258,8 @@
         .projects-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
+            gap: 24px;
+            align-items: start; /* a card that grows on hover doesn't stretch its neighbour */
         }
         
         .project-card {
@@ -275,19 +276,47 @@
             color: inherit;
         }
         
+        /* hover: lifts, tilts a little (alternating), and grows to show details.
+           rotate/translate are separate properties so the fade-in script's inline transform doesn't cancel them. */
         .project-card:hover {
-            transform: scale(1.025) translateY(-4px);
+            translate: 0 -4px;
+            rotate: var(--tilt, -0.8deg);
             border-color: var(--accent-light);
             box-shadow: 0 16px 48px rgba(196, 120, 90, 0.14);
         }
+        .project-card:nth-child(even) { --tilt: 0.8deg; }
+        .card-cover { width: 100%; height: 100%; object-fit: cover; transition: transform .48s cubic-bezier(.22,1,.36,1); }
+        .project-card:hover .card-cover, .project-card:hover .card-image-inner { transform: scale(1.03); }
+        .card-image-inner { transition: transform .48s cubic-bezier(.22,1,.36,1); }
+        .card-pill {
+            position: absolute; left: 50%; bottom: 16px; translate: -50% 8px; opacity: 0;
+            background: var(--accent); color: #fff; border-radius: 999px; padding: 9px 20px;
+            font-size: 13px; letter-spacing: .02em; white-space: nowrap;
+            transition: opacity .26s ease, translate .26s ease; pointer-events: none;
+        }
+        .project-card:hover .card-pill { opacity: 1; translate: -50% 0; }
+        .card-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 6px; }
+        .card-head .card-title { margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-chip { flex: none; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-mid); background: var(--apricot-mid); border-radius: 4px; padding: 3px 7px; }
+        .card-metrics { display: flex; margin-top: 14px; list-style: none; }
+        .card-metrics li { flex: 1; padding: 0 14px; border-left: 0.5px solid var(--apricot-warm); display: flex; flex-direction: column; gap: 4px; }
+        .card-metrics li:first-child { padding-left: 0; border-left: 0; }
+        .card-metrics b { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400; color: var(--ink); line-height: 1; white-space: nowrap; }
+        .card-metrics span { font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-light); }
+        .card-details { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .32s cubic-bezier(.22,1,.36,1); }
+        .card-details > div { min-height: 0; overflow: hidden; }
+        .project-card:hover .card-details { grid-template-rows: 1fr; }
+        .card-details dl { margin: 16px 0 0; padding-top: 14px; border-top: 1px dashed var(--apricot-deep); display: grid; gap: 8px; opacity: 0; translate: 0 4px; transition: opacity .26s ease .06s, translate .26s ease .06s; }
+        .project-card:hover .card-details dl { opacity: 1; translate: 0 0; }
+        .card-details dl div { display: grid; grid-template-columns: 90px 1fr; gap: 24px; font-size: 12.5px; }
+        .card-details dt { font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-light); }
+        .card-details dd { margin: 0; color: var(--ink-mid); }
+        @media (prefers-reduced-motion: reduce) { .project-card, .card-details, .card-details dl, .card-pill, .card-cover { transition: none !important; } }
         
         .project-card:active {
             transform: scale(1.01);
         }
         
-        .project-card.featured {
-            grid-column: span 2;
-        }
         
         .card-image {
             width: 100%;
@@ -300,9 +329,6 @@
             justify-content: center;
         }
         
-        .featured .card-image {
-            aspect-ratio: 16/8;
-        }
         
         .card-image-inner {
             width: 100%;
@@ -734,9 +760,6 @@
             .projects-grid {
                 grid-template-columns: 1fr;
             }
-            .project-card.featured {
-                grid-column: span 1;
-            }
             .playground-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -789,66 +812,18 @@
 
             <div class="projects-grid">
 
-                <!-- Featured project -->
-                <a href="microstep.html" class="project-card featured">
-                    <div class="card-image">
-                        <div class="card-image-inner proj-visual-1">
-                            <div class="proj-mockup proj-mockup-wide">
-                                <div style="text-align:center; padding: 16px;">
-                                    <div style="width:32px;height:4px;background:var(--apricot-warm);border-radius:2px;margin:0 auto 10px;"></div>
-                                    <div style="width:80px;height:6px;background:var(--apricot-mid);border-radius:2px;margin:0 auto 6px;"></div>
-                                    <div style="width:56px;height:6px;background:var(--apricot-mid);border-radius:2px;margin:0 auto;"></div>
-                                    <div style="margin-top:12px;display:flex;gap:6px;justify-content:center;">
-                                        <div style="width:20px;height:20px;border-radius:4px;background:var(--apricot-warm);"></div>
-                                        <div style="width:20px;height:20px;border-radius:4px;background:var(--apricot-warm);"></div>
-                                        <div style="width:20px;height:20px;border-radius:4px;background:var(--accent-light);opacity:0.4;"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <span class="proj-glyph">01</span>
-                            <div class="pixel-dots">
-                                <div class="pixel-dot"></div>
-                                <div class="pixel-dot"></div>
-                                <div class="pixel-dot"></div>
-                                <div class="pixel-dot"></div>
-                                <div class="pixel-dot"></div>
-                                <div class="pixel-dot"></div>
-                                <div class="pixel-dot"></div>
-                                <div class="pixel-dot"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-content">
-                        <p class="card-tag">Interaction Design · App</p>
-                        <h3 class="card-title">Microstep — Blueprint for reaching your goal</h3>
-                        <p class="card-desc">Long-term goal completion with AI-driven adaptation based on users. Designing habit loops that feel natural and encouraging through micro-interactions.</p>
-                        <span class="card-arrow">View case study →</span>
-                    </div>
-                </a>
-
                 <!-- Project: Temu -->
                 <a href="temu.html" class="project-card">
-                    <div class="card-image">
-                        <div class="card-image-inner proj-visual-5">
-                            <div class="proj-mockup" style="flex-direction:column;gap:6px;">
-                                <div style="font-size:8px;color:var(--ink-light);text-decoration:line-through;">$1,500+ rewards</div>
-                                <div style="font-size:14px;font-weight:500;color:var(--ink);">$151.34</div>
-                                <div style="width:60%;height:1px;background:var(--apricot-warm);"></div>
-                                <div style="font-size:14px;font-weight:500;color:var(--accent-light);">$93.76</div>
-                                <div style="font-size:7px;color:var(--ink-light);">3 steps · exit anytime</div>
-                            </div>
-                            <span class="proj-glyph">05</span>
-                        </div>
-                    </div>
+                    <div class="card-image"><img class="card-cover" src="images/temu/cover.jpg" alt="Temu's prize wheel next to the Temu app icon"><span class="card-pill">View case study</span></div>
                     <div class="card-content">
-                        <p class="card-tag">UX Research · Ethical Design · Prototype</p>
-                        <h3 class="card-title">Ethical Redesign of Temu</h3>
-                        <p class="card-desc">Redesigned Temu's coupon event: same promotion, no dark patterns. 16 screens down to 2 honest steps, with a clickable prototype.</p>
-                        <span class="card-arrow">View case study →</span>
+                        <div class="card-head"><h3 class="card-title">The Gift Card Trap</h3><span class="card-chip">Class project</span></div>
+                        <p class="card-desc">An ethical redesign of Temu’s coupon pop-up maze</p>
+                        <ul class="card-metrics"><li><b>21→3</b><span>screens</span></li><li><b>7</b><span>dark patterns</span></li><li><b>$151→$94</b><span>checkout</span></li></ul>
+                        <div class="card-details"><div><dl><div><dt>Role</dt><dd>Solo · research & design</dd></div><div><dt>Course</dt><dd>Dark Patterns</dd></div><div><dt>Timeline</dt><dd>Sep 2026 · 1 week</dd></div></dl></div></div>
                     </div>
                 </a>
 
-                <!-- Project 2 -->
+                <!-- Project: Olive -->
                 <a href="olive.html" class="project-card">
                     <div class="card-image">
                         <div class="card-image-inner proj-visual-2">
@@ -873,16 +848,16 @@
                             </div>
                             <span class="proj-glyph">02</span>
                         </div>
-                    </div>
+                    <span class="card-pill">View case study</span></div>
                     <div class="card-content">
-                        <p class="card-tag">Brand · App Redesign · Client</p>
-                        <h3 class="card-title">Olive — Brand & App Redesign</h3>
-                        <p class="card-desc">Rapid 1–2 week redesign of Olive's holistic food scanner app (350k+ users). Balancing clarity with warmth.</p>
-                        <span class="card-arrow">View case study →</span>
+                        <div class="card-head"><h3 class="card-title">Olive</h3><span class="card-chip">Client work</span></div>
+                        <p class="card-desc">Brand &amp; app redesign for a holistic food scanner</p>
+                        <ul class="card-metrics"><li><b>350K+</b><span>users</span></li><li><b>1–2 wk</b><span>sprint</span></li></ul>
+                        <div class="card-details"><div><dl><div><dt>Role</dt><dd>UI · micro-interactions</dd></div><div><dt>Team</dt><dd>With Dan Alves</dd></div><div><dt>Timeline</dt><dd>Nov 2025</dd></div></dl></div></div>
                     </div>
                 </a>
 
-                <!-- Project 3 -->
+                <!-- Project: SoftConstruct -->
                 <a href="softconstruct.html" class="project-card">
                     <div class="card-image">
                         <div class="card-image-inner proj-visual-3">
@@ -894,16 +869,16 @@
                             </div>
                             <span class="proj-glyph">03</span>
                         </div>
-                    </div>
+                    <span class="card-pill">View case study</span></div>
                     <div class="card-content">
-                        <p class="card-tag">Web Design · Internship</p>
-                        <h3 class="card-title">SoftConstruct — First Run Landing</h3>
-                        <p class="card-desc">Designed a landing website for a mobile game called "First Run" — blending playful motion with structured information hierarchy.</p>
-                        <span class="card-arrow">View case study →</span>
+                        <div class="card-head"><h3 class="card-title">SoftConstruct</h3><span class="card-chip">Internship</span></div>
+                        <p class="card-desc">Landing page for the mobile game First Run</p>
+                        <ul class="card-metrics"><li><b>5</b><span>page sections</span></li><li><b>2 wk</b><span>duration</span></li></ul>
+                        <div class="card-details"><div><dl><div><dt>Role</dt><dd>Lead designer · UI &amp; prototyping</dd></div><div><dt>Team</dt><dd>SoftConstruct developers</dd></div><div><dt>Timeline</dt><dd>2023</dd></div></dl></div></div>
                     </div>
                 </a>
 
-                <!-- Project 4 -->
+                <!-- Project: Sonic -->
                 <a href="sonic-archive.html" class="project-card">
                     <div class="card-image">
                         <div class="card-image-inner proj-visual-4">
@@ -919,15 +894,14 @@
                             </div>
                             <span class="proj-glyph">04</span>
                         </div>
-                    </div>
+                    <span class="card-pill">View case study</span></div>
                     <div class="card-content">
-                        <p class="card-tag">Web Archive · Concept</p>
-                        <h3 class="card-title">Archive of Sonic the Hedgehog</h3>
-                        <p class="card-desc">Designed a web archive concept for Sonic's franchise — exploring nostalgic interaction patterns with modern structural clarity.</p>
-                        <span class="card-arrow">View case study →</span>
+                        <div class="card-head"><h3 class="card-title">Sonic Archive</h3><span class="card-chip">Personal</span></div>
+                        <p class="card-desc">A fan web archive of Sonic the Hedgehog</p>
+                        <ul class="card-metrics"><li><b>30+</b><span>game titles</span></li><li><b>4</b><span>archive sections</span></li></ul>
+                        <div class="card-details"><div><dl><div><dt>Role</dt><dd>Solo designer &amp; developer</dd></div><div><dt>Tools</dt><dd>Figma · HTML/CSS · JS</dd></div><div><dt>Timeline</dt><dd>2024 · 3 weeks</dd></div></dl></div></div>
                     </div>
                 </a>
-
             </div>
         </section>
 
@@ -1077,7 +1051,7 @@
         cards.forEach(card => {
             card.style.opacity = '0';
             card.style.transform = 'translateY(16px)';
-            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease, box-shadow 0.45s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.45s cubic-bezier(0.4, 0, 0.2, 1), scale 0.45s cubic-bezier(0.4, 0, 0.2, 1)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease, box-shadow 0.45s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.45s cubic-bezier(0.4, 0, 0.2, 1), scale 0.45s cubic-bezier(0.4, 0, 0.2, 1), rotate 0.32s cubic-bezier(0.22, 1, 0.36, 1), translate 0.32s cubic-bezier(0.22, 1, 0.36, 1)';
             cardObserver.observe(card);
         });
 
