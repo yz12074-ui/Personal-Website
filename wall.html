@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-zh="签名墙 — 张玥妍">Sign the wall — Amanda</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Nunito:wght@400;600;700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<style>
+/* Soft crayon palette. Outlines are drawn on a ::before layer through an SVG "crayon" filter,
+   so borders wobble like crayon while text stays crisp. */
+:root {
+  --paper: #FBF7F2; --ink: #4A4060; --ink-soft: #8A80A0;
+  --lavender: #B9A7F2; --mist: #A8D8F0; --apricot: #FFC8A8; --pink: #F7A8C8; --mint: #A8E0B8;
+  --wall: #EFE8FB; --bolt: #D8CDF3;
+  --hand: 'Gaegu', 'ZCOOL KuaiLe', cursive; --body: 'Nunito', 'PingFang SC', system-ui, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html:lang(zh-CN) { --hand: 'ZCOOL KuaiLe', 'Gaegu', cursive; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.6 var(--body); padding: 0 max(16px, 4vw) 64px; }
+button, input { font: inherit; color: inherit; }
+.crayon { position: relative; isolation: isolate; }
+.crayon::before { content: ''; position: absolute; inset: 0; border: 2.5px solid var(--ink); border-radius: inherit; filter: url(#crayon); pointer-events: none; z-index: 2; }
+:focus-visible { outline: 3px dashed var(--lavender); outline-offset: 4px; }
+
+.top { display: flex; align-items: center; justify-content: space-between; max-width: 1100px; margin: 0 auto; padding: 18px 0; }
+.top a { text-decoration: none; font: 700 20px var(--hand); color: inherit; }
+.lang-toggle { background: #fff; border: 0; border-radius: 999px; padding: 4px 14px; cursor: pointer; font: 700 16px var(--hand); color: var(--ink-soft); }
+.lang-toggle b { color: var(--ink); }
+
+header { max-width: 1100px; margin: 12px auto 28px; display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+.avatar { flex: none; width: 112px; height: 112px; border-radius: 50%; background: var(--apricot); display: grid; place-items: center; animation: bob 3s ease-in-out infinite; }
+.avatar svg { width: 84%; height: 84%; }
+h1 { font: 700 clamp(36px, 6vw, 60px)/1.05 var(--hand); margin: 0 0 6px; }
+.sub { margin: 0; color: var(--ink-soft); max-width: 52ch; }
+.actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 12px; }
+.count { background: var(--mist); border-radius: 999px; padding: 2px 14px; font: 700 18px var(--hand); }
+.btn { border: 0; border-radius: 999px; padding: 8px 22px; cursor: pointer; font: 700 22px var(--hand); background: #fff; }
+.btn.primary { background: var(--lavender); }
+.btn.small { font-size: 18px; padding: 4px 14px; }
+@keyframes bob { 50% { transform: translateY(-6px) rotate(-3deg); } }
+.demo { max-width: 1100px; margin: 0 auto 14px; background: #fff; border-radius: 14px; padding: 8px 14px; font-size: 13px; color: var(--ink-soft); }
+
+/* the wall: climbing-wall panels with bolt holes */
+.wall { max-width: 1100px; margin: 0 auto; border-radius: 26px; padding: clamp(18px, 3vw, 36px);
+  background-color: var(--wall);
+  background-image: radial-gradient(circle, var(--bolt) 3px, transparent 3.5px), linear-gradient(90deg, transparent calc(100% - 2px), rgba(74,64,96,.06) 0), linear-gradient(transparent calc(100% - 2px), rgba(74,64,96,.06) 0);
+  background-size: 48px 48px, 240px 240px, 240px 240px; background-position: 24px 24px, 0 0, 0 0;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 28px 22px; min-height: 360px; align-content: start; }
+.empty { grid-column: 1 / -1; text-align: center; font: 700 24px var(--hand); color: var(--ink-soft); padding: 60px 0; }
+
+/* a signature card, taped to the wall */
+.card { --c: var(--lavender); background: #fff; border-radius: 16px; padding: 14px 14px 10px; position: relative; transform: rotate(var(--r, 0deg)); transition: transform .25s; }
+.card:hover { transform: rotate(0) scale(1.04); z-index: 3; }
+.card::after { content: ''; position: absolute; top: -12px; left: 50%; width: 70px; height: 22px; margin-left: -35px; background: var(--c); opacity: .75; border-radius: 3px; transform: rotate(-3deg); }
+.card.new { animation: stick .55s cubic-bezier(.3,1.5,.5,1); }
+@keyframes stick { from { transform: translateY(-40px) rotate(12deg) scale(1.2); opacity: 0; } }
+.card .sig { display: block; width: 100%; aspect-ratio: 12 / 5; object-fit: contain; border-bottom: 2px dashed var(--c); margin-bottom: 6px; }
+.card b { font: 700 22px/1.1 var(--hand); display: block; }
+.card p { margin: 2px 0 6px; font-size: 14px; word-wrap: break-word; }
+.card .meta { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--ink-soft); }
+.heart { border: 0; background: none; cursor: pointer; font: 700 16px var(--hand); color: var(--ink); padding: 0 4px; }
+.heart[aria-pressed=true] { color: #D0567A; }
+
+/* sign dialog */
+dialog { border: 0; border-radius: 24px; padding: 22px; width: min(440px, calc(100vw - 32px)); background: var(--paper); color: var(--ink); overflow: visible; }
+dialog::backdrop { background: rgba(74, 64, 96, .35); }
+dialog h2 { font: 700 30px var(--hand); margin: 0 0 8px; }
+.pad-wrap { background: #fff; border-radius: 16px; padding: 8px; }
+.pad { display: block; width: 100%; aspect-ratio: 12 / 5; touch-action: none; cursor: crosshair; border-bottom: 2px dashed var(--lavender); }
+.pad-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--ink-soft); padding: 4px 4px 0; }
+label { display: block; font: 700 18px var(--hand); margin-top: 12px; }
+input[type=text] { width: 100%; border: 0; background: #fff; border-radius: 14px; padding: 10px 12px; margin-top: 4px; }
+.swatches { display: flex; gap: 10px; margin-top: 6px; }
+.swatches label { margin: 0; }
+.swatches input { position: absolute; opacity: 0; }
+.swatches span { display: block; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; }
+.swatches input:checked + span { outline: 3px solid var(--ink); outline-offset: 3px; }
+.swatches input:focus-visible + span { outline: 3px dashed var(--lavender); outline-offset: 3px; }
+.row { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; }
+.err { color: #C0506A; font-size: 14px; min-height: 1.4em; margin: 6px 0 0; }
+.fine { font-size: 12px; color: var(--ink-soft); margin: 10px 0 0; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="crayon"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="3"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter>
+</svg>
+
+<div class="top">
+  <a href="index.html" data-zh="← 玥妍的作品集">← Amanda’s portfolio</a>
+  <button class="lang-toggle" type="button"><b>EN</b> / 中文</button>
+</div>
+
+<header>
+  <!-- TODO(Amanda): replace with your own cartoon avatar -->
+  <div class="avatar crayon" aria-hidden="true">
+    <svg viewBox="0 0 100 100"><circle cx="50" cy="52" r="34" fill="#FBF7F2" stroke="#4A4060" stroke-width="3"/><circle cx="38" cy="50" r="4" fill="#4A4060"/><circle cx="62" cy="50" r="4" fill="#4A4060"/><path d="M40 63q10 9 20 0" fill="none" stroke="#4A4060" stroke-width="3" stroke-linecap="round"/><circle cx="31" cy="60" r="5" fill="#FFC8A8"/><circle cx="69" cy="60" r="5" fill="#FFC8A8"/></svg>
+  </div>
+  <div>
+    <h1 data-zh="在墙上签个名吧！">Sign the wall!</h1>
+    <p class="sub" data-zh="每个来过的人都会在这里留下一张签名卡。画下你的签名，写一句话，贴到墙上。">Everyone who stops by leaves a signature card here. Draw your signature, add a line, and tape it to the wall.</p>
+    <div class="actions">
+      <button class="btn primary" id="open" data-zh="✎ 签一张卡">✎ Sign a card</button>
+      <span class="count" id="count"></span>
+    </div>
+  </div>
+</header>
+
+<p class="demo" id="demo" hidden data-zh="演示模式：现在的签名卡只保存在你自己的浏览器里，连接数据库后所有人都能看到。">Demo mode: cards are only saved in your own browser until the database is connected.</p>
+
+<main class="wall crayon" id="wall" aria-live="polite"></main>
+
+<dialog id="dlg" class="crayon" aria-labelledby="dlg-title">
+  <form id="form" method="dialog">
+    <h2 id="dlg-title" data-zh="签一张卡 ✿">Sign a card ✿</h2>
+    <div class="pad-wrap">
+      <canvas class="pad" id="pad" width="480" height="200" aria-label="Signature pad: draw with your mouse or finger"></canvas>
+      <div class="pad-row"><span data-zh="在这里画你的签名">Draw your signature here</span><button type="button" class="btn small" id="clear" data-zh="擦掉">Clear</button></div>
+    </div>
+    <label><span data-zh="名字">Your name</span> <input type="text" name="name" maxlength="20" required autocomplete="nickname"></label>
+    <label><span data-zh="想说的话（选填）">A little note (optional)</span> <input type="text" name="note" maxlength="60"></label>
+    <label><span data-zh="胶带颜色">Tape color</span></label>
+    <div class="swatches" id="swatches"></div>
+    <p class="fine" data-zh="签名卡会公开显示在墙上。请不要写邮箱、电话等个人信息。">Your card is shown publicly on the wall. Please don’t share emails or phone numbers.</p>
+    <p class="err" id="err" role="alert"></p>
+    <div class="row">
+      <button class="btn" type="button" id="cancel" data-zh="算了">Cancel</button>
+      <button class="btn primary" type="submit" data-zh="贴上墙！">Tape it up!</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+/* ---------- config ---------- */
+// TODO(Amanda): paste the Apps Script web-app URL here. Empty = demo mode (saved in this browser only).
+const ENDPOINT = '';
+const COLORS = ['#B9A7F2', '#A8D8F0', '#FFC8A8', '#F7A8C8', '#A8E0B8'];
+const COOLDOWN_MS = 10 * 60 * 1000;   // one card per browser per 10 minutes
+const SIG_W = 240, SIG_H = 100;        // stored signature size: small PNG, a few KB
+
+const $ = s => document.querySelector(s);
+const zh = () => document.documentElement.lang === 'zh-CN';
+const tr = (en, z) => (zh() ? z : en);
+const store = {
+  get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+};
+
+/* ---------- signature pad ---------- */
+const pad = $('#pad'), g = pad.getContext('2d');
+let drawing = false, inked = false, last = null;
+g.lineCap = g.lineJoin = 'round'; g.strokeStyle = '#4A4060'; g.lineWidth = 5;
+const pos = e => { const r = pad.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width * pad.width, y: (e.clientY - r.top) / r.height * pad.height }; };
+pad.addEventListener('pointerdown', e => { drawing = true; last = pos(e); pad.setPointerCapture(e.pointerId); });
+pad.addEventListener('pointermove', e => {
+  if (!drawing) return;
+  const p = pos(e);
+  g.beginPath(); g.moveTo(last.x, last.y);
+  g.lineTo(p.x + (Math.random() - .5) * .8, p.y + (Math.random() - .5) * .8);   // a touch of crayon wobble
+  g.stroke(); last = p; inked = true;
+});
+['pointerup', 'pointercancel', 'pointerleave'].forEach(t => pad.addEventListener(t, () => { drawing = false; }));
+const clearPad = () => { g.clearRect(0, 0, pad.width, pad.height); inked = false; };
+$('#clear').onclick = clearPad;
+function sigData() {
+  const c = document.createElement('canvas'); c.width = SIG_W; c.height = SIG_H;
+  c.getContext('2d').drawImage(pad, 0, 0, SIG_W, SIG_H);
+  return c.toDataURL('image/png');
+}
+
+/* ---------- storage: Apps Script when configured, else localStorage demo ---------- */
+const SEED = [{ id: 'demo1', name: 'Amanda', note: 'Welcome to my wall ✿', color: '#B9A7F2', sig: '', likes: 3, time: '2026-10-21' }];
+async function load() {
+  if (!ENDPOINT) return store.get('wall-demo', SEED);
+  const r = await fetch(ENDPOINT); return (await r.json()).items;
+}
+async function send(body) {
+  if (!ENDPOINT) return;
+  // text/plain keeps this a "simple" request (no CORS preflight); Apps Script still reads the JSON body.
+  await fetch(ENDPOINT, { method: 'POST', mode: 'no-cors', body: JSON.stringify(body) });
+}
+
+/* ---------- render (visitor text only ever goes in via textContent) ---------- */
+let items = [];
+const liked = new Set(store.get('wall-liked', []));
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+const rot = id => ((([...String(id)].reduce((a, c) => a + c.charCodeAt(0), 0)) % 7) - 3) * 0.9;   // stable tilt per card
+
+function render() {
+  const wall = $('#wall'); wall.replaceChildren();
+  $('#count').textContent = tr(`${items.length} cards on the wall`, `墙上已经有 ${items.length} 张卡`);
+  if (!items.length) { wall.append(el('div', 'empty', tr('Be the first to sign ✎', '来当第一个签名的人吧 ✎'))); return; }
+  for (const it of [...items].reverse()) {
+    const c = el('article', 'card crayon' + (it.isNew ? ' new' : ''));
+    c.style.setProperty('--c', COLORS.includes(it.color) ? it.color : COLORS[0]);
+    c.style.setProperty('--r', rot(it.id) + 'deg');
+    if (typeof it.sig === 'string' && it.sig.startsWith('data:image/png;base64,')) {
+      const img = el('img', 'sig'); img.src = it.sig; img.alt = tr(`Signature of ${it.name}`, `${it.name} 的签名`); c.append(img);
+    }
+    c.append(el('b', '', it.name));
+    if (it.note) c.append(el('p', '', it.note));
+    const meta = el('div', 'meta'), h = el('button', 'heart', `♥ ${it.likes || 0}`);
+    h.setAttribute('aria-pressed', liked.has(it.id));
+    h.setAttribute('aria-label', tr(`Like ${it.name}'s card`, `给 ${it.name} 的卡点赞`));
+    h.onclick = () => {
+      if (liked.has(it.id)) return;
+      it.likes = (it.likes || 0) + 1; liked.add(it.id); store.set('wall-liked', [...liked]);
+      if (!ENDPOINT) store.set('wall-demo', items.map(({ isNew, ...x }) => x)); else send({ action: 'like', id: it.id });
+      render();
+    };
+    meta.append(el('span', '', String(it.time || '').slice(0, 10)), h);
+    c.append(meta);
+    wall.append(c);
+  }
+}
+
+/* ---------- sign flow ---------- */
+$('#swatches').innerHTML = COLORS.map((c, i) => `<label><input type="radio" name="color" value="${c}"${i ? '' : ' checked'} aria-label="${c}"><span style="background:${c}"></span></label>`).join('');
+$('#open').onclick = () => { $('#err').textContent = ''; $('#dlg').showModal(); };
+$('#cancel').onclick = () => $('#dlg').close();
+$('#form').addEventListener('submit', e => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  if (!inked) { $('#err').textContent = tr('Draw a signature first ✎', '先画一个签名吧 ✎'); return; }
+  if (Date.now() - store.get('wall-last', 0) < COOLDOWN_MS) { $('#err').textContent = tr('You just signed — come back in a few minutes!', '你刚刚签过啦，过几分钟再来吧！'); return; }
+  const it = { id: 'local-' + Date.now(), name: fd.get('name').trim().slice(0, 20), note: fd.get('note').trim().slice(0, 60),
+    color: fd.get('color'), sig: sigData(), likes: 0, time: new Date().toISOString().slice(0, 10) };
+  if (!it.name) return;
+  items.push({ ...it, isNew: true }); store.set('wall-last', Date.now());
+  if (!ENDPOINT) store.set('wall-demo', items.map(({ isNew, ...x }) => x)); else send({ action: 'add', ...it }).catch(() => {});
+  e.target.reset(); clearPad(); $('#dlg').close(); render();
+  $('#wall').scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
+// Re-render dynamic text when the EN / 中文 switch flips <html lang>
+new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+$('#demo').hidden = !!ENDPOINT;
+load().then(d => { items = d; render(); }).catch(() => { items = []; render(); });
+</script>
+<script src="assets/i18n.js" defer></script>
+</body>
+</html>
