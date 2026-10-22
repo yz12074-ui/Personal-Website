@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amanda Z — Designer</title>
+    <title data-zh="张玥妍 Amanda — 设计师">Amanda Z — Designer</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -744,6 +744,17 @@
                 grid-template-columns: 1fr;
             }
         }
+        /* ─── ADDED: bilingual switch + real project images ─── */
+        .lang-toggle { margin-top: 24px; width: fit-content; font: inherit; font-size: 12px; letter-spacing: 0.04em; color: var(--ink-light); background: none; border: 0.5px solid var(--apricot-warm); border-radius: 100px; padding: 4px 12px; cursor: pointer; }
+        .lang-toggle b { color: var(--ink); font-weight: 500; }
+        html:lang(zh-CN) body { font-family: 'DM Sans', 'PingFang SC', 'Noto Sans SC', sans-serif; }
+        .card-shot { max-width: 86%; max-height: 88%; width: auto; height: auto; object-fit: contain; position: relative; z-index: 1; transition: transform var(--transition); }
+        .project-card:hover .card-shot { transform: scale(1.04); }
+        .card-tag.pill { display: inline-block; padding: 3px 10px; border-radius: 100px; background: var(--tag-bg); color: var(--tag-ink, #fff); }
+        .card-lock { display: inline-flex; vertical-align: middle; margin-left: 6px; color: var(--ink-light); }
+        .about-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; border-radius: 50%; }
+        .about-photo { overflow: hidden; }
+        @media (max-width: 768px) { .lang-toggle { margin: 0 0 0 20px; } }
     </style>
 </head>
 
@@ -753,10 +764,11 @@
     <nav class="sidebar">
         <span class="sidebar-logo">玥妍</span>
         <div class="sidebar-nav">
-            <a href="#projects" class="nav-item active" onclick="setActive(this)">Projects</a>
-            <a href="#playground" class="nav-item" onclick="setActive(this)">Playground</a>
-            <a href="#connect" class="nav-item" onclick="setActive(this)">Connect</a>
+            <a href="#projects" class="nav-item active" onclick="setActive(this)" data-zh="作品">Projects</a>
+            <a href="#playground" class="nav-item" onclick="setActive(this)" data-zh="实验">Playground</a>
+            <a href="#connect" class="nav-item" onclick="setActive(this)" data-zh="联系">Connect</a>
         </div>
+        <button class="lang-toggle" type="button"><b>EN</b> / 中文</button>
     </nav>
 
     <!-- Main -->
@@ -764,167 +776,87 @@
 
         <!-- Hero -->
         <section class="hero" id="top">
-            <p class="hero-eyebrow">Portfolio · 2025</p>
-            <h1 class="hero-name">
+            <p class="hero-eyebrow" data-zh="作品集 · 2025">Portfolio · 2025</p>
+            <h1 class="hero-name" data-zh="Amanda ——&lt;br&gt;&lt;em&gt;设计师&lt;/em&gt;，&lt;br&gt;捕捉安静的瞬间。">
                 Amanda —<br>
                 <em>designer</em> crafting<br> quiet moments.
             </h1>
-            <p class="hero-sub">
+            <p class="hero-sub" data-zh="跨领域设计师，探索形式、功能与感受之间的空间。偏爱会呼吸的交互。">
                 Multidisciplinary designer exploring the space between form, function, and feeling. Drawn to interactions that breathe.
             </p>
             <div class="hero-tags">
-                <span class="tag">Interaction Design</span>
-                <span class="tag">Visual Design</span>
-                <span class="tag">Brand</span>
-                <span class="tag">Motion</span>
+                <span class="tag" data-zh="交互设计">Interaction Design</span>
+                <span class="tag" data-zh="视觉设计">Visual Design</span>
+                <span class="tag" data-zh="品牌">Brand</span>
+                <span class="tag" data-zh="动效">Motion</span>
             </div>
             <div class="scroll-hint">
-                <span class="scroll-hint-line"></span> scroll
+                <span class="scroll-hint-line"></span> <span data-zh="向下滑动">scroll</span>
             </div>
         </section>
 
         <!-- Projects Section -->
         <section class="section" id="projects">
-            <div class="section-label">Selected Work</div>
+            <div class="section-label" data-zh="精选作品">Selected Work</div>
 
             <div class="projects-grid">
 
-                <!-- Featured project -->
-                <a href="microstep.html" class="project-card featured">
-                    <div class="card-image">
-                        <div class="card-image-inner proj-visual-1">
-                            <div class="proj-mockup proj-mockup-wide">
-                                <div style="text-align:center; padding: 16px;">
-                                    <div style="width:32px;height:4px;background:var(--apricot-warm);border-radius:2px;margin:0 auto 10px;"></div>
-                                    <div style="width:80px;height:6px;background:var(--apricot-mid);border-radius:2px;margin:0 auto 6px;"></div>
-                                    <div style="width:56px;height:6px;background:var(--apricot-mid);border-radius:2px;margin:0 auto;"></div>
-                                    <div style="margin-top:12px;display:flex;gap:6px;justify-content:center;">
-                                        <div style="width:20px;height:20px;border-radius:4px;background:var(--apricot-warm);"></div>
-                                        <div style="width:20px;height:20px;border-radius:4px;background:var(--apricot-warm);"></div>
-                                        <div style="width:20px;height:20px;border-radius:4px;background:var(--accent-light);opacity:0.4;"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <span class="proj-glyph">01</span>
-                            <div class="pixel-dots">
-                                <div class="pixel-dot"></div>
-                                <div class="pixel-dot"></div>
-                                <div class="pixel-dot"></div>
-                                <div class="pixel-dot"></div>
-                                <div class="pixel-dot"></div>
-                                <div class="pixel-dot"></div>
-                                <div class="pixel-dot"></div>
-                                <div class="pixel-dot"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-content">
-                        <p class="card-tag">Interaction Design · App</p>
-                        <h3 class="card-title">Microstep — Blueprint for reaching your goal</h3>
-                        <p class="card-desc">Long-term goal completion with AI-driven adaptation based on users. Designing habit loops that feel natural and encouraging through micro-interactions.</p>
-                        <span class="card-arrow">View case study →</span>
-                    </div>
-                </a>
-
-                <!-- Project: Temu -->
                 <a href="temu.html" class="project-card">
                     <div class="card-image">
                         <div class="card-image-inner proj-visual-5">
-                            <div class="proj-mockup" style="flex-direction:column;gap:6px;">
-                                <div style="font-size:8px;color:var(--ink-light);text-decoration:line-through;">$1,500+ rewards</div>
-                                <div style="font-size:14px;font-weight:500;color:var(--ink);">$151.34</div>
-                                <div style="width:60%;height:1px;background:var(--apricot-warm);"></div>
-                                <div style="font-size:14px;font-weight:500;color:var(--accent-light);">$93.76</div>
-                                <div style="font-size:7px;color:var(--ink-light);">3 steps · exit anytime</div>
-                            </div>
-                            <span class="proj-glyph">05</span>
+                            <img class="card-shot" src="images/home/temu-card.webp" alt="Two iPhones showing the redesigned Temu coupon pop-up and the 20-day check-in" data-zh-alt="两部 iPhone，展示重新设计的 Temu 优惠弹窗和 20 天签到页" loading="lazy" decoding="async">
+                            <span class="proj-glyph">01</span>
                         </div>
                     </div>
                     <div class="card-content">
-                        <p class="card-tag">UX Research · Ethical Design · Prototype</p>
-                        <h3 class="card-title">Ethical Redesign of Temu</h3>
-                        <p class="card-desc">Redesigned Temu's coupon event: same promotion, no dark patterns. 16 screens down to 2 honest steps, with a clickable prototype.</p>
-                        <span class="card-arrow">View case study →</span>
+                        <p class="card-tag pill" style="--tag-bg:#FB7701;--tag-ink:#fff" data-zh="UX 案例研究">UX Case Study</p>
+                        <h3 class="card-title"><span data-zh="Temu 优惠弹窗重设计 · 修好它，而不是删掉它">Temu Redesign — Fix it, don’t kill it</span></h3>
+                        <p class="card-desc" data-zh="把 Temu 的优惠券弹窗，从一个陷阱改成一次诚实的邀请。">Redesigning Temu’s coupon pop-up from a trap into an honest invitation.</p>
+                        <span class="card-arrow" data-zh="查看案例 →">View case study →</span>
                     </div>
                 </a>
 
-                <!-- Project 2 -->
-                <a href="olive.html" class="project-card">
+                <a href="lovelink.html" class="project-card">
                     <div class="card-image">
                         <div class="card-image-inner proj-visual-2">
-                            <div class="proj-mockup" style="flex-direction:column;gap:8px;">
-                                <div style="width:36px;height:36px;border-radius:50%;background:var(--apricot-mid);"></div>
-                                <div style="display:flex;gap:10px;">
-                                    <div style="text-align:center;">
-                                        <div style="font-size:9px;font-weight:500;color:var(--ink);">90</div>
-                                        <div style="font-size:7px;color:var(--ink-light);">score</div>
-                                    </div>
-                                    <div style="text-align:center;">
-                                        <div style="font-size:9px;font-weight:500;color:var(--ink);">72</div>
-                                        <div style="font-size:7px;color:var(--ink-light);">following</div>
-                                    </div>
-                                    <div style="text-align:center;">
-                                        <div style="font-size:9px;font-weight:500;color:var(--ink);">38</div>
-                                        <div style="font-size:7px;color:var(--ink-light);">follower</div>
-                                    </div>
-                                </div>
-                                <div style="width:70%;height:1px;background:var(--apricot-warm);"></div>
-                                <div style="font-size:7px;color:var(--ink-light);">history</div>
-                            </div>
+                            <img class="card-shot" src="images/home/lovelink-card.webp" alt="A hand holding an iPhone with the LoveLink chat screen" data-zh-alt="手持 iPhone，屏幕上是 LoveLink 聊天界面" loading="lazy" decoding="async">
                             <span class="proj-glyph">02</span>
                         </div>
                     </div>
                     <div class="card-content">
-                        <p class="card-tag">Brand · App Redesign · Client</p>
-                        <h3 class="card-title">Olive — Brand & App Redesign</h3>
-                        <p class="card-desc">Rapid 1–2 week redesign of Olive's holistic food scanner app (350k+ users). Balancing clarity with warmth.</p>
-                        <span class="card-arrow">View case study →</span>
+                        <p class="card-tag pill" style="--tag-bg:#8177E0;--tag-ink:#fff" data-zh="UI | UX App 设计">UI | UX App Design</p>
+                        <h3 class="card-title"><span data-zh="LoveLink · 让异地的爱，始终在线">LoveLink — Keep long-distance love online</span></h3>
+                        <p class="card-desc" data-zh="用 AI 陪伴和共建空间，连接相隔两地的情侣。">Connecting long-distance couples through an AI companion and a shared space.</p>
+                        <span class="card-arrow" data-zh="查看案例 →">View case study →</span>
                     </div>
                 </a>
 
-                <!-- Project 3 -->
-                <a href="softconstruct.html" class="project-card">
+                <a href="viva-toy.html" class="project-card">
                     <div class="card-image">
                         <div class="card-image-inner proj-visual-3">
-                            <div class="proj-mockup" style="flex-direction:column;gap:6px;">
-                                <div style="width:80%;height:5px;background:var(--apricot-warm);border-radius:2px;"></div>
-                                <div style="width:60%;height:5px;background:var(--apricot-mid);border-radius:2px;"></div>
-                                <div style="width:72%;height:5px;background:var(--apricot-warm);border-radius:2px;"></div>
-                                <div style="margin-top:6px;width:60%;height:14px;border-radius:3px;background:var(--accent-light);opacity:0.4;"></div>
-                            </div>
+                            <img class="card-shot" src="images/home/viva-card.webp" alt="VIVA TOY app screens: welcome, Revive Me plan, and a toy recycling page held in hand" data-zh-alt="VIVA TOY App 界面：欢迎页、Revive Me 计划，以及手持的玩具回收页" loading="lazy" decoding="async">
                             <span class="proj-glyph">03</span>
                         </div>
                     </div>
                     <div class="card-content">
-                        <p class="card-tag">Web Design · Internship</p>
-                        <h3 class="card-title">SoftConstruct — First Run Landing</h3>
-                        <p class="card-desc">Designed a landing website for a mobile game called "First Run" — blending playful motion with structured information hierarchy.</p>
-                        <span class="card-arrow">View case study →</span>
+                        <p class="card-tag pill" style="--tag-bg:#73DFFA;--tag-ink:#0B2A33" data-zh="服务设计">Service Design</p>
+                        <h3 class="card-title"><span data-zh="VIVA TOY · 让旧玩具，重新被爱">VIVA TOY — Let old toys be loved again</span></h3>
+                        <p class="card-desc" data-zh="一个让电子玩具被修好、被继续使用的维修与循环服务。">A repair-and-reuse service that keeps electronic toys in play.</p>
+                        <span class="card-arrow" data-zh="查看案例 →">View case study →</span>
                     </div>
                 </a>
 
-                <!-- Project 4 -->
-                <a href="sonic-archive.html" class="project-card">
+                <a href="aban.html" class="project-card">
                     <div class="card-image">
                         <div class="card-image-inner proj-visual-4">
-                            <div class="proj-mockup" style="flex-direction:column;align-items:flex-start;gap:5px;padding:12px;">
-                                <div style="font-size:8px;font-weight:500;color:var(--ink);letter-spacing:0.06em;">SONIC</div>
-                                <div style="width:100%;height:1px;background:var(--apricot-warm);"></div>
-                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;width:100%;">
-                                    <div style="height:18px;background:var(--apricot-mid);border-radius:2px;"></div>
-                                    <div style="height:18px;background:var(--apricot-warm);border-radius:2px;"></div>
-                                    <div style="height:18px;background:var(--apricot-warm);border-radius:2px;"></div>
-                                    <div style="height:18px;background:var(--apricot-mid);border-radius:2px;"></div>
-                                </div>
-                            </div>
+                            <img class="card-shot" src="images/home/aban-card.webp" alt="Aban AI music website on a desktop monitor and a floating landing page" data-zh-alt="阿伴 AI 音乐创作网站，显示在台式显示器和悬浮的落地页上" loading="lazy" decoding="async">
                             <span class="proj-glyph">04</span>
                         </div>
                     </div>
                     <div class="card-content">
-                        <p class="card-tag">Web Archive · Concept</p>
-                        <h3 class="card-title">Archive of Sonic the Hedgehog</h3>
-                        <p class="card-desc">Designed a web archive concept for Sonic's franchise — exploring nostalgic interaction patterns with modern structural clarity.</p>
-                        <span class="card-arrow">View case study →</span>
+                        <p class="card-tag pill" style="--tag-bg:#4D54E9;--tag-ink:#fff" data-zh="UI | UX 网页设计">UI | UX Web Design</p>
+                        <h3 class="card-title"><span data-zh="阿伴 Aban · 把灵感变成收入">Aban — Turn inspiration into income</span><span class="card-lock" title="Password protected"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" fill="currentColor"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></svg></span></h3>
+                        <span class="card-arrow" data-zh="🔒 需要密码">🔒 Password protected</span>
                     </div>
                 </a>
 
@@ -935,12 +867,12 @@
 
         <!-- Playground Section -->
         <section class="section" id="playground">
-            <div class="section-label">Playground</div>
+            <div class="section-label" data-zh="实验">Playground</div>
 
             <div class="playground-grid">
 
                 <a href="cookie-thief.html" class="play-card" style="text-decoration:none;background:#fff;">
-                    <img src="assets/cookie-thief-cover.png" alt="Cookie Thief: pixel rat offline game" style="width:100%;height:100%;object-fit:contain;">
+                    <img src="assets/cookie-thief-cover.png" alt="Cookie Thief: pixel rat offline game" data-zh-alt="Cookie Thief：像素老鼠离线小游戏" style="width:100%;height:100%;object-fit:contain;">
                     <span class="play-label">Cookie Thief</span>
                 </a>
 
@@ -960,7 +892,7 @@
                             <div style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(80,60,120,0.4);">is Action</div>
                         </div>
                     </div>
-                    <span class="play-label">Pixel Art Poster</span>
+                    <span class="play-label" data-zh="像素海报">Pixel Art Poster</span>
                 </div>
 
                 <div class="play-card" onclick="void(0)">
@@ -982,7 +914,7 @@
                             <div style="height:24px;background:rgba(196,100,90,0.25);border-radius:3px;"></div>
                         </div>
                     </div>
-                    <span class="play-label">iOS Explorations</span>
+                    <span class="play-label" data-zh="iOS 探索">iOS Explorations</span>
                 </div>
 
                 <div class="play-card" onclick="void(0)">
@@ -993,7 +925,7 @@
                             <div style="width:40px;height:2px;background:rgba(60,100,160,0.4);border-radius:1px;transform:rotate(-20deg);"></div>
                         </div>
                     </div>
-                    <span class="play-label">Motion Studies</span>
+                    <span class="play-label" data-zh="动效练习">Motion Studies</span>
                 </div>
 
 
@@ -1004,27 +936,27 @@
 
         <!-- Connect Section -->
         <section class="section" id="connect">
-            <div class="section-label">Connect</div>
+            <div class="section-label" data-zh="联系">Connect</div>
 
             <div class="connect-grid">
 
                 <div>
-                    <div class="about-photo">悦</div>
+                    <div class="about-photo"><img src="images/home/about-photo.webp" alt="Portrait of Amanda" data-zh-alt="张玥妍的肖像" loading="lazy"></div>
                     <p class="about-text">
-                        <p>I'm Yueyan (Amanda) Zhang — a multidisciplinary designer interested in the quiet space between interaction and emotion. Started in visual design, drawn into motion and micro-interactions.</p>
-                        <p>I believe good design feels inevitable. Currently exploring new work and collaborations.</p>
+                        <p data-zh="我是张玥妍（Amanda），一名跨领域设计师，关注交互与情感之间那片安静的空间。从视觉设计起步，后来被动效和微交互吸引。">I'm Yueyan (Amanda) Zhang — a multidisciplinary designer interested in the quiet space between interaction and emotion. Started in visual design, drawn into motion and micro-interactions.</p>
+                        <p data-zh="我相信好的设计会让人觉得理所当然。目前正在寻找新的工作和合作机会。">I believe good design feels inevitable. Currently exploring new work and collaborations.</p>
                     </p>
                 </div>
 
                 <div class="connect-links">
                     <a href="#" class="connect-link">
-          Resume <span class="connect-link-arrow">↗</span>
+          <span data-zh="简历">Resume</span> <span class="connect-link-arrow">↗</span>
         </a>
                     <a href="#" class="connect-link">
           LinkedIn <span class="connect-link-arrow">↗</span>
         </a>
                     <a href="#" class="connect-link">
-          Email <span class="connect-link-arrow">↗</span>
+          <span data-zh="邮箱">Email</span> <span class="connect-link-arrow">↗</span>
         </a>
                     <a href="#" class="connect-link">
           Instagram <span class="connect-link-arrow">↗</span>
@@ -1108,6 +1040,7 @@
         });
     </script>
 
+    <script src="assets/i18n.js" defer></script>
 </body>
 
 </html>
