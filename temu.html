@@ -1,1291 +1,810 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ethical Redesign of Temu — Amanda</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Gift Card Trap — Amanda</title>
+<meta name="description" content="A $20 Temu coupon turned a $51.14 bean bag into a $151.34 checkout. Seven dark patterns, one honest redesign.">
+<style>html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: sticky TOC left, one reading column right, prototype phone peeking from the right edge.
+   Color rule: orange = the trap, teal = the honest redesign. */
+:root{
+  --bg:#F2F1EC; --surface:#FFFFFF; --sunk:#E7E5DE; --ink:#1D1B19; --dim:#6A655E; --line:#D6D2C8;
+  --trap:#E8590C; --trap-soft:#FCE3D2; --honest:#0B7A66; --honest-soft:#D3EEE7; --hi:#FFE15A; --hi-o:#FFC29A;
+  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"Source Serif 4",Georgia,serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#171614; --surface:#211F1C; --sunk:#2A2825; --ink:#EEEAE2; --dim:#A39D93; --line:#3A3733;
+  --trap:#FF7A33; --trap-soft:#3D2416; --honest:#3CC4A6; --honest-soft:#14332C; --hi:#8A7414; --hi-o:#8A3D12; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#171614; --surface:#211F1C; --sunk:#2A2825; --ink:#EEEAE2; --dim:#A39D93; --line:#3A3733;
+  --trap:#FF7A33; --trap-soft:#3D2416; --honest:#3CC4A6; --honest-soft:#14332C; --hi:#8A7414; --hi-o:#8A3D12; color-scheme:dark}
 
-    <style>
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
-         :root {
-            --apricot: #FAF5EF;
-            --apricot-mid: #F3EAE0;
-            --apricot-warm: #E8D9C8;
-            --apricot-deep: #D4C0A8;
-            --ink: #2C2118;
-            --ink-mid: #6B5A4A;
-            --ink-light: #9E8E7E;
-            --accent: #C4785A;
-            --accent-light: #E8A882;
-            --white: #FEFCFA;
-            --card-bg: rgba(255, 255, 255, 0.72);
-            --sidebar-w: 160px;
-            --content-max: 900px;
-        }
-        
-        html {
-            scroll-behavior: smooth;
-        }
-        
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--apricot);
-            color: var(--ink);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-            background-size: 200px;
-            pointer-events: none;
-            z-index: 0;
-        }
-        /* ─── SIDEBAR ─── */
-        
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: var(--sidebar-w);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 0 0 0 36px;
-            z-index: 100;
-            gap: 10px;
-        }
-        
-        .sidebar-logo {
-            position: absolute;
-            top: 32px;
-            left: 36px;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 15px;
-            font-weight: 300;
-            color: var(--ink);
-            letter-spacing: 0.02em;
-            text-decoration: none;
-            opacity: 0.7;
-            transition: opacity 0.25s;
-        }
-        
-        .sidebar-logo:hover {
-            opacity: 1;
-        }
-        
-        .sidebar-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        .nav-item {
-            font-size: 13px;
-            font-weight: 400;
-            color: var(--ink-light);
-            cursor: pointer;
-            letter-spacing: 0.01em;
-            transition: color 0.25s ease, transform 0.25s ease;
-            padding: 2px 0;
-            text-decoration: none;
-            width: fit-content;
-            position: relative;
-        }
-        
-        .nav-item::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 0;
-            height: 0.5px;
-            background: var(--accent);
-            transition: width 0.3s ease;
-        }
-        
-        .nav-item:hover {
-            color: var(--ink);
-            transform: translateX(4px);
-        }
-        
-        .nav-item:hover::after {
-            width: 100%;
-        }
-        /* ─── BACK BUTTON ─── */
-        
-        .back-btn {
-            position: fixed;
-            top: 32px;
-            left: calc(var(--sidebar-w) + 40px);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            color: var(--ink-light);
-            text-decoration: none;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            z-index: 50;
-            transition: color 0.25s, transform 0.25s;
-            opacity: 0;
-            animation: fadeIn 0.6s ease 0.3s forwards;
-        }
-        
-        .back-btn:hover {
-            color: var(--accent);
-            transform: translateX(-3px);
-        }
-        
-        .back-btn svg {
-            width: 14px;
-            height: 14px;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 1.5;
-        }
-        /* ─── MAIN ─── */
-        
-        .main {
-            margin-left: var(--sidebar-w);
-            padding: 0 80px 0 60px;
-            position: relative;
-            z-index: 1;
-            max-width: calc(var(--sidebar-w) + var(--content-max) + 80px);
-        }
-        /* ─── HERO SECTION ─── */
-        
-        .project-hero {
-            padding: 100px 0 60px;
-            opacity: 0;
-            animation: fadeUp 0.9s ease 0.15s forwards;
-        }
-        
-        .project-tag {
-            font-size: 11px;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            color: var(--accent);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .project-tag::before {
-            content: '';
-            width: 24px;
-            height: 0.5px;
-            background: var(--accent);
-        }
-        
-        .project-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(40px, 5vw, 64px);
-            font-weight: 300;
-            line-height: 1.05;
-            letter-spacing: -0.02em;
-            color: var(--ink);
-            margin-bottom: 28px;
-        }
-        
-        .project-title em {
-            font-style: italic;
-            color: var(--accent);
-        }
-        
-        .project-meta {
-            display: flex;
-            gap: 36px;
-            flex-wrap: wrap;
-        }
-        
-        .meta-item {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-        }
-        
-        .meta-label {
-            font-size: 10px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--ink-light);
-        }
-        
-        .meta-value {
-            font-size: 13px;
-            color: var(--ink-mid);
-            font-weight: 300;
-        }
-        /* ─── DIVIDER ─── */
-        
-        .divider {
-            height: 0.5px;
-            background: linear-gradient(90deg, var(--apricot-warm), transparent);
-            margin: 48px 0;
-            opacity: 0;
-            animation: fadeIn 0.8s ease 0.5s forwards;
-        }
-        /* ─── HERO IMAGE GRID ─── */
-        
-        .hero-image-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            grid-template-rows: auto auto;
-            gap: 12px;
-            margin-bottom: 80px;
-            opacity: 0;
-            animation: fadeUp 0.9s ease 0.35s forwards;
-        }
-        
-        .img-placeholder {
-            border-radius: 14px;
-            background: var(--apricot-mid);
-            border: 0.5px solid var(--apricot-warm);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .img-placeholder.tall {
-            grid-row: span 2;
-        }
-        
-        .img-placeholder.wide {
-            grid-column: span 2;
-        }
-        
-        .img-placeholder img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            border-radius: 14px;
-        }
-        
-        .img-inner-label {
-            position: absolute;
-            bottom: 14px;
-            left: 16px;
-            font-size: 11px;
-            color: rgba(44, 33, 24, 0.4);
-            letter-spacing: 0.05em;
-            background: var(--card-bg);
-            padding: 3px 10px;
-            border-radius: 100px;
-        }
-        /* Placeholder visuals */
-        
-        .ph-olive-1 {
-            background: linear-gradient(160deg, #F0E8D4 0%, #C8BA90 100%);
-            min-height: 340px;
-        }
-        
-        .ph-olive-2 {
-            background: #4A6741;
-            min-height: 160px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .ph-olive-3 {
-            background: #8B2E1A;
-            min-height: 160px;
-        }
-        
-        .ph-olive-4 {
-            background: linear-gradient(160deg, #8B9E45 0%, #6B7A35 100%);
-            min-height: 160px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .ph-olive-5 {
-            background: linear-gradient(160deg, #E8DEC8 0%, #D4C89A 100%);
-            min-height: 160px;
-        }
-        
-        .stat-text {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 18px;
-            font-weight: 400;
-            color: #E8D89A;
-            text-align: center;
-            line-height: 1.4;
-            padding: 24px;
-        }
-        
-        .cta-pill {
-            background: #E8D89A;
-            color: #4A6741;
-            font-size: 13px;
-            font-weight: 500;
-            padding: 10px 24px;
-            border-radius: 100px;
-            letter-spacing: 0.02em;
-        }
-        /* ─── BRIEF SECTION ─── */
-        
-        .brief-section {
-            display: grid;
-            grid-template-columns: 1fr 1.4fr;
-            gap: 60px;
-            margin-bottom: 80px;
-            opacity: 0;
-            animation: fadeUp 0.8s ease 0.55s forwards;
-        }
-        
-        .brief-left {
-            display: flex;
-            flex-direction: column;
-            gap: 36px;
-        }
-        
-        .brief-block {}
-        
-        .brief-block-label {
-            font-size: 11px;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--ink-light);
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 0.5px solid var(--apricot-warm);
-        }
-        
-        .brief-block-text {
-            font-size: 13.5px;
-            color: var(--ink-mid);
-            line-height: 1.75;
-            font-weight: 300;
-        }
-        
-        .brief-right {}
-        
-        .challenge-label {
-            font-size: 11px;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--ink-light);
-            margin-bottom: 20px;
-        }
-        
-        .challenge-text {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(28px, 3.5vw, 44px);
-            font-weight: 300;
-            line-height: 1.2;
-            color: var(--ink);
-            letter-spacing: -0.01em;
-        }
-        /* ─── APPROACH SECTION ─── */
-        
-        .approach-section {
-            margin-bottom: 80px;
-            opacity: 0;
-        }
-        
-        .section-heading {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 32px;
-            font-weight: 300;
-            color: var(--ink);
-            margin-bottom: 32px;
-            letter-spacing: -0.01em;
-        }
-        
-        .two-col-text {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            margin-bottom: 36px;
-        }
-        
-        .col-block-title {
-            font-size: 12px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--ink-mid);
-            margin-bottom: 12px;
-            font-weight: 500;
-        }
-        
-        .col-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        
-        .col-list li {
-            font-size: 13.5px;
-            color: var(--ink-mid);
-            font-weight: 300;
-            padding-left: 16px;
-            position: relative;
-            line-height: 1.6;
-        }
-        
-        .col-list li::before {
-            content: '—';
-            position: absolute;
-            left: 0;
-            color: var(--apricot-deep);
-            font-size: 11px;
-        }
-        /* ─── IMAGE PLACEHOLDER FULL ─── */
-        
-        .img-full {
-            width: 100%;
-            border-radius: 16px;
-            background: var(--apricot-mid);
-            border: 0.5px solid var(--apricot-warm);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .img-full-label {
-            position: absolute;
-            bottom: 16px;
-            left: 20px;
-            font-size: 11px;
-            color: var(--ink-light);
-            letter-spacing: 0.05em;
-        }
-        
-        .ph-screens {
-            background: linear-gradient(160deg, #8B9E45 0%, #4A6741 100%);
-            min-height: 360px;
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
-            padding: 24px;
-            align-items: center;
-        }
-        
-        .screen-mini {
-            background: #E8DEC8;
-            border-radius: 6px;
-            aspect-ratio: 9/19;
-            display: flex;
-            flex-direction: column;
-            padding: 6px 4px;
-            gap: 3px;
-        }
-        
-        .screen-mini-bar {
-            height: 3px;
-            background: rgba(74, 103, 65, 0.3);
-            border-radius: 2px;
-        }
-        
-        .screen-mini-bar.accent-bar {
-            background: rgba(74, 103, 65, 0.6);
-            width: 60%;
-        }
-        /* ─── MEDIA SECTION ─── */
-        
-        .media-section {
-            margin-bottom: 80px;
-            opacity: 0;
-        }
-        
-        .media-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-        
-        .video-placeholder {
-            width: 100%;
-            border-radius: 14px;
-            background: var(--ink);
-            aspect-ratio: 16/9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: opacity 0.25s;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .video-placeholder:hover {
-            opacity: 0.88;
-        }
-        
-        .play-icon {
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .play-icon svg {
-            width: 18px;
-            height: 18px;
-            fill: white;
-            margin-left: 3px;
-        }
-        
-        .video-label {
-            position: absolute;
-            bottom: 14px;
-            left: 16px;
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.5);
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-        }
-        
-        .link-row {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-        
-        .ext-link {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            color: var(--ink-light);
-            text-decoration: none;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            padding: 10px 18px;
-            border-radius: 100px;
-            border: 0.5px solid var(--apricot-warm);
-            background: var(--card-bg);
-            transition: color 0.25s, border-color 0.25s, transform 0.25s;
-        }
-        
-        .ext-link:hover {
-            color: var(--accent);
-            border-color: var(--accent-light);
-            transform: translateY(-2px);
-        }
-        
-        .ext-link svg {
-            width: 11px;
-            height: 11px;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 1.5;
-        }
-        /* ─── CONCLUSION ─── */
-        
-        .conclusion-section {
-            margin-bottom: 80px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            opacity: 0;
-        }
-        
-        .concl-block {}
-        
-        .concl-label {
-            font-size: 11px;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--ink-light);
-            margin-bottom: 14px;
-            padding-bottom: 10px;
-            border-bottom: 0.5px solid var(--apricot-warm);
-        }
-        
-        .concl-text {
-            font-size: 13.5px;
-            color: var(--ink-mid);
-            font-weight: 300;
-            line-height: 1.75;
-        }
-        /* ─── SEE NEXT ─── */
-        
-        .see-next-section {
-            padding: 60px 0 0;
-            border-top: 0.5px solid var(--apricot-warm);
-            opacity: 0;
-        }
-        
-        .see-next-label {
-            font-size: 10px;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            color: var(--ink-light);
-            margin-bottom: 28px;
-        }
-        
-        .next-cards {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 60px;
-        }
-        
-        .next-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            overflow: hidden;
-            border: 0.5px solid var(--apricot-warm);
-            cursor: pointer;
-            text-decoration: none;
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.4s;
-            display: block;
-        }
-        
-        .next-card:hover {
-            transform: translateY(-4px) scale(1.01);
-            border-color: var(--accent-light);
-        }
-        
-        .next-card-img {
-            width: 100%;
-            aspect-ratio: 16/9;
-            background: var(--apricot-mid);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-        
-        .next-card-body {
-            padding: 16px 20px 20px;
-        }
-        
-        .next-card-direction {
-            font-size: 10px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--ink-light);
-            margin-bottom: 6px;
-        }
-        
-        .next-card-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 18px;
-            font-weight: 400;
-            color: var(--ink);
-            line-height: 1.25;
-            margin-bottom: 6px;
-        }
-        
-        .next-card-desc {
-            font-size: 12px;
-            color: var(--ink-light);
-            font-weight: 300;
-            line-height: 1.5;
-        }
-        /* Placeholder visuals for next cards */
-        
-        .ph-next-1 {
-            background: linear-gradient(135deg, #2C2118 0%, #4A3828 100%);
-        }
-        
-        .ph-next-2 {
-            background: linear-gradient(135deg, #E8DEC8 0%, #D4C89A 100%);
-        }
-        /* ─── VIBE FOOTER ─── */
-        
-        .vibe-footer {
-            background: var(--ink);
-            margin: 0 -80px 0 -60px;
-            padding: 80px 80px 64px 60px;
-            position: relative;
-            overflow: hidden;
-            opacity: 0;
-        }
-        
-        .vibe-footer::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(ellipse at 80% 50%, rgba(196, 120, 90, 0.08) 0%, transparent 60%);
-        }
-        
-        .vibe-pretext {
-            font-size: 11px;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.3);
-            margin-bottom: 28px;
-        }
-        
-        .vibe-headline {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(36px, 4.5vw, 60px);
-            font-weight: 300;
-            color: rgba(255, 255, 255, 0.95);
-            line-height: 1.1;
-            letter-spacing: -0.02em;
-            margin-bottom: 40px;
-        }
-        
-        .vibe-headline em {
-            font-style: italic;
-            color: var(--accent-light);
-        }
-        
-        .vibe-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 52px;
-        }
-        
-        .vibe-tag {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.5);
-            border: 0.5px solid rgba(255, 255, 255, 0.15);
-            padding: 6px 16px;
-            border-radius: 100px;
-            letter-spacing: 0.04em;
-            transition: color 0.25s, border-color 0.25s;
-        }
-        
-        .vibe-tag:hover {
-            color: var(--accent-light);
-            border-color: rgba(232, 168, 130, 0.4);
-        }
-        
-        .vibe-bottom {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            border-top: 0.5px solid rgba(255, 255, 255, 0.08);
-            padding-top: 28px;
-        }
-        
-        .vibe-copy {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.25);
-            letter-spacing: 0.04em;
-        }
-        
-        .vibe-links {
-            display: flex;
-            gap: 20px;
-        }
-        
-        .vibe-link {
-            font-size: 11px;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.35);
-            text-decoration: none;
-            transition: color 0.25s;
-        }
-        
-        .vibe-link:hover {
-            color: var(--accent-light);
-        }
-        /* ─── ANIMATIONS ─── */
-        
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-        
-        .reveal {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.7s ease, transform 0.7s ease;
-        }
-        
-        .reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        /* Progress bar */
-        
-        .reading-progress {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 1.5px;
-            background: var(--accent);
-            z-index: 200;
-            transition: width 0.1s linear;
-            width: 0%;
-        }
-        /* Mobile */
-        
-        @media (max-width: 768px) {
-             :root {
-                --sidebar-w: 0px;
-            }
-            .sidebar {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                top: auto;
-                width: 100%;
-                height: 56px;
-                flex-direction: row;
-                justify-content: center;
-                padding: 0 24px;
-                background: var(--apricot);
-                border-top: 0.5px solid var(--apricot-warm);
-            }
-            .sidebar-logo {
-                display: none;
-            }
-            .sidebar-nav {
-                flex-direction: row;
-                gap: 28px;
-            }
-            .main {
-                margin-left: 0;
-                padding: 0 24px 80px;
-            }
-            .hero-image-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-            .img-placeholder.tall {
-                grid-row: auto;
-            }
-            .brief-section {
-                grid-template-columns: 1fr;
-                gap: 32px;
-            }
-            .two-col-text {
-                grid-template-columns: 1fr;
-                gap: 24px;
-            }
-            .media-grid {
-                grid-template-columns: 1fr;
-            }
-            .conclusion-section {
-                grid-template-columns: 1fr;
-            }
-            .next-cards {
-                grid-template-columns: 1fr;
-            }
-            .vibe-footer {
-                margin: 0 -24px;
-                padding: 60px 24px 48px;
-            }
-            .vibe-bottom {
-                flex-direction: column;
-                gap: 16px;
-                align-items: flex-start;
-            }
-        }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:18px;line-height:1.6;padding-inline:16px;overflow-x:hidden}
+.shell{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:200px minmax(0,1fr);gap:56px;padding-block:32px 80px}
+@media (max-width:960px){.shell{grid-template-columns:minmax(0,1fr)}.toc{display:none}}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.1}
+p{margin:0}
+.eyebrow,.tag,.mono{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.eyebrow{color:var(--trap)} .eyebrow.ok{color:var(--honest)}
+button{font:inherit;cursor:pointer;color:inherit}
+:focus-visible{outline:2px solid var(--trap);outline-offset:3px}
 
-        /* ─── TEMU: content left, scroll-synced prototype right ─── */
-        :root { --content-max: 1080px; }
-        .split { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 64px; align-items: start; }
-        .screen-sec { min-height: 78vh; display: flex; flex-direction: column; justify-content: center; padding: 48px 0; opacity: .35; transition: opacity .4s; }
-        .screen-sec.on { opacity: 1; }
-        .screen-sec .section-heading { margin-bottom: 20px; }
-        .sec-k { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
-        .sec-why { margin-top: 20px; font-size: 14px; color: var(--ink-light); font-style: italic; }
-        .scroll-cue { margin-top: 32px; font-size: 12px; color: var(--ink-light); letter-spacing: .04em; }
-        .phone-dock { position: sticky; top: 24px; height: min(720px, calc(100vh - 48px)); }
-        .phone-dock iframe { width: 100%; height: 100%; border: 0; display: block; }
-        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-        .stats div { border-top: 1px solid var(--apricot-warm); padding-top: 12px; }
-        .stats b { display: block; font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 34px; color: var(--ink); }
-        .stats span { font-size: 12px; color: var(--ink-light); }
-        .locked-card { display: flex; gap: 20px; align-items: center; margin: 40px 0 80px; padding: 28px 32px; border-radius: 16px; border: 0.5px solid var(--apricot-warm); background: var(--apricot-mid); text-decoration: none; color: var(--ink); }
-        .locked-card > span:nth-child(2) { flex: 1; display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--ink-light); line-height: 1.6; }
-        .locked-card b { font-size: 16px; font-weight: 500; color: var(--ink); }
-        .locked-icon { font-size: 22px; }
-        @media (max-width: 1100px) {
-            .split { grid-template-columns: 1fr; }
-            .phone-dock { display: none; }
-            .screen-sec { min-height: 0; opacity: 1; }
-        }
-        @media (max-width: 768px) {
-            .stats { grid-template-columns: 1fr; }
-            .locked-card { flex-direction: column; align-items: flex-start; }
-        }
-    </style>
+.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start;display:flex;flex-direction:column;gap:14px}
+.toc nav{background:var(--sunk);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:2px}
+.toc nav a{font-family:var(--f-mono);font-size:12.5px;color:var(--dim);padding:6px 8px;border-radius:8px;text-decoration:none;transition:background .2s,color .2s}
+.toc nav a:hover{color:var(--ink);background:var(--bg)}
+.toc nav a.on{color:var(--ink);background:var(--trap-soft)}
+.toc .meta{font-family:var(--f-mono);font-size:11px;color:var(--dim);letter-spacing:.08em}
+
+main{display:flex;flex-direction:column;gap:88px;min-width:0}
+section{display:flex;flex-direction:column;gap:18px;max-width:700px;scroll-margin-top:24px}
+section.wide{max-width:none}
+section h2{font-size:clamp(28px,4vw,38px);font-weight:800;letter-spacing:-.02em}
+section p{max-width:60ch}
+.emph{background:linear-gradient(var(--hi),var(--hi)) 0 100%/100% 35% no-repeat;transition:background-size .25s;padding:0 2px}
+.emph:hover{background-size:100% 100%}
+.price{font-family:var(--f-mono);font-weight:600;color:var(--trap);white-space:nowrap}
+.cap{font-family:var(--f-mono);font-size:11px;color:var(--dim);letter-spacing:.04em}
+
+/* HERO */
+.hero{display:flex;flex-direction:column;gap:26px;max-width:none}
+.stage{position:relative;height:340px;border-radius:24px;background:var(--trap);overflow:hidden}
+.stage-title{position:absolute;left:28px;top:24px;color:#fff;font-family:var(--f-display);font-weight:800;font-size:clamp(34px,6vw,64px);line-height:.95;letter-spacing:-.03em;z-index:3}
+.stage-title small{display:block;font-family:var(--f-mono);font-size:12px;font-weight:400;letter-spacing:.1em;text-transform:uppercase;margin-top:12px;opacity:.85}
+.fan{position:absolute;left:50%;bottom:-70px;width:0;height:0}
+.scr{position:absolute;left:-75px;bottom:0;width:150px;height:250px;border-radius:18px;background:var(--surface);color:var(--ink);box-shadow:0 10px 30px rgba(0,0,0,.18);padding:14px 12px;display:flex;flex-direction:column;gap:8px;font-family:var(--f-display);font-size:13px;transform-origin:50% 120%;rotate:var(--r);translate:var(--x) 0;transition:rotate .45s cubic-bezier(.3,1.4,.5,1),translate .45s cubic-bezier(.3,1.4,.5,1)}
+.stage:hover .scr{rotate:var(--rh);translate:var(--xh) -36px}
+.scr b{font-weight:800;font-size:17px;line-height:1.1}
+.scr .pill{align-self:flex-start;font-family:var(--f-mono);font-size:10px;padding:3px 7px;border-radius:99px;background:var(--trap-soft);color:var(--trap)}
+.scr .big{font-size:30px;font-weight:800;color:var(--trap);line-height:1}
+.scr .btn{margin-top:auto;background:var(--trap);color:#fff;border-radius:99px;text-align:center;padding:7px;font-weight:600;font-size:12px}
+.scr .tiny{font-family:var(--f-mono);font-size:9px;color:var(--dim);opacity:.6}
+.counter{position:absolute;right:20px;top:22px;z-index:3;display:flex;flex-direction:column;align-items:flex-end;gap:2px;color:#fff;font-family:var(--f-mono);font-size:12px}
+.counter strong{font-size:22px}
+@media (max-width:640px){.stage{height:380px}.counter{right:auto;left:28px;top:150px;align-items:flex-start}}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{background:var(--sunk);color:var(--dim);padding:4px 8px;border-radius:6px;font-size:11px}
+.hero h1{font-size:clamp(30px,4.5vw,44px);font-weight:600;letter-spacing:-.02em;display:flex;gap:12px;align-items:baseline}
+.hero h1 .star{color:var(--trap);font-size:.8em}
+.lead{font-size:20px;color:var(--dim)}
+.info{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;background:var(--ink);color:var(--bg);border-radius:18px;padding:24px}
+.info div{display:flex;flex-direction:column;gap:6px;font-size:15px;line-height:1.4}
+.info .mono{opacity:.6;font-size:11px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:4px;transition:transform .2s}
+.stat:hover{transform:translateY(-3px)}
+.stat strong{font-family:var(--f-display);font-size:34px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.stat span{font-family:var(--f-mono);font-size:11px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase}
+.stat.t strong{color:var(--trap)} .stat.h strong{color:var(--honest)}
+@media (max-width:720px){.info,.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* ---------- PHONE + APP UI (shared by every phone on the page) ---------- */
+.phone{position:relative;width:260px;height:540px;flex:none;border:9px solid var(--ink);border-radius:38px;overflow:hidden;background:var(--bg);box-shadow:0 18px 40px rgba(0,0,0,.14)}
+.phone::before{content:"";position:absolute;top:6px;left:50%;translate:-50% 0;width:70px;height:18px;border-radius:12px;background:var(--ink);z-index:6}
+.stories{position:absolute;top:30px;left:12px;right:12px;display:flex;gap:3px;z-index:5}
+.stories i{flex:1;height:3px;border-radius:2px;background:rgba(127,127,127,.3);overflow:hidden;cursor:pointer}
+.stories i b{display:block;height:100%;width:0;background:var(--ink)}
+.stories i.done b{width:100%}
+.stories i.now b{animation:fill var(--d,2400ms) linear forwards}
+.paused .stories i.now b{animation-play-state:paused}
+@keyframes fill{to{width:100%}}
+.host{position:absolute;inset:0}
+.ms{position:absolute;inset:0;padding:42px 14px 14px;display:flex;flex-direction:column;gap:8px;font-family:var(--f-display);font-size:12.5px;line-height:1.3;background:var(--bg);color:var(--ink);animation:in .35s ease;overflow:hidden}
+@keyframes in{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+.ms small{font-family:var(--f-mono);font-size:10px;color:var(--dim)}
+/* screenshot + live-prototype phones */
+.phone.shot{height:544px}
+.phone.shot::before{display:none}
+.phone.shot .stories{top:auto;bottom:10px}
+.ms.img{padding:0;background:#000}
+.ms.img img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
+.live{width:310px;height:640px;flex:none;border:0;display:block;background:transparent}
+.chip{font-family:var(--f-mono);font-size:12px;padding:5px 10px;border-radius:99px;background:var(--trap-soft);color:var(--trap);align-self:flex-start;transition:all .3s}
+.chip.none{background:var(--sunk);color:var(--dim)}
+/* trap stand-in screens */
+
+/* CONTEXT loop */
+.ctx{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:40px;align-items:center}
+@media (max-width:760px){.ctx{grid-template-columns:minmax(0,1fr);justify-items:center}}
+.ctx .txt{display:flex;flex-direction:column;gap:16px}
+.meters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-width:300px}
+.meter{background:var(--sunk);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column}
+.meter strong{font-family:var(--f-mono);font-size:22px;font-variant-numeric:tabular-nums}
+.meter span{font-family:var(--f-mono);font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em}
+.meter.pay strong{color:var(--trap)}
+
+.hmw{background:var(--trap);color:#fff;border-radius:18px;padding:28px;display:flex;flex-direction:column;gap:10px}
+.hmw p{font-family:var(--f-display);font-size:clamp(22px,3vw,30px);font-weight:600;line-height:1.2;max-width:none}
+.hmw .mono{opacity:.8}
+
+/* PATTERNS */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.pcard{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;min-height:140px;display:flex;flex-direction:column;gap:8px;overflow:hidden;transition:transform .25s,border-color .25s}
+.pcard:hover,.pcard:focus{transform:translateY(-4px) rotate(-1deg);border-color:var(--trap)}
+.pcard h3{font-size:19px;font-weight:600}
+.pcard .front{font-size:15px;color:var(--dim);line-height:1.45}
+.pcard .back{position:absolute;inset:0;background:var(--trap);color:#fff;padding:16px;font-size:14.5px;line-height:1.45;display:flex;flex-direction:column;gap:6px;translate:0 101%;transition:translate .3s cubic-bezier(.3,1.2,.5,1)}
+.pcard:hover .back,.pcard:focus .back{translate:0 0}
+.pcard .back .mono{font-size:10.5px;opacity:.85}
+.pcard.frame{grid-column:1/-1;background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.pcard.frame .front{color:var(--bg);opacity:.8}
+
+.dump{display:flex;flex-wrap:wrap;gap:10px}
+.dump span{font-family:var(--f-display);font-size:15px;padding:8px 14px;border-radius:99px;background:var(--surface);border:1.5px dashed var(--line);transition:all .4s ease}
+.dump.pared span.cut{opacity:.35;text-decoration:line-through;transform:scale(.92);border-style:solid}
+.dump.pared span.keep{background:var(--honest);color:#fff;border-color:var(--honest);border-style:solid;transform:scale(1.06)}
+.b{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:99px;padding:8px 16px;font-family:var(--f-mono);font-size:12.5px;transition:transform .2s;align-self:flex-start}
+.b:hover{transform:translateY(-2px) scale(1.04)}
+.b.solid{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+.rules{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:720px){.rules{grid-template-columns:minmax(0,1fr)}}
+.rule{border-top:3px solid var(--honest);padding-top:10px;font-family:var(--f-display);font-size:18px;font-weight:600;line-height:1.25}
+
+/* lo-fi fan */
+.lofi{position:relative;height:280px;display:flex;justify-content:center;align-items:center}
+.lofi img{position:absolute;width:min(46%,320px);border-radius:10px;background:#fff;box-shadow:0 10px 28px rgba(0,0,0,.18);rotate:var(--r);translate:var(--x) 0;transition:rotate .45s cubic-bezier(.3,1.4,.5,1),translate .45s cubic-bezier(.3,1.4,.5,1),scale .3s}
+.lofi:hover img{rotate:var(--rh);translate:var(--xh) -10px}
+.lofi img:hover{scale:1.08;z-index:3}
+@media (max-width:640px){.lofi{height:190px}}
+
+/* FIX 1 animation + pins */
+.fix1{display:grid;grid-template-columns:310px minmax(0,1fr);gap:64px;align-items:center}
+@media (max-width:760px){.fix1{grid-template-columns:minmax(0,1fr);justify-items:center}}
+.pins{display:flex;flex-direction:column;gap:10px;width:100%}
+.pin{display:flex;gap:12px;align-items:flex-start;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;transition:transform .2s,border-color .2s}
+.pin:hover,.pin.on{transform:translateX(4px);border-color:var(--honest)}
+.pin em{flex:none;font-style:normal;width:26px;height:26px;border-radius:50%;background:var(--honest);color:#fff;display:grid;place-items:center;font-family:var(--f-mono);font-size:13px}
+.pin div{display:flex;flex-direction:column;font-size:15px;line-height:1.4;font-family:var(--f-body)}
+.pin b{font-family:var(--f-display);font-size:16px}
+
+/* FIX 2 compare */
+.compare{display:flex;justify-content:center;gap:clamp(16px,5vw,64px);flex-wrap:wrap;background:var(--sunk);border-radius:22px;padding:28px 16px}
+.compare figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:14px}
+.badge{font-family:var(--f-display);font-weight:800;font-size:15px;padding:6px 14px;border-radius:99px;display:flex;gap:6px;align-items:center}
+.badge.t{background:var(--trap);color:#fff} .badge.h{background:var(--honest);color:#fff}
+.compare figcaption{font-size:15px;color:var(--dim);text-align:center;max-width:240px;line-height:1.4}
+
+.hl-o{background:linear-gradient(transparent 14%,var(--hi-o) 14%,var(--hi-o) 94%,transparent 94%);padding:0 4px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+/* every temu-orig recording has a ~6px colored capture frame: zoom just past it */
+.ms.img.framed img{transform:scale(1.035)}
+
+/* FIX 3 check-in */
+.ci-row{display:flex;gap:18px;justify-content:center;flex-wrap:wrap}
+.ci-row figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:10px;transition:transform .3s cubic-bezier(.3,1.4,.5,1)}
+.ci-row figure:nth-child(1){rotate:-3deg}.ci-row figure:nth-child(3){rotate:3deg}
+.ci-row figure:hover{transform:translateY(-8px) scale(1.03)}
+.ci-row img{width:200px;border-radius:26px;border:7px solid var(--ink);display:block;background:#fff}
+.ci-row figcaption{font-family:var(--f-mono);font-size:12px;color:var(--dim)}
+.ci-rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (max-width:640px){.ci-rules{grid-template-columns:minmax(0,1fr)}}
+.ci-rules div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:15.5px;line-height:1.4}
+.ci-rules b{font-family:var(--f-display);display:block;font-size:16px}
+.notifs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:640px){.notifs{grid-template-columns:minmax(0,1fr)}}
+.nf{border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.nf.ok{background:var(--honest-soft)} .nf.no{background:var(--trap-soft);cursor:pointer}
+.nf .mono{font-size:11px}
+.nf.ok .mono{color:var(--honest)} .nf.no .mono{color:var(--trap)}
+.ban{background:var(--surface);border-radius:14px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start;font-family:var(--f-display);font-size:14px;line-height:1.35;box-shadow:0 4px 14px rgba(0,0,0,.06)}
+.ban i{width:30px;height:30px;border-radius:8px;background:var(--trap);flex:none}
+.ban b{display:block}
+.nf .why{font-size:14px;color:var(--dim);min-height:2.6em}
+.nf.no .ban{animation:none}
+.nf.no.swap .ban{animation:pop2 .3s ease}
+@keyframes pop2{from{transform:scale(.96);opacity:.4}}
+
+/* FLYING CUBE: the peek phone shrinks into it and it carries the phone to Fix 1 */
+.cube{position:fixed;left:0;top:0;width:64px;height:64px;z-index:60;pointer-events:none;perspective:500px;display:none}
+.cube-in{position:absolute;inset:0;transform-style:preserve-3d}
+.cube .f{position:absolute;inset:0;border-radius:14px;background:var(--trap);box-shadow:inset 0 0 0 2px rgba(255,255,255,.18)}
+.cube .fr{transform:translateZ(32px);display:grid;place-items:center;background:linear-gradient(160deg,#FF8A45,var(--trap))}
+.cube .bk{transform:rotateY(180deg) translateZ(32px)}
+.cube .l{transform:rotateY(-90deg) translateZ(32px);background:#C94A08}
+.cube .r{transform:rotateY(90deg) translateZ(32px);background:#C94A08}
+.cube .t{transform:rotateX(90deg) translateZ(32px);background:#FFA36B}
+.cube .b{transform:rotateX(-90deg) translateZ(32px);background:#B23F05}
+.face{position:relative;width:40px;height:26px}
+.face::before,.face::after{content:"";position:absolute;top:4px;width:7px;height:9px;border-radius:50%;background:#fff}
+.face::before{left:7px}.face::after{right:7px}
+.face b{position:absolute;left:50%;top:13px;width:12px;height:7px;translate:-50% 0;border:2.5px solid #fff;border-top:0;border-radius:0 0 10px 10px}
+.face i{position:absolute;top:13px;width:8px;height:5px;border-radius:50%;background:#FFB3C1;opacity:.9}
+.face i:first-of-type{left:0}.face i:last-of-type{right:0}
+.dig{position:fixed;left:0;top:0;z-index:59;pointer-events:none;font-family:var(--f-mono);font-weight:600;color:var(--trap);will-change:transform,opacity}
+/* DESKTOP */
+.seg{display:inline-flex;background:var(--sunk);border-radius:99px;padding:4px;gap:4px;align-self:flex-start}
+.seg button{border:0;background:none;border-radius:99px;padding:7px 14px;font-family:var(--f-mono);font-size:12px;color:var(--dim)}
+.seg button.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.scrollx{overflow-x:auto;border-radius:16px}
+.browser{min-width:820px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--surface)}
+.browser .chrome{display:flex;gap:6px;align-items:center;padding:9px 12px;background:var(--sunk);font-family:var(--f-mono);font-size:11px;color:var(--dim)}
+.browser .chrome i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.browser .chrome span{margin-left:10px;background:var(--bg);border-radius:6px;padding:2px 10px;flex:1;max-width:340px}
+.browser img{display:block;width:100%}
+.dk-promo{background:#111;color:#fff;font-family:var(--f-display);font-size:12px;display:flex;justify-content:space-around;padding:8px}
+.dk-promo b{color:#9BE58C}
+.dk-head{display:flex;align-items:center;gap:16px;padding:12px 20px;border-bottom:1px solid var(--line);font-family:var(--f-display);font-size:13px}
+.dk-logo{width:40px;height:40px;border-radius:10px;background:var(--trap);color:#fff;display:grid;place-items:center;font-weight:800;font-size:12px;line-height:1}
+.dk-search{flex:1;border:2px solid var(--ink);border-radius:99px;padding:7px 14px;color:var(--dim)}
+.dk-sync{font-family:var(--f-mono);font-size:11px;color:var(--honest);display:flex;gap:6px;align-items:center;white-space:nowrap}
+.dk-sync i{width:8px;height:8px;border-radius:50%;background:var(--honest)}
+.dk-sync.ping i{animation:ping .8s ease}
+@keyframes ping{0%{box-shadow:0 0 0 0 var(--honest)}100%{box-shadow:0 0 0 10px transparent}}
+.dk-main{display:grid;grid-template-columns:1.1fr 1fr;gap:20px 32px;padding:18px 24px 28px}
+.dk-gal{display:grid;grid-template-columns:64px 1fr;gap:10px}
+.dk-gal .th{display:flex;flex-direction:column;gap:8px}
+.dk-gal .th button{aspect-ratio:1;border-radius:8px;overflow:hidden;padding:0;border:0;background:#fff;outline:2px solid transparent;outline-offset:1px;transition:outline-color .2s}
+.dk-gal .th button.on{outline-color:var(--ink)}
+.dk-gal .th img,.dk-gal .big img{width:100%;height:100%;object-fit:cover;display:block}
+.dk-gal .big{aspect-ratio:1;border-radius:12px;overflow:hidden;background:#fff}
+.dk-gal .big img.fit{object-fit:contain}
+.dk-rev{border-top:1px solid var(--line);padding:20px 24px 26px;display:flex;flex-direction:column;gap:14px;font-family:var(--f-display)}
+.dk-rev .hd{display:flex;justify-content:space-between;align-items:baseline}
+.dk-rev .hd b{font-size:16px}.dk-rev .hd span{font-family:var(--f-mono);font-size:12px;color:var(--dim)}
+.dk-rev .pics{display:flex;gap:8px}.dk-rev .pics img{width:72px;height:72px;border-radius:8px;object-fit:cover}
+.dk-rev .list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.dk-rev .r{background:var(--bg);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:6px;font-size:12.5px;line-height:1.5}
+.dk-rev .r small{font-family:var(--f-mono);font-size:11px;color:var(--dim)}
+
+.browser{position:relative;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+/* inside the mock, everything uses the store's own sans, like temu.com */
+.browser *:not(.chrome span){font-family:inherit!important}
+.dk-crumb{grid-column:1/-1;font-size:12px;color:var(--dim);margin-bottom:-6px}
+.dk-sold{display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.dk-stars{color:#FB7701;font-size:13px;letter-spacing:1px}.dk-stars b{font-weight:500;margin-right:4px}
+.dk-price{font-weight:700;line-height:1;color:var(--ink)}
+.dk-price sup,.dk-price small{font-size:15px;vertical-align:baseline}
+.dk-price big{font-size:28px}
+.dk-modal[hidden]{display:none}
+.dk-trust{background:#FFF4EA;border-radius:8px;padding:10px 14px;display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12.5px;white-space:nowrap;font-weight:500;color:#1A7F37}
+.dk-trust span+span{border-left:1px solid #E5D4C4;padding-left:14px}
+.dk-info{display:flex;flex-direction:column;gap:12px}
+.dk-title{font-size:15px;font-weight:400;line-height:1.5;color:var(--ink)}
+.dk-meta{font-family:var(--f-mono);font-size:12px;color:var(--dim)}
+.dk-coup{text-align:left;border:1.5px dashed #FB7701;background:#FFF4EA;color:#C2410C;border-radius:8px;padding:9px 12px;font-weight:600;font-size:13px;display:flex;flex-direction:column;gap:2px}
+.dk-coup small{font-weight:400;font-size:11.5px;color:var(--dim)}
+.dk-btns{display:flex;gap:10px;margin-top:auto}
+.dk-b{flex:1;border-radius:99px;padding:11px;font-weight:600;font-size:15px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink)}
+.dk-b.pri{background:#FB7701;border-color:#FB7701;color:#fff}
+.dk-b[disabled]{opacity:.4;cursor:default}
+.dk-b.ghost{border:0;background:none;text-decoration:underline;color:var(--dim);font-weight:600;font-size:13.5px;padding:6px}
+.dk-modal{position:absolute;inset:0;background:rgba(20,18,15,.45);display:flex;justify-content:center;align-items:flex-start;padding-top:56px;z-index:5;animation:fadein .2s ease}
+@keyframes fadein{from{opacity:0}}
+.dk-sheet{position:relative;width:min(560px,92%);max-height:calc(100% - 80px);overflow:auto;background:var(--surface);border-radius:18px;padding:20px 22px;display:flex;flex-direction:column;gap:12px;font-family:var(--f-display);font-size:13px;box-shadow:0 30px 60px -20px rgba(0,0,0,.4)}
+.dk-mh{display:flex;justify-content:space-between;align-items:flex-start}
+.dk-mh small{display:block;font-family:var(--f-mono);font-size:11px;color:var(--dim)}
+.dk-mh b{font-size:17px}
+.dk-x{border:1px solid var(--line);background:var(--surface);border-radius:50%;width:36px;height:36px;font-size:18px;line-height:1}
+.dk-steps{display:flex;gap:6px}.dk-steps i{flex:1;height:4px;border-radius:3px;background:var(--line)}.dk-steps i.on{background:var(--trap)}
+.dk-card{border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.dk-row{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.dk-row .m{font-family:var(--f-mono);font-size:11.5px;color:var(--dim)}
+.dk-chk{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--surface)}
+.dk-chk.on{border-color:var(--trap);background:var(--trap-soft)}
+.dk-chk i{flex:none;width:20px;height:20px;border-radius:5px;border:2px solid var(--trap);display:grid;place-items:center;color:#fff;font-style:normal;font-size:13px}
+.dk-chk.on i{background:var(--trap)}
+.dk-chk span{display:flex;flex-direction:column;gap:2px}.dk-chk small{font-family:var(--f-mono);font-size:11.5px;color:var(--dim)}
+.dk-adds{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.dk-add{border:1.5px solid var(--line);border-radius:12px;overflow:hidden;padding:0;background:var(--surface);text-align:left;display:flex;flex-direction:column}
+.dk-add.on{border-color:var(--trap);box-shadow:0 0 0 3px var(--trap-soft)}
+.dk-add img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.dk-add span{padding:8px 10px;display:flex;flex-direction:column;gap:2px;font-size:12.5px}.dk-add small{font-family:var(--f-mono);font-size:10.5px;color:var(--dim)}
+.dk-gifts{display:flex;gap:8px}.dk-gifts button{flex:1;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);padding:10px 6px;font-size:12.5px}
+.dk-gifts button.on{border-color:var(--trap);background:var(--trap-soft)}.dk-gifts button[disabled]{opacity:.45;cursor:default}
+.dk-bar{height:7px;border-radius:7px;background:var(--line);overflow:hidden}.dk-bar i{display:block;height:100%;background:var(--honest);transition:width .25s}
+.dk-tot{display:flex;justify-content:space-between;font-weight:800;font-size:17px;border-top:1px solid var(--line);padding-top:10px}
+.dk-radio{display:flex;gap:10px;align-items:center;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface);width:100%;text-align:left}
+.dk-radio.on{border-color:var(--ink)}.dk-radio i{width:16px;height:16px;border-radius:50%;border:2px solid var(--dim)}.dk-radio.on i{border:5px solid var(--ink)}
+.dk-confirm{position:absolute;inset:0;background:rgba(255,255,255,.72);backdrop-filter:blur(2px);display:grid;place-items:center;border-radius:18px;animation:fadein .2s ease}
+.dk-confirm div{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;width:min(360px,90%);display:flex;flex-direction:column;gap:10px;text-align:center;box-shadow:0 20px 40px -20px rgba(0,0,0,.35)}
+.dk-confirm b{font-size:19px}.dk-confirm .two{display:flex;gap:8px}
+.dk-confirm .two button{flex:1;border:1.5px solid var(--ink);background:var(--surface);color:var(--ink);border-radius:99px;padding:10px;font-weight:700;font-family:var(--f-display)}
+/* IMPACT etc */
+.vs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:640px){.vs{grid-template-columns:minmax(0,1fr)}}
+.vs div{border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:6px;transition:transform .2s}
+.vs div:hover{transform:translateY(-3px)}
+.vs .a{background:var(--trap-soft)} .vs .z{background:var(--honest-soft)}
+.vs strong{font-family:var(--f-display);font-size:48px;font-weight:800;line-height:1}
+.vs .a strong{color:var(--trap)} .vs .z strong{color:var(--honest)}
+.vs span{font-family:var(--f-mono);font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+.vs p{font-size:16px}
+.ledger{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:640px){.ledger{grid-template-columns:minmax(0,1fr)}}
+.ledger div{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:8px;font-size:16px}
+.ledger ul{margin:0;padding-left:20px}
+.refl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.refl{grid-template-columns:minmax(0,1fr)}}
+.refl div{background:var(--sunk);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:6px;font-size:16px;transition:transform .2s,background .2s}
+.refl div:hover{transform:translateY(-3px);background:var(--surface)}
+.refl b{font-family:var(--f-display);font-size:18px;line-height:1.2}
+footer{border-top:1px solid var(--line);padding-top:24px;font-family:var(--f-mono);font-size:12px;color:var(--dim)}
+
+/* PEEK PHONE: half visible on the right edge, slides in on hover */
+/* closed: only the binder clip shows at the edge. open: the phone slides out holding the clip */
+.peek{position:fixed;right:0;top:50%;z-index:50;display:flex;align-items:center;translate:calc(100% - 100px) -50%;transition:translate .55s cubic-bezier(.3,1.25,.5,1)}
+.peek.open{translate:-24px -50%}
+.peek .tab{position:relative;z-index:2;flex:none;width:110px;height:110px;margin-right:-15px;padding:0;border:0;background:none;cursor:pointer}
+.peek .tab img{position:absolute;left:50%;top:50%;width:110px;height:110px;translate:-50% -50%;rotate:-90deg;filter:drop-shadow(-3px 4px 6px rgba(20,40,70,.25));transition:rotate .3s cubic-bezier(.3,1.6,.5,1)}
+.peek .tab:hover img,.peek .tab:focus-visible img{rotate:-84deg}
+.peek:not(.open) .tab img{animation:nudge 4s ease-in-out 2s infinite}
+@keyframes nudge{0%,88%,100%{translate:-50% -50%}92%{translate:-62% -50%}96%{translate:-46% -50%}}
+.peek:not(.open) iframe{opacity:0;visibility:hidden;transition:opacity .2s,visibility 0s .2s}
+.peek iframe{transition:opacity .25s .1s;width:340px;height:min(720px,calc(100vh - 32px));border:0;display:block;filter:drop-shadow(-10px 20px 30px rgba(0,0,0,.22))}
+@media (max-width:760px){.peek{translate:calc(100% - 80px) -50%;scale:.85;transform-origin:right center}.peek.open{translate:-8px -50%}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
 </head>
-
 <body>
+<!-- My hi-fi prototype, unchanged, peeking from the right edge. Scroll-synced like on my site. -->
+<aside class="peek" id="peek" aria-label="Clickable prototype">
+  <button class="tab" id="peekTab" aria-expanded="false" aria-controls="proto" aria-label="Try my prototype">
+    <img src="images/temu/clip.png" alt="">
+  </button>
+  <iframe src="temu-prototype.html?embed" id="proto" title="Clickable prototype of the redesigned Temu checkout"></iframe>
+</aside>
 
-    <!-- Progress bar -->
-    <div class="reading-progress" id="progress"></div>
-
-    <!-- Sidebar -->
-    <nav class="sidebar">
-        <a href="index.html" class="sidebar-logo">玥妍</a>
-        <div class="sidebar-nav">
-            <a href="index.html#projects" class="nav-item">Projects</a>
-            <a href="index.html#playground" class="nav-item">Playground</a>
-            <a href="index.html#connect" class="nav-item">Connect</a>
-        </div>
+<div class="cube" id="cube" aria-hidden="true"><div class="cube-in" id="cubeIn"><i class="f fr"><span class="face"><i></i><b></b><i></i></span></i><i class="f bk"></i><i class="f l"></i><i class="f r"></i><i class="f t"></i><i class="f b"></i></div></div>
+<div class="shell">
+  <aside class="toc">
+    <a href="index.html" class="meta" style="color:var(--ink);text-decoration:none">← Amanda</a>
+    <span class="meta">CONTENTS</span>
+    <nav id="toc">
+      <a href="#context">Context</a>
+      <a href="#patterns">The patterns</a>
+      <a href="#pare">Pare it down</a>
+      <a href="#fix1">Fix 1 · Obstruction</a>
+      <a href="#fix2">Fix 2 · Sneaking</a>
+      <a href="#fix3">Fix 3 · Check-in</a>
+      <a href="#desktop">Desktop</a>
+      <a href="#business">Trade-offs</a>
+      <a href="#reflection">Reflection</a>
     </nav>
+  </aside>
 
-    <!-- Back button -->
-    <a href="index.html" class="back-btn">
-        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> Back
-    </a>
-
-    <!-- Main content -->
-    <div class="main">
-
-        <!-- ── HERO ── -->
-        <section class="project-hero">
-            <p class="project-tag">UX Research · Ethical Design · Prototype</p>
-            <h1 class="project-title">
-                Ethical Redesign<br>
-                of <em>Temu</em>
-            </h1>
-            <div class="project-meta">
-                <div class="meta-item">
-                    <span class="meta-label">Course</span>
-                    <span class="meta-value">Dark Patterns</span>
-                </div>
-                <div class="meta-item">
-                    <span class="meta-label">Date</span>
-                    <span class="meta-value">September 2026</span>
-                </div>
-                <div class="meta-item">
-                    <span class="meta-label">Deliverable</span>
-                    <span class="meta-value">Clickable prototype</span>
-                </div>
-                <div class="meta-item">
-                    <span class="meta-label">Role</span>
-                    <span class="meta-value">Research · UX · Prototype</span>
-                </div>
-            </div>
-            <div class="link-row">
-                <a href="https://www.figma.com/proto/pZAnarTcl8uMECRHm96UmL/Temu-%E5%BC%B9%E7%AA%97%E9%87%8D%E8%AE%BE%E8%AE%A1-%C2%B7-Case-Study?node-id=16-3&amp;p=f&amp;t=0Vs0neroPpKBcstY-0&amp;scaling=min-zoom&amp;content-scaling=fixed&amp;page-id=16%3A2&amp;starting-point-node-id=16%3A3" class="ext-link" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Open in Figma</a>
-                <a href="temu-prototype.html" class="ext-link" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Prototype full screen</a>
-                <a href="temu-full.html" class="ext-link"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Full case study 🔒</a>
-            </div>
-        </section>
-
-        <div class="divider"></div>
-
-        <div class="split">
-            <div class="split-content">
-
-                <section class="screen-sec" data-screen="product">
-                    <p class="brief-block-label">The problem</p>
-                    <h2 class="challenge-text" style="margin-bottom:20px;">Keep the promotion. Remove the tricks around it.</h2>
-                    <p class="brief-block-text">Temu's coupon event turned a $51 bean bag chair into a $151 checkout, across 16 screens of prize wheels, fake rewards and blocked exits. I kept the real offer (spend $100, get $20 off + 1 gift) and rebuilt everything around it on three principles:</p>
-                    <ul class="col-list" style="margin-top:20px;">
-                        <li><b>Item first</b>: the user can always buy what they came for</li>
-                        <li><b>Rules visible</b>: real prices, running total, no fine print</li>
-                        <li><b>Exit everywhere</b>: same spot, every screen, no guilt</li>
-                    </ul>
-                    <p class="scroll-cue">Scroll — the phone on the right follows along →</p>
-                </section>
-
-                <section class="screen-sec" data-screen="product">
-                    <p class="sec-k">Entry</p>
-                    <h2 class="section-heading">Product page: buy what you came for</h2>
-                    <ul class="col-list">
-                        <li>The offer is a quiet, optional note. Tapping it opens the coupon</li>
-                        <li>After "Add to cart", the coupon appears once</li>
-                        <li>"Buy now" goes straight to checkout, with no event screens in between</li>
-                    </ul>
-                </section>
-
-                <section class="screen-sec" data-screen="popup">
-                    <p class="sec-k">Pop-up</p>
-                    <h2 class="section-heading">Fix the pop-up, don't kill it</h2>
-                    <ul class="col-list">
-                        <li>Shows once, after add to cart, never when the user tries to leave</li>
-                        <li>Nothing preselected; the ticket is selected only when tapped</li>
-                        <li>"No time limit · optional" replaces the countdown</li>
-                        <li>"No thanks, just my item" carries equal weight to "Claim"</li>
-                        <li>×, tap outside or Esc closes it, and it stays closed</li>
-                    </ul>
-                    <p class="sec-why">The business still gets exposure; the user keeps their autonomy.</p>
-                </section>
-
-                <section class="screen-sec" data-screen="popupSel">
-                    <p class="sec-k">Coupon selected</p>
-                    <h2 class="section-heading">Choose first, then one next step</h2>
-                    <ul class="col-list">
-                        <li>Tapping the ticket selects it: the title pops to “Coupon added!” and confetti bursts, then settles</li>
-                        <li>The two buttons converge into a single “Save money”, and the sheet keeps its height</li>
-                        <li>Tap the ticket again to unselect; × and the scrim still close it anytime</li>
-                    </ul>
-                    <p class="sec-why">No big button pushing the user before they've chosen.</p>
-                </section>
-                <section class="screen-sec" data-screen="pick">
-                    <p class="sec-k">Step 1 of 2</p>
-                    <h2 class="section-heading">Rules first, then pick items</h2>
-                    <ul class="col-list">
-                        <li>Full rules at the top, at body-text size; the 20-day check-in is off by default</li>
-                        <li>On scroll, rules collapse to one line you can tap to reopen</li>
-                        <li>Real prices, ratings and reviews on every card</li>
-                        <li>Pinned footer: "You pay so far" incl. tax, distance to $100, and a skip button</li>
-                    </ul>
-                </section>
-
-                <section class="screen-sec" data-screen="detail">
-                    <p class="sec-k">Details</p>
-                    <h2 class="section-heading">Every item can be inspected</h2>
-                    <ul class="col-list">
-                        <li>Real price, reviews, delivery dates and return policy</li>
-                        <li>One button to select or remove, then back to the same spot in the feed</li>
-                    </ul>
-                </section>
-
-                <section class="screen-sec" data-screen="review">
-                    <p class="sec-k">Step 2 of 2</p>
-                    <h2 class="section-heading">What you pay, what you get</h2>
-                    <ul class="col-list">
-                        <li>Split into: you pay / your gift / you receive / not included</li>
-                        <li>The gift unlocks at $100 and shows its real value</li>
-                        <li>Short of $100? It says so plainly; the coupon isn't silently dropped</li>
-                        <li>No preselected payment method</li>
-                    </ul>
-                </section>
-
-                <section class="screen-sec" data-screen="done">
-                    <p class="sec-k">Done</p>
-                    <h2 class="section-heading">An honest confirmation</h2>
-                    <ul class="col-list">
-                        <li>Delivery date for every item and gift</li>
-                        <li>A single "Keep shopping" button, with no "reward expired" bait</li>
-                        <li>If you joined check-in, it tells you where to leave</li>
-                    </ul>
-                    <p class="sec-why">From my own experience: receiving things I didn't remember buying, and that were hard to return.</p>
-                </section>
-
-                <section class="screen-sec" data-screen="checkout">
-                    <p class="sec-k">Branch</p>
-                    <h2 class="section-heading">Leaving is one tap</h2>
-                    <ul class="col-list">
-                        <li>× on any step lands here, with no retention pop-up</li>
-                        <li>One neutral line of copy; the cart is kept</li>
-                        <li>The offer stays available as step 2 of checkout</li>
-                    </ul>
-                </section>
-
-                <section class="screen-sec" data-screen="c1">
-                    <p class="sec-k">Optional · 20-day check-in</p>
-                    <h2 class="section-heading">Explain it before anyone joins</h2>
-                    <ul class="col-list">
-                        <li>Opened from a toggle in Step 1, on its own page, never switched on silently</li>
-                        <li>20 days, 4 coupons, $17 in total, readable at a glance</li>
-                        <li>Missing a day pauses progress; it never resets</li>
-                        <li>Fine print in plain words, and “Not now” is the default</li>
-                    </ul>
-                    <p class="sec-why">The original hid a pre-checked check-in task inside the event.</p>
-                </section>
-
-                <section class="screen-sec" data-screen="c2">
-                    <p class="sec-k">Day 1</p>
-                    <h2 class="section-heading">Feedback, and a way out</h2>
-                    <ul class="col-list">
-                        <li>A clear check and progress bar: done for today, and when the next coupon comes</li>
-                        <li>Daily reminder is off by default</li>
-                        <li>“Leave check-in” is one tap, with no retention screen; earned coupons stay</li>
-                    </ul>
-                    <p class="sec-why">No “just X more days for the grand prize” pressure.</p>
-                </section>
-
-                <section class="screen-sec" data-screen="r1">
-                    <p class="sec-k">Reminder</p>
-                    <h2 class="section-heading">Ask in context, before iOS asks</h2>
-                    <ul class="col-list">
-                        <li>The app explains first: one notification a day, only during check-in, no ads</li>
-                        <li>The user picks the time and sees a preview of the exact notification</li>
-                        <li>Only after “Turn on reminder” does the one-shot iOS permission prompt appear</li>
-                    </ul>
-                </section>
-
-                <section class="screen-sec" data-screen="r4">
-                    <p class="sec-k">7:00 pm</p>
-                    <h2 class="section-heading">An honest notification</h2>
-                    <ul class="col-list">
-                        <li>“Your $3 coupon is ready”: the real benefit is the title</li>
-                        <li>No bait like a “$100” teaser for a $3 coupon, no fake urgency</li>
-                        <li>Tap it to open the app and complete day 7</li>
-                    </ul>
-                </section>
-
-                <section class="screen-sec" data-screen="r5">
-                    <p class="sec-k">Day 7</p>
-                    <h2 class="section-heading">The coupon actually lands</h2>
-                    <ul class="col-list">
-                        <li>Days 1–7 turn green; days 3 and 7 show the coupons earned</li>
-                        <li>“Your coupons” lists both, with their conditions</li>
-                    </ul>
-                </section>
-                <section class="screen-sec" data-screen="review">
-                    <p class="sec-k">Outcome</p>
-                    <h2 class="section-heading">Same offer, honest flow</h2>
-                    <div class="stats">
-                        <div><b>2 steps</b><span>down from 16 screens</span></div>
-                        <div><b>$93.76</b><span>total known from screen one</span></div>
-                        <div><b>0</b><span>exit interceptions</span></div>
-                    </div>
-                    <p class="brief-block-text" style="margin-top:24px;">"I didn't remove the promotion. I removed the tricks around it, and moved the offer to checkout, where purchase intent is highest." Success would be measured by completed orders, refund rate and 30-day repeat purchases, not order value alone.</p>
-                </section>
-
-            </div>
-
-            <aside class="phone-dock" aria-label="Clickable prototype">
-                <iframe src="temu-prototype.html?embed" title="Clickable prototype of the redesigned Temu checkout" id="proto"></iframe>
-            </aside>
+  <main>
+    <section class="hero" id="top">
+      <div class="stage" aria-label="Fan of coupon screens. Hover to spread them.">
+        <div class="stage-title">I came for<br>one thing.<small>Temu · coupon pop-up event</small></div>
+        <div class="counter"><span>RECEIPT</span><strong>$151.34</strong><span>16 screens · 15 min</span></div>
+        <div class="fan">
+          <div class="scr" style="--r:-34deg;--x:-40px;--rh:-46deg;--xh:-120px"><span class="pill">FOR YOU</span><b>$20 coupon unlocked</b><div class="btn">Claim now</div></div>
+          <div class="scr" style="--r:-20deg;--x:-22px;--rh:-28deg;--xh:-70px"><span class="pill">SPIN</span><b>Your prize:</b><div class="big">$1,000+</div><div class="btn">Collect</div></div>
+          <div class="scr" style="--r:-6deg;--x:-6px;--rh:-10deg;--xh:-22px"><span class="pill">04:59</span><b>Upgrade your reward before time runs out</b><div class="btn">Upgrade</div></div>
+          <div class="scr" style="--r:8deg;--x:8px;--rh:10deg;--xh:24px"><span class="pill">FREE</span><b>Pick 5 free gifts</b><div class="tiny">price not shown</div><div class="btn">Pick gifts</div></div>
+          <div class="scr" style="--r:22deg;--x:24px;--rh:28deg;--xh:72px"><span class="pill">DAY 1/20</span><b>Check in 20 days to unlock</b><div class="tiny">*min. spend applies</div><div class="btn">Check in</div></div>
+          <div class="scr" style="--r:36deg;--x:40px;--rh:46deg;--xh:122px"><span class="pill">WAIT!</span><b>Leaving? Your reward will expire.</b><div class="btn">Stay</div></div>
         </div>
+      </div>
+      <div class="tags"><span class="tag">Class project</span><span class="tag">Dark patterns</span><span class="tag">UX research</span><span class="tag">Ethical redesign</span></div>
+      <h1><span class="star">✳</span>The Gift Card Trap: untangling Temu's coupon maze</h1>
+      <p class="lead">A $20 coupon turned a $51.14 chair into a $151.34 checkout. I found seven dark patterns and rebuilt the flow as three honest steps.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="b" href="https://www.figma.com/proto/pZAnarTcl8uMECRHm96UmL/Temu-%E5%BC%B9%E7%AA%97%E9%87%8D%E8%AE%BE%E8%AE%A1-%C2%B7-Case-Study?node-id=16-3&amp;p=f&amp;t=0Vs0neroPpKBcstY-0&amp;scaling=min-zoom&amp;content-scaling=fixed&amp;page-id=16%3A2&amp;starting-point-node-id=16%3A3" target="_blank" rel="noopener" style="text-decoration:none">Open in Figma ↗</a><a class="b" href="temu-prototype.html" target="_blank" rel="noopener" style="text-decoration:none">Prototype full screen ↗</a></div>
+      <div class="info">
+        <div><span class="mono">Role</span>Solo · researcher &amp; designer</div>
+        <div><span class="mono">Context</span>Dark Patterns course, Week 3 project</div>
+        <div><span class="mono">Timeline</span>September 2026<br>(1 week)</div>
+        <div><span class="mono">Tools</span>Screen recording, flow mapping, paper, Figma</div>
+      </div>
+      <div class="stats">
+        <div class="stat t"><strong>21</strong><span>screens before</span></div>
+        <div class="stat h"><strong>3</strong><span>steps after</span></div>
+        <div class="stat t"><strong>7</strong><span>dark patterns</span></div>
+        <div class="stat h"><strong>$93.76</strong><span>shown from step 1</span></div>
+      </div>
+    </section>
 
-        <!-- ── LOCKED FULL CASE STUDY ── -->
-        <a href="temu-full.html" class="locked-card reveal">
-            <span class="locked-icon">🔒</span>
-            <span>
-                <b>Full case study</b>
-                <span>Research, the original 16-screen flow, 7 dark patterns, wireframes and process. Password protected; ask me for access.</span>
-            </span>
-            <span class="card-arrow">Unlock →</span>
-        </a>
+    <section id="context" class="wide" data-screen="product">
+      <div class="ctx">
+        <div class="txt">
+          <span class="eyebrow">Context</span>
+          <h2>A class project that started with one bean bag.</h2>
+          <p>Say “dark pattern” to me and the first app I think of is Temu.</p>
+          <p>This was Project 1 for <span class="emph">Dark Patterns</span>, a class where we spent weeks learning to spot manipulative design, and, honestly, how to use it. The brief: take a real product and redesign it the ethical way. So I opened Temu.</p>
+          <p>I only wanted one thing: a <span class="price">$51.14</span> bean bag chair. Then a $20 coupon popped up, and I tapped it out of curiosity. A prize wheel. A “$1,000+” reward. A countdown to upgrade it. Five free gifts with no prices. A 20-day check-in. Three “Wait, don’t leave!” screens.</p>
+          <p>Fifteen minutes later, checkout said <span class="price">$151.34</span>, about three times what I came to spend. I still wasn’t sure what was in my cart.</p>
+          <p><span class="emph">No single screen lied much. Together, they made leaving hard.</span></p>
+          <div class="meters">
+            <div class="meter"><span>Screen</span><strong id="mScr">1/21</strong></div>
+            <div class="meter pay"><span>You pay</span><strong id="mPay">$ ??</strong></div>
+          </div>
+          <span class="chip none" id="mPat">The chair I wanted</span>
+        </div>
+        <div class="phone shot" id="loopTrap"></div>
+      </div>
+    </section>
 
-        <!-- ── SEE NEXT ── -->
-        <section class="see-next-section reveal" style="padding-bottom:80px;">
-            <p class="see-next-label">See next</p>
-            <div class="next-cards">
-                <a href="microstep.html" class="next-card">
-                    <div class="next-card-img ph-next-1"></div>
-                    <div class="next-card-body">
-                        <p class="next-card-direction">Next →</p>
-                        <h3 class="next-card-title">Microstep — Blueprint for reaching your goal</h3>
-                        <p class="next-card-desc">AI-adaptive goal completion app</p>
-                    </div>
-                </a>
-                <a href="olive.html" class="next-card">
-                    <div class="next-card-img ph-next-2"></div>
-                    <div class="next-card-body">
-                        <p class="next-card-direction">Next →</p>
-                        <h3 class="next-card-title">Olive — Brand &amp; App Redesign</h3>
-                        <p class="next-card-desc">Food scanner app redesign</p>
-                    </div>
-                </a>
+    <section>
+      <div class="hmw">
+        <span class="mono">Problem statement</span>
+        <p>How might we keep the coupon promotion while letting shoppers see the price and leave anytime?</p>
+      </div>
+    </section>
+
+    <section id="patterns" class="wide" data-screen="popupSel">
+      <span class="eyebrow">The patterns</span>
+      <h2>Seven tricks, one frame.</h2>
+      <p>Hover a card to see where it hides.</p>
+      <div class="pgrid">
+        <div class="pcard frame" tabindex="0"><span class="mono" style="opacity:.6">The frame · Obstruction</span>
+          <h3>Each screen misleads a little. Stacked, leaving keeps getting harder.</h3>
+          <div class="back"><span class="mono">Where · Fig. 12–13, 19–21</span>The reward turns into a 20-day check-in, and every exit is intercepted three times.</div></div>
+        <div class="pcard" tabindex="0"><h3>Sneaking</h3><p class="front">Key rules appear only after you’ve invested time.</p>
+          <div class="back"><span class="mono">Fig. 6, 9, 11, 15–17</span>Faded small print, gifts with no price, an unfilled “$0,000+” template.</div></div>
+        <div class="pcard" tabindex="0"><h3>Interface interference</h3><p class="front">Bright buttons forward, grey links out.</p>
+          <div class="back"><span class="mono">Why it works</span>The path Temu wants is the only one that looks clickable.</div></div>
+        <div class="pcard" tabindex="0"><h3>False urgency</h3><p class="front">Countdowns on rewards that never expire.</p>
+          <div class="back"><span class="mono">Why it works</span>A 04:59 timer leaves no time to read the rules.</div></div>
+        <div class="pcard" tabindex="0"><h3>Fake social proof</h3><p class="front">“Others are claiming right now.”</p>
+          <div class="back"><span class="mono">Why it works</span>Unverifiable activity makes the offer feel scarce.</div></div>
+        <div class="pcard" tabindex="0"><h3>Preselection</h3><p class="front">Gifts come pre-picked.</p>
+          <div class="back"><span class="mono">Why it works</span>Removing items takes effort, so most people keep them.</div></div>
+        <div class="pcard" tabindex="0"><h3>Confirmshaming</h3><p class="front">“Give up $1,000+?”</p>
+          <div class="back"><span class="mono">Where · exit attempts</span>Three interruptions in a row, each framing leaving as a loss.</div></div>
+        <div class="pcard" tabindex="0"><h3>Fake reference prices</h3><p class="front">Struck-through prices that never existed.</p>
+          <div class="back"><span class="mono">Fig. 11, 16</span>Inflated “originals” make every add-on look like a steal.</div></div>
+      </div>
+    </section>
+
+    <section id="pare">
+      <span class="eyebrow">Pare it down</span>
+      <h2>Strip the goofy stuff. What’s left?</h2>
+      <div class="dump" id="dump">
+        <span class="cut">Prize wheel</span><span class="cut">“$1,000+” reward</span><span class="cut">04:59 timer</span><span class="cut">“Others are claiming”</span>
+        <span class="cut">Fake $0 prices</span><span class="cut">20-day check-in</span><span class="cut">3 exit blockers</span>
+        <span class="keep">Spend more → get a discount</span><span class="keep">A free gift</span>
+      </div>
+      <button class="b solid" id="pareBtn">Pare it down →</button>
+      <div class="rules">
+        <div class="rule">See the price before you commit.</div>
+        <div class="rule">Leaving costs no more than joining.</div>
+        <div class="rule">Defaults don’t decide for you.</div>
+      </div>
+    </section>
+
+    <section>
+      <span class="eyebrow ok">Paper first</span>
+      <div class="lofi" aria-label="Paper prototypes. Hover to spread them.">
+        <img src="images/temu/wf-sneaking.jpg" alt="Sketch: coupon rules, add items, checkout" style="--r:-9deg;--x:-34%;--rh:-14deg;--xh:-62%">
+        <img src="images/temu/wf-confirm.jpg" alt="Sketch: order confirmation" style="--r:6deg;--x:32%;--rh:10deg;--xh:66%;width:min(22%,150px)">
+        <img src="images/temu/wf-obstruction.jpg" alt="Sketch: product page, checkout stepper, step 2 of 3" style="--r:-1deg;--x:0;--rh:0deg;--xh:0">
+      </div>
+    </section>
+
+    <section id="fix1" class="wide">
+      <span class="eyebrow ok">Fix 1 · Obstruction</span>
+      <h2>The item comes first.</h2>
+      <p>The coupon is an optional note. Leaving is always one tap. This phone is my live prototype: it tours itself, and you can tap it.</p>
+      <div class="fix1">
+        <iframe class="live" id="tour" src="temu-prototype.html?embed" title="Self-playing tour of my prototype"></iframe>
+        <div class="pins" id="pins">
+          <button class="pin" data-pin="product"><em>1</em><div><b>The item comes first</b>The coupon is an optional note on the product page.</div></button>
+          <button class="pin" data-pin="popup"><em>2</em><div><b>One honest pop-up</b>Shows once, after add to cart. Nothing preselected.</div></button>
+          <button class="pin" data-pin="pick"><em>3</em><div><b>Rules up top, real items</b>Full rules, real prices, ratings and reviews.</div></button>
+          <button class="pin" data-pin="checkout"><em>4</em><div><b>A way out on every screen</b>× or “just my item” lands on checkout. No “reward expired.”</div></button>
+          <button class="pin" data-pin="pick-checkin"><em>5</em><div><b>20-day check-in, opt-in</b>Off by default. Tap the toggle to see the rules first.</div></button>
+        </div>
+      </div>
+    </section>
+
+    <section id="fix2" class="wide">
+      <span class="eyebrow ok">Fix 2 · Sneaking</span>
+      <h2>Price visible from step 1.</h2>
+      <p>Same offer. The difference is when you see the price.</p>
+      <div class="compare">
+        <figure><span class="badge t">✕ Hidden till the end</span><div class="phone shot" id="loopBefore"></div><figcaption>Temu today: rules in small print, total revealed at checkout.</figcaption></figure>
+        <figure><span class="badge h">✓ Upfront</span><div class="phone shot" id="loopAfter"></div><figcaption>My prototype: rules first, running total, honest confirmation.</figcaption></figure>
+      </div>
+    </section>
+
+    <section id="fix3" class="wide">
+      <span class="eyebrow ok">Fix 3 · The 20-day check-in</span>
+      <h2>Keep the check-in. Make it a choice.</h2>
+      <p>Daily check-ins are a fair way to bring people back. The trap was hiding one, pre-checked, inside the coupon. So I kept it, off by default and separate from the order.</p>
+      <div class="ci-row">
+        <figure><img src="images/temu/temu-checkin-1.webp" alt="Check-in intro: 20 days, 4 coupons, $17 total, rules in plain words"><figcaption>1 · Explain first</figcaption></figure>
+        <figure><img src="images/temu/temu-checkin-2.webp" alt="Day 1 checked in, with progress and a Leave check-in button"><figcaption>2 · Feedback + a way out</figcaption></figure>
+        <figure><img src="images/temu/temu-remind-3.webp" alt="Home screen with the 7 pm reminder banner"><figcaption>3 · A reminder you asked for</figcaption></figure>
+      </div>
+      <div class="ci-rules">
+        <div><b>Off by default</b>Its own page, never switched on silently.</div>
+        <div><b>20 days · 4 coupons · $17</b>The whole deal, readable at a glance.</div>
+        <div><b>Miss a day, it pauses</b>Progress never resets. The original wiped it.</div>
+        <div><b>Leave in one tap</b>No retention screen. Coupons you earned stay yours.</div>
+      </div>
+      <h3 style="font-size:22px;margin-top:6px">Ask for notifications in context, then keep the promise.</h3>
+      <p>iOS asks for permission only once, so an in-app sheet explains first: one a day, your chosen time, no ads.</p>
+      <div class="notifs">
+        <div class="nf ok"><span class="mono">✓ We send</span>
+          <div class="ban"><i></i><span><b>Your $3 coupon is ready</b>Check in for day 7 to add it to your account. Valid for 30 days.</span></div>
+          <p class="why">The benefit is the title. Action and expiry in the body.</p></div>
+        <div class="nf no" id="nfNo" tabindex="0" role="button" aria-label="Show the next example we don't send"><span class="mono">✕ We don’t send · tap for next</span>
+          <div class="ban" id="nfBan"></div>
+          <p class="why" id="nfWhy"></p></div>
+      </div>
+      <p class="cap">References: Apple HIG “Asking permission”, App Store Guideline 4.5.4, Duolingo and Starbucks notification patterns.</p>
+    </section>
+
+    <section id="desktop" class="wide">
+      <span class="eyebrow ok">New · Desktop</span>
+      <h2>Same cart on desktop.</h2>
+      <p>A first concept. Same pop-up checkout as Temu’s website, made honest: the real price, an optional coupon, and one calm “leave?” check. Try Buy now.</p>
+      <div class="seg" role="tablist"><button class="on" data-dk="after" role="tab">After · concept</button><button data-dk="before" role="tab">Before · Temu today</button></div>
+      <div class="scrollx">
+        <div class="browser" id="dkAfter">
+          <div class="chrome"><i></i><i></i><i></i><span>temu.com/bean-bag-chair</span></div>
+          <div class="dk-promo"><span><b>Free shipping</b> on this item</span><span>Price adjustment within 30 days</span><span>Coupon progress syncs with the app</span></div>
+          <div class="dk-head"><span class="dk-logo">TE<br>MU</span><span class="dk-search">bean bag chair</span><span class="dk-sync" id="dkSync"><i></i>Synced with app</span><span>Orders</span><span>Cart</span></div>
+          <div class="dk-main">
+            <div class="dk-crumb">Home › Furniture › Living Room Furniture › Jumbo Plush Bean Bag Chair…</div>
+            <div class="dk-gal"><div class="th" id="dkThumbs"></div><div class="big"><img id="dkBig" src="assets/temu-proto/photo-room-1.jpg" alt="Bean bag chair in a living room"></div></div>
+            <div class="dk-info">
+              <h3 class="dk-title">Jumbo Plush Bean Bag Chair for Adults with Head and Back Support, Extra Large Durable Tear-Resistant Fabric</h3>
+              <div class="dk-sold"><span>Sold by FurniCraft Home ›</span><span class="dk-stars"><b>4.6</b>★★★★★</span></div>
+              <div class="dk-price"><small>$</small><big>54</big><small>.76</small></div>
+              <div class="dk-trust"><span>✓ Free shipping</span><span>✓ Free returns within 90 days</span></div>
+              <button class="dk-coup" data-a="openCoupon">Spend $100, get $20 off + 1 gift.<small>Optional · you can also add it at checkout ›</small></button>
+              <div class="dk-btns"><button class="dk-b" data-a="cart" id="dkCart">Add to cart</button><button class="dk-b pri" data-a="open">Buy now</button></div>
             </div>
-        </section>
+          </div>
+          <div class="dk-rev"><div class="hd"><b>Reviews</b><span>★ 4.6</span></div><div class="pics" id="dkPics"></div><div class="list" id="dkRevs"></div></div>
+          <div class="dk-modal" id="dkModal" hidden><div class="dk-sheet" id="dkSheet" role="dialog" aria-modal="true" aria-label="Checkout"></div></div>
+        </div>
+        <div class="browser" id="dkBefore" hidden>
+          <div class="chrome"><i></i><i></i><i></i><span>temu.com</span></div>
+          <img src="images/temu/before-desktop.webp" alt="Temu desktop today: a $200 coupon bundle pop-up covers the page, with Add to get $200 buttons under every product">
+        </div>
+      </div>
+    </section>
 
-    </div>
+    <section id="impact">
+      <div class="vs">
+        <div class="a"><span>Before</span><strong>$151.34</strong><p>First shown on screen 16.</p></div>
+        <div class="z"><span>After</span><strong>$93.76</strong><p>Visible from step 1, updated live.</p></div>
+      </div>
+    </section>
 
-    <!-- /main -->
+    <section id="business">
+      <span class="eyebrow">Trade-offs</span>
+      <h2>Honesty costs a little. <span class="hl-o">Trust pays it back.</span></h2>
+      <div class="ledger">
+        <div><b>Short term</b><ul><li>Fewer impulse add-ons.</li><li>Some refunds once people see what they bought.</li></ul></div>
+        <div><b>Long term</b><ul><li>Shoppers return on purpose.</li><li>Fewer surprise packages and returns.</li><li>Less risk under FTC click-to-cancel and the EU DSA.</li></ul></div>
+      </div>
+    </section>
 
-    <!-- ── VIBE FOOTER ── -->
-    <div class="main" style="padding:0;max-width:100%;margin-left:var(--sidebar-w);">
-        <footer class="vibe-footer reveal">
-            <p class="vibe-pretext">About the designer</p>
-            <h2 class="vibe-headline">
-                Fashion-forward,<br>
-                <em>empathy-driven</em> —<br> UX that feels alive.
-            </h2>
-            <div class="vibe-tags">
-                <span class="vibe-tag">Fashion + Design</span>
-                <span class="vibe-tag">Empathy Coder</span>
-                <span class="vibe-tag">Fast Learner</span>
-                <span class="vibe-tag">Micro-interactions</span>
-                <span class="vibe-tag">Brand Systems</span>
-                <span class="vibe-tag">Motion & Prototyping</span>
-                <span class="vibe-tag">Human Psychology</span>
-                <span class="vibe-tag">Visual Storytelling</span>
-            </div>
-            <div class="vibe-bottom">
-                <span class="vibe-copy">© Amanda · 玥妍 · 2025</span>
-                <div class="vibe-links">
-                    <a href="#" class="vibe-link">Resume</a>
-                    <a href="#" class="vibe-link">LinkedIn</a>
-                    <a href="#" class="vibe-link">Instagram</a>
-                    <a href="index.html" class="vibe-link">↑ Back to top</a>
-                </div>
-            </div>
-        </footer>
-    </div>
+    <section id="reflection" class="wide">
+      <span class="eyebrow">Reflection</span>
+      <h2>Seven patterns, three steps, one chair.</h2>
+      <div class="refl">
+        <div><b>Obstruction is a sum</b>No screen is a deal-breaker alone. Mapping the whole flow showed the trap.</div>
+        <div><b>Be fair to the business</b>Keeping the promotion made the redesign shippable.</div>
+        <div><b>Paper is enough to argue</b>Logic first, pixels second.</div>
+      </div>
+      <div class="hmw" style="background:var(--honest)">
+        <span class="mono">What’s next · testing it</span>
+        <p>Is the redesign actually better? 15–20 people try both flows with one task: buy only the bean bag chair.</p>
+        <span style="font-size:16px;line-height:1.5">I compare completion, taps, what they paid, whether they knew what they paid, and trust. Half see Temu first, half see mine first.</span>
+        <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="b" style="background:#fff;color:var(--ink);text-decoration:none" href="temu-study.html#ab" target="_blank" rel="noopener">Take the study (Temu first) ›</a><a class="b" style="background:#fff;color:var(--ink);text-decoration:none" href="temu-study.html#ba" target="_blank" rel="noopener">Take the study (mine first) ›</a></div>
+      </div>
+    </section>
 
-    <script>
-        // Reading progress
-        const progress = document.getElementById('progress');
-        window.addEventListener('scroll', () => {
-            const h = document.documentElement.scrollHeight - window.innerHeight;
-            const pct = (window.scrollY / h) * 100;
-            progress.style.width = Math.min(pct, 100) + '%';
-        });
+    <footer>THE GIFT CARD TRAP · DARK PATTERNS CASE STUDY · 2026</footer>
+  </main>
+</div>
 
-        // Scroll reveal
-        const reveals = document.querySelectorAll('.reveal');
-        const obs = new IntersectionObserver((entries) => {
-            entries.forEach(e => {
-                if (e.isIntersecting) {
-                    e.target.classList.add('visible');
-                    obs.unobserve(e.target);
-                }
-            });
-        }, {
-            threshold: 0.08,
-            rootMargin: '0px 0px -40px 0px'
-        });
+<script>
+const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const $=id=>document.getElementById(id);
+const money=v=>"$"+v.toFixed(2);
 
-        reveals.forEach(el => obs.observe(el));
-    </script>
+// ---------- Peek prototype: same jump messages my site uses ----------
+const proto=$("proto");let protoReady=false;
+proto.addEventListener("load",()=>{protoReady=true});
+function jumpPeek(id){if(protoReady&&id)proto.contentWindow.postMessage({jump:id},location.origin)}
+// ---------- Desktop concept: honest checkout modal ----------
+const TAX=0.08875, MY={n:"Jumbo Plush Bean Bag Chair",p:54.76,eta:"Oct 3–8"};
+const ADDS=[{id:"lounge",n:"Boucle Floor Lounge Chair",p:54.98,r:"★4.4 · 812",img:"lounge"},{id:"boucle",n:"Teddy Boucle Accent Chair",p:45.99,r:"★4.6 · 1,290",img:"boucle"},{id:"cat",n:"Cat Ear Plush Bean Bag",p:29.99,r:"★4.7 · 356",img:"cat"}];
+const GIFTS=["Digital Scale","Sleep Pillow","Cutting Board"];
+const freshD=()=>({open:false,step:1,coupon:false,added:[],gift:null,pay:null,done:false,confirm:false});
+let D=freshD(),askedLeave=false;
+function dTot(){const sub=MY.p+(D.coupon?ADDS.filter(x=>D.added.includes(x.id)).reduce((a,x)=>a+x.p,0):0),ok=D.coupon&&sub>=100,disc=ok?20:0,tax=Math.round((sub-disc)*TAX*100)/100;return{sub,ok,disc,tax,tot:sub-disc+tax,gap:Math.max(0,100-sub)}}
+function sheet(){
+  const t=dTot(),chosen=D.coupon?ADDS.filter(x=>D.added.includes(x.id)):[];
+  const head=(title)=>`<div class="dk-mh"><div><small>${D.done?"Order placed":`Step ${D.step} of 3`}</small><b>${title}</b></div><button class="dk-x" data-a="close" aria-label="Close checkout">×</button></div>${D.done?"":`<div class="dk-steps">${[1,2,3].map(n=>`<i class="${n<=D.step?"on":""}"></i>`).join("")}</div>`}`;
+  const lines=`<div class="dk-row"><span>${MY.n}</span><span>${money(MY.p)}</span></div>${chosen.map(x=>`<div class="dk-row"><span>${x.n}</span><span>${money(x.p)}</span></div>`).join("")}${t.disc?`<div class="dk-row" style="color:var(--honest)"><span>Coupon</span><span>−$20.00</span></div>`:""}<div class="dk-row"><span>Sales tax</span><span>${money(t.tax)}</span></div><div class="dk-tot"><span>You pay</span><span>${money(t.tot)}</span></div>`;
+  let h;
+  if(D.done) h=`${head("Your items are on the way")}<div class="dk-card"><div class="dk-row"><span>${MY.n}</span><span class="m">arrives ${MY.eta}</span></div>${chosen.map(x=>`<div class="dk-row"><span>${x.n}</span><span class="m">arrives Oct 4–9</span></div>`).join("")}${t.ok&&D.gift!==null?`<div class="dk-row"><span>${GIFTS[D.gift]} · free gift · $0.00</span><span class="m">arrives with your first package</span></div>`:""}<div class="dk-tot"><span>Paid</span><span>${money(t.tot)}</span></div></div><button class="dk-b" data-a="finish">Keep shopping</button>`;
+  else if(D.step===1) h=`${head("Your item")}<div class="dk-card"><div class="dk-row"><span>${MY.n}<br><span class="m">Qty 1 · arrives ${MY.eta}</span></span><span>${money(MY.p)}</span></div></div>
+    <button class="dk-chk ${D.coupon?"on":""}" data-a="coupon"><i>${D.coupon?"✓":""}</i><span><b>Coupon (optional): spend $100, get $20 off + 1 gift</b><small>You’re ${money(100-MY.p)} away. Skip it if you only want your item.</small></span></button>
+    <div class="dk-card">${lines}</div>
+    ${D.coupon?`<button class="dk-b pri" data-a="step" data-v="2">Continue to coupon</button><button class="dk-b ghost" data-a="skip">Pay for my item only (${money(MY.p*(1+TAX))})</button>`:`<button class="dk-b pri" data-a="step" data-v="3">Continue to pay · ${money(t.tot)}</button>`}`;
+  else if(D.step===2) h=`${head("Coupon: pick items")}<div class="dk-card" style="background:var(--honest-soft);border:0"><b>The whole deal</b><span>✓ Spend $100+ in one order → $20 off at checkout<br>✓ One free gift with that order, you pick it<br>✓ No time limit. Returns work like any order.</span></div>
+    <div class="dk-adds">${ADDS.map(x=>`<button class="dk-add ${D.added.includes(x.id)?"on":""}" data-a="add" data-v="${x.id}"><img src="assets/temu-proto/${x.img}.jpg" alt=""><span><b>${x.n}</b>${money(x.p)}<small>${x.r} reviews</small></span></button>`).join("")}</div>
+    <div><small class="cap">FREE GIFT (PICK 1) · ${t.ok?"UNLOCKED":"UNLOCKS AT $100"}</small><div class="dk-gifts">${GIFTS.map((g,i)=>`<button class="${D.gift===i?"on":""}" data-a="gift" data-v="${i}" ${t.ok?"":"disabled"}>${g}</button>`).join("")}</div></div>
+    <div class="dk-card"><div class="dk-row"><b>You pay so far</b><b>${money(t.tot)} <span class="m">incl. tax</span></b></div><div class="dk-bar"><i style="width:${Math.min(100,t.sub)}%"></i></div><span class="m">${t.ok?"✓ $100 reached · $20 off applied":money(t.gap)+" more to use $20 off"}</span></div>
+    <button class="dk-b pri" data-a="step" data-v="3">Continue</button><button class="dk-b ghost" data-a="skip">Skip, pay for my item only</button>`;
+  else h=`${head("Review & pay")}${D.coupon&&!t.ok?`<div class="dk-card" style="background:var(--trap-soft);border:0">You’re ${money(t.gap)} short, so the $20 coupon isn’t applied.</div>`:""}<div class="dk-card">${lines}</div>
+    <div class="dk-card"><b>Payment method</b><span class="m">Nothing is pre-selected</span>${["Apple Pay","Card","PayPal"].map(o=>`<button class="dk-radio ${D.pay===o?"on":""}" data-a="pay" data-v="${o}"><i></i>${o}</button>`).join("")}</div>
+    <button class="dk-b pri" data-a="place" ${D.pay?"":"disabled"}>Place order · ${money(t.tot)}</button>${D.coupon?`<button class="dk-b ghost" data-a="skip">Remove extras, pay ${money(MY.p*(1+TAX))}</button>`:""}`;
+  if(D.confirm) h+=`<div class="dk-confirm"><div><b>Leave checkout?</b><span>Your cart is saved. The $20 coupon stays available.</span><div class="two"><button data-a="stay">Keep checking out</button><button data-a="leave">Leave</button></div></div></div>`;
+  return h;
+}
+function renderD(){
+  $("dkModal").hidden=!D.open; if(D.open)$("dkSheet").innerHTML=sheet();
+  $("dkCart").textContent=D.inCart?"Added ✓":"Add to cart";
+  const sy=$("dkSync");sy.classList.remove("ping");void sy.offsetWidth;sy.classList.add("ping");
+}
+function dAct(a,v){
+  if(a==="open"||a==="openCoupon"){if(D.done){const c=D.inCart;D=freshD();D.inCart=c}D.open=true;if(a==="openCoupon")D.coupon=true}
+  if(a==="cart")D.inCart=true;
+  if(a==="coupon"){D.coupon=!D.coupon;if(!D.coupon){D.added=[];D.gift=null}}
+  if(a==="step")D.step=+v;
+  if(a==="skip"){D.coupon=false;D.added=[];D.gift=null;D.step=3}
+  if(a==="add"){D.added=D.added.includes(v)?D.added.filter(x=>x!==v):[...D.added,v];if(!dTot().ok)D.gift=null}
+  if(a==="gift")D.gift=+v;
+  if(a==="pay")D.pay=v;
+  if(a==="place")D.done=true;
+  if(a==="finish"){const c=D.inCart;D=freshD();D.inCart=c}
+  // leaving: one neutral check, once; after that × just closes. Cart is kept.
+  if(a==="close"){if(D.done){const c=D.inCart;D=freshD();D.inCart=c}else if(askedLeave)D.open=false;else{D.confirm=true;askedLeave=true}}
+  if(a==="stay")D.confirm=false;
+  if(a==="leave"){D.confirm=false;D.open=false}
+  renderD();
+}
+$("dkAfter").addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(b&&!b.disabled){dAct(b.dataset.a,b.dataset.v)}else if(e.target===$("dkModal"))dAct("close")});
+addEventListener("keydown",e=>{if(e.key==="Escape"&&D.open)dAct(D.confirm?"stay":"close")});
+renderD();
+// The clip opens the phone. If you scroll and it would cover content, it tucks itself back.
+let openedAt=0;
+function setPeek(open){$("peek").classList.toggle("open",open);$("peekTab").setAttribute("aria-expanded",open);if(open)openedAt=scrollY}
+$("peekTab").onclick=()=>setPeek(!$("peek").classList.contains("open"));
+addEventListener("scroll",()=>{
+  if(!$("peek").classList.contains("open")||Math.abs(scrollY-openedAt)<120)return;
+  const r=$("proto").getBoundingClientRect();
+  const hit=[...document.querySelectorAll("main section > *")].some(el=>{const b=el.getBoundingClientRect();return b.right>r.left&&b.left<r.right&&b.bottom>r.top&&b.top<r.bottom});
+  if(hit)setPeek(false);
+},{passive:true});
 
+// Desktop gallery + reviews (same photos and reviews as the app)
+const PHOTOS=["photo-room-1","photo-room-2","photo-white","photo-details","photo-size"].map(n=>`assets/temu-proto/${n}.jpg`);
+$("dkThumbs").innerHTML=PHOTOS.map((src,i)=>`<button class="${i?"":"on"}" data-i="${i}" aria-label="Photo ${i+1}"><img src="${src}" alt=""></button>`).join("");
+$("dkThumbs").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const i=+b.dataset.i;$("dkBig").src=PHOTOS[i];$("dkBig").classList.toggle("fit",i>=3);document.querySelectorAll("#dkThumbs button").forEach(x=>x.classList.toggle("on",x===b))});
+$("dkPics").innerHTML=PHOTOS.map(src=>`<img src="${src}" alt="">`).join("");
+$("dkRevs").innerHTML=[
+ ["Jhimy Palma","Sep 1, 2026","I love it! It arrived quite quickly, packed in a vacuum-sealed box. It took a couple of hours to expand into shape, and it's quite comfortable. I needed something like this for my reading space to enjoy my fish. I bought the white one; great price and very good quality, definitely worth it! Thank you!"],
+ ["Mary Famulari","Aug 21, 2026","This chair arrived very quickly and was packaged very well! The material is actually thicker than I expected it to be, which makes it very comfortable to sit on. It's a great product for kids, as well as, adults! I would definitely recommend this product!"],
+ ["Cruz mari Fernandez","Aug 6, 2026","I loved it! It's super comfortable. I give it a 100/100! I highly recommend it for when guests come over. Thanks for the fast shipping!"]
+].map(([n,d,t])=>`<div class="r"><b>${n} <small>${d}</small></b>${t}</div>`).join("");
 
-    <script>
-        // Scroll-synced prototype: the section in the middle of the viewport drives the phone
-        const proto = document.getElementById('proto');
-        let current = null;
-        const secObs = new IntersectionObserver((entries) => {
-            entries.forEach(e => {
-                if (!e.isIntersecting) return;
-                document.querySelectorAll('.screen-sec.on').forEach(s => s.classList.remove('on'));
-                e.target.classList.add('on');
-                const id = e.target.dataset.screen;
-                if (id !== current) {
-                    current = id;
-                    proto.contentWindow.postMessage({ jump: id }, location.origin);
-                }
-            });
-        }, { rootMargin: '-45% 0px -45% 0px' });
-        proto.addEventListener('load', () => document.querySelectorAll('.screen-sec').forEach(s => secObs.observe(s)));
-    </script>
+// ---------- Auto-looping phone (story-bar style) ----------
+function player(el,frames,onFrame){
+  el.innerHTML=`<div class="stories">${frames.map(()=>"<i><b></b></i>").join("")}</div><div class="host"></div>`;
+  const bars=[...el.querySelectorAll(".stories i")],host=el.querySelector(".host");
+  let i=0,timer,paused=false,seen=true;
+  function show(n){
+    i=(n+frames.length)%frames.length;const f=frames[i];
+    host.innerHTML=`<div class="ms ${f.cls||""}">${f.html}</div>`;
+    el.style.setProperty("--d",(f.ms||2400)+"ms");
+    bars.forEach((b,k)=>b.className=k<i?"done":k===i?"now":"");
+    onFrame&&onFrame(f,i);clearTimeout(timer);
+    if(!paused&&seen&&!RM)timer=setTimeout(()=>show(i+1),f.ms||2400);
+  }
+  bars.forEach((b,k)=>b.onclick=()=>show(k));
+  host.onclick=()=>show(i+1);
+  new IntersectionObserver(([e])=>{seen=e.isIntersecting;seen?show(i):clearTimeout(timer)}).observe(el);
+  return {show,pause(){paused=true;el.classList.add("paused");clearTimeout(timer)},play(){paused=false;el.classList.remove("paused");show(i)}};
+}
+const shot=(n,extra={})=>({html:`<img src="images/temu/${n}.webp" alt="">`,cls:n.includes("orig")?"img framed":"img",...extra});
+
+// Context: my real recording of the flow, looping
+const trap=[
+ ["temu-orig-01",1,null],["temu-orig-02",2,"Sneaking"],["temu-orig-04",4,"Fake reward"],["temu-orig-05",5,"False urgency"],
+ ["temu-orig-06",6,"Obstruction"],["temu-orig-07",7,"Preselection"],["temu-orig-09",9,"Interface interference"],
+ ["temu-orig-11",11,"Fake reference prices"],["temu-orig-12",12,"Obstruction"],["temu-orig-13",13,"Nagging"],
+ ["temu-orig-15",15,"Sneaking"],["temu-orig-17",17,"Hidden cost",true],["temu-orig-19",19,"Confirmshaming"],["temu-orig-21",21,"Nagging"]
+].map(([n,scr,pat,pay])=>shot(n,{scr,pat,pay,ms:pay?3400:2000}));
+player($("loopTrap"),trap,f=>{
+  $("mScr").textContent=f.scr+"/21";$("mPay").textContent=f.scr>=17?"$151.34":"$ ??";
+  const c=$("mPat");c.textContent=f.pat||"The chair I wanted";c.classList.toggle("none",!f.pat);
+});
+
+// Fix 1: my live prototype tours itself; hover a pin to jump there and pause
+const tour=$("tour"),TOUR=["product","popup","popupSel","pick","review","done","checkout"];
+let ti=0,tt,tourPaused=false;
+const pins=[...document.querySelectorAll(".pin")];
+function tourGo(id){tour.contentWindow.postMessage({jump:id==="pick-checkin"?"pick":id,hint:id==="pick-checkin"?"checkin":null},location.origin);pins.forEach(p=>p.classList.toggle("on",p.dataset.pin===id))}
+function tourNext(){if(tourPaused||RM)return;tourGo(TOUR[ti]);ti=(ti+1)%TOUR.length;tt=setTimeout(tourNext,2800)}
+let tourStarted=false;const startTour=()=>{if(!tourStarted){tourStarted=true;tourNext()}};
+pins.forEach(p=>{const go=()=>{tourPaused=true;clearTimeout(tt);tourGo(p.dataset.pin)};p.addEventListener("mouseenter",go);p.addEventListener("focus",go);p.addEventListener("click",go)});
+$("pins").addEventListener("mouseleave",()=>{tourPaused=false;ti=Math.max(0,TOUR.indexOf(pins.find(p=>p.classList.contains("on"))?.dataset.pin)+1)%TOUR.length;tt=setTimeout(tourNext,1200)});
+// stop auto-tour for good once the viewer taps inside it
+addEventListener("blur",()=>{if(document.activeElement===tour){tourPaused=true;clearTimeout(tt)}});
+
+// Fix 2: Temu today vs my prototype
+player($("loopBefore"),[shot("temu-orig-11"),shot("temu-orig-15"),shot("temu-orig-17",{ms:3200})]);
+player($("loopAfter"),[shot("temu-checkout-1"),shot("temu-checkout-3"),shot("temu-checkout-4",{ms:3200})]);
+
+// Fix 3: the examples we don't send, one per tap
+const NO=[
+ ["⚠ Your $3 coupon EXPIRES in 10 min!!!","Open now or lose it forever.","False urgency: the coupon actually lasts 30 days."],
+ ["You’ve been selected! 🎁","Claim your $100 reward now.","Bait: the title promises $100, the reward is $3."],
+ ["Don’t lose everything you’ve earned 😢","Your streak is about to reset.","Loss-framing, and it contradicts “progress never resets”."]];
+let ni=0;
+function showNo(){const [t,b,w]=NO[ni];$("nfBan").innerHTML=`<i></i><span><b>${t}</b>${b}</span>`;$("nfWhy").textContent=w;const c=$("nfNo");c.classList.remove("swap");void c.offsetWidth;c.classList.add("swap")}
+showNo();
+$("nfNo").onclick=()=>{ni=(ni+1)%NO.length;showNo()};
+$("nfNo").onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();$("nfNo").click()}};
+
+// ---------- The flight: peek phone -> cute cube with a digit trail -> lands as the Fix 1 phone ----------
+(function(){
+  const peek=$("peek"),cube=$("cube"),cin=$("cubeIn"),h2=document.querySelector("#fix1 h2");
+  const clamp=v=>Math.max(0,Math.min(1,v)),ease=t=>t*t*(3-2*t),seg=(p,a,b)=>clamp((p-a)/(b-a));
+  const absTop=el=>el.getBoundingClientRect().top+scrollY;
+  if(RM){tour.style.opacity=1;startTour();
+    addEventListener("scroll",()=>{const r=tour.getBoundingClientRect();peek.style.visibility=r.top<innerHeight?"hidden":""},{passive:true});return}
+  tour.style.transition="none";
+  let last=null,lastP=-1;
+  const GLYPHS="0123456789$%+";
+  function trail(x,y,dx,dy){
+    const d=document.createElement("span");d.className="dig";
+    d.textContent=GLYPHS[Math.random()*GLYPHS.length|0];
+    const sz=10+Math.random()*10;d.style.fontSize=sz+"px";document.body.appendChild(d);
+    const jx=(Math.random()-.5)*26,jy=(Math.random()-.5)*26,bx=-dx*6+jx*2.2,by=-dy*6+jy*2.2-10;
+    d.animate([{transform:`translate(${x+jx}px,${y+jy}px) scale(1)`,opacity:.95},{transform:`translate(${x+bx}px,${y+by}px) scale(.35) rotate(${(Math.random()-.5)*90}deg)`,opacity:0}],
+      {duration:700+Math.random()*500,easing:"cubic-bezier(.2,.7,.3,1)"}).finished.then(()=>d.remove());
+  }
+  function frame(){
+    const vh=innerHeight,vw=innerWidth;
+    const start=absTop(h2)-vh*.85, tr=tour.getBoundingClientRect();
+    const end=absTop(tour)+tr.height/2-vh*.55;
+    const p=clamp((scrollY-start)/Math.max(1,end-start));
+    if(p===lastP)return;lastP=p;
+    // 1. phone shrinks away into the right edge
+    const sh=ease(seg(p,0,.2));
+    peek.style.scale=String(1-.85*sh);peek.style.opacity=String(1-sh);
+    peek.style.pointerEvents=p>0?"none":"";
+    // 2. cube travels on an arc from the right edge to the phone slot
+    const S={x:vw-70,y:vh/2},T={x:tr.left+tr.width/2,y:tr.top+tr.height/2};
+    const C={x:(S.x+T.x)/2,y:Math.min(S.y,T.y)-170};
+    const t=ease(seg(p,.15,.85)),u=1-t;
+    const x=u*u*S.x+2*u*t*C.x+t*t*T.x,y=u*u*S.y+2*u*t*C.y+t*t*T.y;
+    const grow=ease(seg(p,.08,.2)),land=ease(seg(p,.85,1));
+    const sc=grow*(1+land*2.2),op=p<=0||p>=1?0:(1-land);
+    cube.style.display=op>0?"block":"none";
+    cube.style.transform=`translate(${x-32}px,${y-32}px) scale(${sc})`;cube.style.opacity=op;
+    cin.style.transform=`rotateX(${-14+Math.sin(p*9)*16}deg) rotateY(${p*540}deg)`;
+    if(last&&op>0){const dx=x-last.x,dy=y-last.y,dist=Math.hypot(dx,dy);
+      for(let k=0;k<Math.min(5,dist/9);k++)trail(x,y,dx/Math.max(dist,1),dy/Math.max(dist,1))}
+    last={x,y};
+    // 3. the cube opens into the live prototype
+    tour.style.opacity=String(land);tour.style.transform=`scale(${.75+.25*land})`;
+    if(p>=1)startTour();
+  }
+  addEventListener("scroll",frame,{passive:true});addEventListener("resize",()=>{lastP=-1;frame()});
+  tour.addEventListener("load",()=>{lastP=-1;frame()});frame();
+})();
+
+// Scroll-sync the peek phone, the way my site's sidebar does
+const secObs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)jumpPeek(e.target.dataset.screen)}),{rootMargin:"-45% 0px -50% 0px"});
+proto.addEventListener("load",()=>document.querySelectorAll("section[data-screen]").forEach(x=>secObs.observe(x)));
+
+// ---------- small bits ----------
+$("pareBtn").onclick=()=>{const on=$("dump").classList.toggle("pared");$("pareBtn").textContent=on?"Bring the tricks back":"Pare it down →"};
+document.querySelectorAll("[data-dk]").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("[data-dk]").forEach(x=>x.classList.toggle("on",x===b));
+  $("dkAfter").hidden=b.dataset.dk!=="after";$("dkBefore").hidden=b.dataset.dk!=="before";
+});
+const links=[...document.querySelectorAll("#toc a")];
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)links.forEach(a=>a.classList.toggle("on",a.getAttribute("href")==="#"+e.target.id))}),{rootMargin:"-40% 0px -55% 0px"});
+links.forEach(a=>{const s=document.querySelector(a.getAttribute("href"));if(s)io.observe(s)});
+</script>
 </body>
-
 </html>

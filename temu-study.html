@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shopping Task Study</title>
+<meta name="robots" content="noindex">
+<style>html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;800&display=swap">
+<style>
+/* Layout: one centered column; the task view puts the phone beside a small task card. Neutral on purpose: participants shouldn't guess which app is "good". */
+:root{--bg:#F4F3F0;--surface:#FFFFFF;--ink:#1D1C1A;--dim:#6A6862;--line:#DDDAD3;--accent:#2F5D8C;--accent-soft:#E3ECF5;--f:"Figtree",system-ui,-apple-system,sans-serif}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#181816;--surface:#22211F;--ink:#EDEBE6;--dim:#A19E96;--line:#3A3833;--accent:#8DB6DE;--accent-soft:#1E2B38;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#181816;--surface:#22211F;--ink:#EDEBE6;--dim:#A19E96;--line:#3A3833;--accent:#8DB6DE;--accent-soft:#1E2B38;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f);font-size:16px;line-height:1.55;padding-inline:16px}
+.wrap{max-width:860px;margin:0 auto;padding-block:32px 64px;display:flex;flex-direction:column;gap:20px}
+h1{font-size:clamp(26px,4vw,34px);margin:0;line-height:1.15;text-wrap:balance}
+h2{font-size:22px;margin:0}
+p{margin:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:14px}
+.muted{color:var(--dim)}
+.task{background:var(--accent-soft);border-radius:12px;padding:12px 14px;font-weight:600}
+.btn{border:0;border-radius:99px;padding:12px 22px;font:600 16px var(--f);background:var(--accent);color:#fff;cursor:pointer;align-self:flex-start}
+.btn.ghost{background:none;border:1.5px solid var(--line);color:var(--ink)}
+.btn[disabled]{opacity:.4;cursor:default}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.stage{display:grid;grid-template-columns:auto minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:700px){.stage{grid-template-columns:minmax(0,1fr);justify-items:center}}
+.side{display:flex;flex-direction:column;gap:12px;max-width:340px}
+.dev{position:relative;width:min(340px,86vw);aspect-ratio:440/956;border:10px solid #111;border-radius:42px;overflow:hidden;background:#000}
+.dev img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.035)}
+.dev iframe{position:absolute;inset:-10px;width:calc(100% + 20px);height:calc(100% + 20px);border:0;background:transparent}
+.dev.live{border:0;background:none;border-radius:0;width:min(360px,90vw);aspect-ratio:auto;height:min(760px,calc(100vh - 40px))}
+.dev.live iframe{inset:0;width:100%;height:100%}
+.hs{position:absolute;background:transparent;border:0;padding:0;cursor:pointer}
+.debug .hs{outline:2px dashed #ff0;background:rgba(255,255,0,.18)}
+.plain{position:absolute;inset:0;background:#F6F5F2;color:#1D1C1A;padding:44px 18px 18px;display:flex;flex-direction:column;gap:12px;font-size:14px}
+.plain .row{display:flex;justify-content:space-between}
+.plain .tot{font-weight:800;font-size:17px;border-top:1px solid #E6E3DD;padding-top:10px}
+.plain button{margin-top:auto;border:0;border-radius:99px;padding:13px;background:#F06414;color:#fff;font:700 15px var(--f)}
+.ended{position:absolute;inset:0;background:rgba(0,0,0,.6);display:grid;place-items:center;color:#fff;text-align:center;padding:20px;font-weight:600;z-index:5}
+.q{display:flex;flex-direction:column;gap:8px}
+.q label{font-weight:600}
+.scale{display:flex;gap:6px;flex-wrap:wrap}
+.scale label{flex:1;min-width:38px}
+.scale input{position:absolute;opacity:0}
+.scale span{display:block;text-align:center;border:1.5px solid var(--line);border-radius:10px;padding:8px 0;cursor:pointer;font-weight:600}
+.scale input:checked+span{background:var(--accent);border-color:var(--accent);color:#fff}
+.scale input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+.ends{display:flex;justify-content:space-between;font-size:13px;color:var(--dim)}
+input[type=number],textarea{font:16px var(--f);padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);width:100%;max-width:240px}
+textarea{max-width:none;min-height:80px}
+.prog{font-size:13px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+pre{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;overflow-x:auto;font-size:12px;margin:0}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+/* ===== Google Form hookup =====
+   Paste the form's "viewform" URL and each question's entry id here (from the form's "Get pre-filled link").
+   Until it is filled in, the last screen shows a copyable result row instead. */
+const FORM={url:"",entries:{order:"",A_outcome:"",A_taps:"",A_seconds:"",A_paid:"",A_guess:"",A_trust:"",A_leave:"",B_outcome:"",B_taps:"",B_seconds:"",B_paid:"",B_guess:"",B_trust:"",B_leave:"",prefer:"",comment:""}};
+
+const $=s=>document.querySelector(s);
+const app=$("#app");
+const tok=location.hash.slice(1).toLowerCase();
+const ORDER=tok.includes("ba")?"BA":tok.includes("ab")?"AB":(Math.random()<.5?"AB":"BA");
+const DEBUG=tok.includes("debug");
+const R={order:ORDER};               // every recorded value, keyed like FORM.entries
+let step=0;                          // 0 intro, 1 app1, 2 q1, 3 app2, 4 q2, 5 final, 6 done
+const which=n=>ORDER[n-1];           // "A" or "B" for App 1 / App 2
+
+/* ===== Version A: Temu today, rebuilt from the recorded screenshots =====
+   hotspots: [x1,y1,x2,y2, action] in % of the screen. First match wins. */
+const A_FLOW=["01","02","04","05","06","07","09","11","12","13","15","17"];
+const A_HS={
+ "01":[[4,89,49,99,"next"],[50,89,98,99,"next"]],
+ "02":[[85,16,98,26,"x"],[20,71,80,82,"next"]],
+ "04":[[0,0,100,100,"next"]],
+ "05":[[85,9,99,18,"x"],[14,74,86,84,"next"]],
+ "06":[[85,43,98,51,"x"],[5,88,95,98,"next"]],
+ "07":[[83,16,98,25,"x"],[11,75,89,84,"next"]],
+ "09":[[6,49,94,61,"next"]],
+ "11":[[84,12,98,21,"x"],[11,73,89,83,"next"]],
+ "12":[[0,0,100,100,"next"]],
+ "13":[[8,33,92,60,"next"]],
+ "15":[[0,0,100,100,"next"]],
+ "17":[[84,17,98,26,"x"],[42,89,99,99,"pay"]],
+ "19":[[0,0,100,100,"next"]],
+ "21":[[83,15,98,24,"giveup"],[16,42,84,52,"back"]]
+};
+function runA(host,done){
+  let cur="01",taps=0,t0=performance.now(),over=false;
+  host.className="dev"+(DEBUG?" debug":"");
+  const finish=(outcome,paid)=>{if(over)return;over=true;done({outcome,taps,seconds:Math.round((performance.now()-t0)/1000),paid})};
+  function show(){
+    if(cur==="P"){host.innerHTML=`<div class="plain"><b style="font-size:17px">Checkout</b><div class="row"><span>Bean bag chair</span><span>$51.14</span></div><div class="row"><span>Shipping</span><span>Free</span></div><div class="row"><span>Sales tax</span><span>$4.54</span></div><div class="row tot"><span>Order total</span><span>$55.68</span></div><button data-act="payplain">Place order</button></div>`;return}
+    host.innerHTML=`<img src="images/temu/temu-orig-${cur}.webp" alt="">`+A_HS[cur].map(([x1,y1,x2,y2,a])=>`<button class="hs" data-act="${a}" aria-label="${a}" style="left:${x1}%;top:${y1}%;width:${x2-x1}%;height:${y2-y1}%"></button>`).join("");
+  }
+  host.onclick=e=>{
+    if(over)return; taps++;
+    const a=e.target.closest("[data-act]")?.dataset.act; if(!a)return;
+    if(a==="next"){cur=cur==="19"?"21":A_FLOW[A_FLOW.indexOf(cur)+1]||cur}
+    else if(a==="x")cur="19";
+    else if(a==="back")cur="17";
+    else if(a==="giveup")cur="P";
+    else if(a==="pay")return finish("extra_items",151.34);
+    else if(a==="payplain")return finish("only_chair",55.68);
+    show();
+  };
+  show();
+  return ()=>finish("gave_up","");
+}
+
+/* ===== Version B: the redesign prototype, unchanged, with hints turned off ===== */
+function runB(host,done){
+  host.className="dev live";
+  host.innerHTML=`<iframe src="temu-prototype.html?embed&nohint" title="Shopping app"></iframe>`;
+  const f=host.querySelector("iframe");
+  let taps=0,t0=performance.now(),over=false,poll;
+  const finish=(outcome,paid)=>{if(over)return;over=true;clearInterval(poll);done({outcome,taps,seconds:Math.round((performance.now()-t0)/1000),paid})};
+  f.addEventListener("load",()=>{
+    const w=f.contentWindow;
+    w.document.addEventListener("click",()=>{if(!over)taps++},true);
+    t0=performance.now();
+    poll=setInterval(()=>{try{
+      if(w.eval("S.screen")!=="done")return;
+      const extra=w.eval('S.orderedFrom==="event"&&selList().length>0');
+      finish(extra?"extra_items":"only_chair",w.eval("totals().total"));
+    }catch(e){}},400);
+  });
+  return ()=>finish("gave_up","");
+}
+
+/* ===== screens ===== */
+function render(){
+  const n=step<=2?1:2;
+  if(step===0) app.innerHTML=`
+    <span class="prog">About 5 minutes · anonymous</span>
+    <h1>Try two shopping apps</h1>
+    <div class="card"><p>You’ll use two versions of a shopping app, one after the other. Please do what you would normally do. There are no right answers, and we only record taps, time and your answers below. No names.</p>
+      <div class="task">Your task in both: buy <u>only</u> the bean bag chair.</div>
+      <p class="muted">If you would give up in real life, tap “I’d stop here”.</p>
+      <button class="btn" id="go">Start App 1</button></div>`;
+  if(step===1||step===3) app.innerHTML=`
+    <span class="prog">App ${n} of 2</span>
+    <div class="stage"><div id="dev"></div>
+      <div class="side"><div class="task">Buy only the bean bag chair.</div><p class="muted">Tap inside the phone like a real app.</p><button class="btn ghost" id="stop">I’d stop here</button></div></div>`;
+  if(step===2||step===4) app.innerHTML=`
+    <span class="prog">About App ${n}</span><h2>A few quick questions</h2>
+    <form class="card" id="qf">
+      <div class="q"><label for="guess">Without looking back: how much do you think you paid (or would have paid)?</label><input type="number" id="guess" min="0" step="0.01" placeholder="$" required></div>
+      ${scale("trust","I trust this store with my money.")}
+      ${scale("leave","If I wanted to leave, it was easy.")}
+      <button class="btn" type="submit">${n===1?"Start App 2":"Continue"}</button></form>`;
+  if(step===5) app.innerHTML=`
+    <span class="prog">Last step</span><h2>Comparing the two</h2>
+    <form class="card" id="qf">
+      <div class="q"><label>Which app would you rather shop in?</label><div class="scale">
+        ${["App 1","App 2","No difference"].map((t,i)=>`<label><input type="radio" name="prefer" value="${t}" required><span>${t}</span></label>`).join("")}</div></div>
+      <div class="q"><label for="comment">Anything that annoyed or surprised you? (optional)</label><textarea id="comment"></textarea></div>
+      <button class="btn" type="submit">Finish</button></form>`;
+  if(step===6){
+    const url=formUrl();
+    app.innerHTML=`<span class="prog">Done</span><h1>Thank you!</h1>
+      <div class="card">${url?`<p>One last tap: open the form and press <b>Submit</b> to send your answers.</p><a class="btn" href="${url}" target="_blank" rel="noopener">Open form to send</a>`
+        :`<p>Please copy this line and send it to the researcher.</p><pre id="row">${rowText()}</pre><button class="btn ghost" id="copy">Copy</button>`}</div>`;
+  }
+  wire();
+}
+function scale(name,text){return `<div class="q"><label>${text}</label><div class="scale" role="radiogroup">${[1,2,3,4,5,6,7].map(v=>`<label><input type="radio" name="${name}" value="${v}" required><span>${v}</span></label>`).join("")}</div><div class="ends"><span>Strongly disagree</span><span>Strongly agree</span></div></div>`}
+let stopTask=null;
+function wire(){
+  $("#go")&&($("#go").onclick=()=>{step=1;render()});
+  if(step===1||step===3){
+    const v=which(step===1?1:2), host=$("#dev");
+    stopTask=(v==="A"?runA:runB)(host,res=>{
+      Object.entries(res).forEach(([k,val])=>R[v+"_"+k]=val);
+      host.insertAdjacentHTML("beforeend",`<div class="ended">Thanks, that’s the end of App ${step===1?1:2}.</div>`);
+      setTimeout(()=>{step++;render()},1200);
+    });
+    $("#stop").onclick=()=>stopTask();
+  }
+  const qf=$("#qf");
+  if(qf) qf.onsubmit=e=>{e.preventDefault();const fd=new FormData(qf);
+    if(step===5){const p=fd.get("prefer");R.prefer=p==="No difference"?"same":which(p==="App 1"?1:2);R.comment=$("#comment").value.trim()}
+    else{const v=which(step===2?1:2);R[v+"_guess"]=$("#guess").value;R[v+"_trust"]=fd.get("trust");R[v+"_leave"]=fd.get("leave")}
+    step++;render();scrollTo(0,0)};
+  $("#copy")&&($("#copy").onclick=()=>{navigator.clipboard.writeText(rowText()).then(()=>$("#copy").textContent="Copied",()=>{const r=document.createRange();r.selectNodeContents($("#row"));getSelection().removeAllRanges();getSelection().addRange(r)})});
+}
+const KEYS=Object.keys(FORM.entries);
+function rowText(){return KEYS.map(k=>R[k]??"").join("\t")}
+function formUrl(){
+  if(!FORM.url||KEYS.some(k=>!FORM.entries[k]))return "";
+  return FORM.url+"?usp=pp_url&"+KEYS.map(k=>FORM.entries[k]+"="+encodeURIComponent(R[k]??"")).join("&");
+}
+render();
+</script>
+</body>
+</html>
