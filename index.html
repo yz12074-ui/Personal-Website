@@ -755,6 +755,13 @@
         .about-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; border-radius: 50%; }
         .about-photo { overflow: hidden; }
         @media (max-width: 768px) { .lang-toggle { margin: 0 0 0 20px; align-self: center; } }
+        /* sewn-on fabric label: links the hero line to the fashion page */
+        .sewn { position: relative; display: inline-block; font-size: 0.78em; font-style: italic; line-height: 1.1; padding: 0.08em 0.32em 0.14em; margin: 0 0.04em; rotate: -2deg; color: #2a2433; text-decoration: none; border-radius: 4px;
+            background-color: #fff; background-image: repeating-linear-gradient(0deg, rgba(255, 143, 199, 0.45) 0 6px, transparent 6px 12px), repeating-linear-gradient(90deg, rgba(255, 143, 199, 0.45) 0 6px, transparent 6px 12px);
+            box-shadow: 0 3px 0 rgba(42, 36, 51, 0.18); transition: rotate 0.25s ease; }
+        .sewn::after { content: ""; position: absolute; inset: 4px; border: 1.5px dashed #2a2433; border-radius: 2px; pointer-events: none; }
+        .sewn:hover, .sewn:focus-visible { rotate: 1deg; }
+        .sewn:focus-visible { outline: 3px solid #2a2433; outline-offset: 3px; }
         /* ─── CLIMBING WALL HERO ─── */
         .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
         .climb-hero { display: grid; grid-template-columns: minmax(260px, 0.8fr) 1.7fr; gap: 40px; align-items: center; min-height: 100vh; padding: 48px 0; position: relative; }
@@ -794,6 +801,11 @@
         .bubble-text { font: 500 15px 'DM Sans', 'PingFang SC', sans-serif; fill: #4a4060; }
         .bell.ring { animation: bell 0.5s ease-in-out 4; }
         @keyframes bell { 25% { rotate: 18deg; } 75% { rotate: -18deg; } }
+        .climb .patch { cursor: pointer; transition: transform 0.25s; }
+        .climb .patch:hover, .climb .patch:focus-visible { outline: none; filter: drop-shadow(0 6px 6px rgba(42, 36, 51, 0.25)); }
+        .climb .patch-text { font: italic 600 19px 'Cormorant Garamond', 'PingFang SC', serif; fill: #2a2433; letter-spacing: 0.04em; }
+        .climb .shuttle { cursor: pointer; outline: none; }
+        .climb .shuttle:focus-visible path { stroke: #C4785A; }
         .fireworks { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; }
         .reward { position: absolute; left: 50%; top: 50%; translate: -50% -50%; z-index: 4; width: min(360px, calc(100% - 32px)); background: var(--white); border: 0.5px solid var(--apricot-warm); border-radius: 18px; padding: 22px 22px 18px; text-align: center; box-shadow: 0 18px 48px rgba(44, 33, 24, 0.16); animation: pop 0.45s cubic-bezier(.3, 1.5, .5, 1); }
         .reward-title { font-family: 'Cormorant Garamond', serif; font-size: 34px; line-height: 1.1; color: var(--ink); }
@@ -828,15 +840,15 @@
         <section class="hero climb-hero" id="top">
             <div class="climb-text">
                 <p class="hero-eyebrow" data-zh="作品集 · 2026">Portfolio · 2026</p>
-                <h1 class="hero-name" data-zh="&lt;span class=&quot;sr-only&quot;&gt;张玥妍 Amanda —— &lt;/span&gt;&lt;em&gt;设计师&lt;/em&gt;，&lt;br&gt;捕捉安静的瞬间。"><span class="sr-only">Amanda — </span><em>designer</em> crafting<br> quiet moments.</h1>
-                <p class="hero-sub" data-zh="跨领域设计师，探索形式、功能与感受之间的空间。偏爱会呼吸的交互。">
-                    Multidisciplinary designer exploring the space between form, function, and feeling. Drawn to interactions that breathe.
+                <h1 class="hero-name" data-zh="&lt;span class=&quot;sr-only&quot;&gt;张玥妍 Amanda：&lt;/span&gt;我是一个&lt;br&gt;会&lt;a class=&quot;sewn&quot; href=&quot;fashion.html&quot;&gt;做衣服&lt;/a&gt;的&lt;br&gt;&lt;em&gt;UX 产品设计师&lt;/em&gt;。"><span class="sr-only">Amanda: </span>I’m a <em>UX &amp; product designer</em> who also <a class="sewn" href="fashion.html">makes clothes</a>.</h1>
+                <p class="hero-sub" data-zh="本科学服装设计，现在做数字产品设计。下了屏幕，我攀岩、打羽毛球，也自己做衣服。">
+                    Fashion design grad turned digital product designer. Off screen I climb, play badminton and sew.
                 </p>
                 <div class="hero-tags">
-                    <span class="tag" data-zh="交互设计">Interaction Design</span>
-                    <span class="tag" data-zh="视觉设计">Visual Design</span>
-                    <span class="tag" data-zh="品牌">Brand</span>
-                    <span class="tag" data-zh="动效">Motion</span>
+                    <span class="tag" data-zh="用户体验设计">UX Design</span>
+                    <span class="tag" data-zh="产品设计">Product Design</span>
+                    <span class="tag" data-zh="服装设计">Fashion Design</span>
+                    <span class="tag" data-zh="原型制作">Prototyping</span>
                 </div>
                 <a class="skip-climb" href="#projects" data-zh="跳过，直接看作品 ↓">Skip to my work ↓</a>
             </div>

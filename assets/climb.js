@@ -18,8 +18,8 @@
   const BLOBS = [
     [250, 560, 34, 'coral', 3, 'start'], [130, 470, 30, 'teal', 8], [335, 472, 28, 'yellow', 5],
     [262, 222, 30, 'blue', 11], [420, 182, 27, 'pink', 2], [582, 232, 33, 'green', 7], [722, 168, 29, 'orange', 13],
-    [60, 300, 24, 'gray', 21], [935, 335, 30, 'purple', 4], [520, 610, 26, 'blue', 17], [810, 560, 32, 'yellow', 9],
-    [380, 112, 22, 'teal', 30], [950, 520, 20, 'pink', 14], [650, 470, 20, 'gray', 23],
+    [60, 300, 24, 'gray', 21], [935, 335, 30, 'purple', 4], [520, 610, 26, 'blue', 17], [792, 478, 30, 'yellow', 9],
+    [380, 112, 22, 'teal', 30], [952, 470, 20, 'pink', 14], [650, 470, 20, 'gray', 23],
   ];
   const LETTERS = { text: 'AMANDA', x0: 200, step: 125, base: 404, size: 150, colors: ['purple', 'coral', 'yellow', 'blue', 'green', 'pink'], tilt: [-6, 4, -3, 7, -5, 3] };
   const TOP = { x: 862, y: 138 };
@@ -89,6 +89,37 @@
 
   // Floor mat
   el('rect', { x: 20, y: 696, width: 960, height: 26, rx: 12, class: 'mat' }, holdsLayer);
+
+  /* ---------- two little extras: a sewn fabric patch (→ fashion page) and a shuttlecock ---------- */
+  const defs = svg.querySelector('defs');
+  defs.insertAdjacentHTML('beforeend', `<pattern id="gingham" width="12" height="12" patternUnits="userSpaceOnUse">
+    <rect width="12" height="12" fill="#fff"/><rect width="6" height="12" fill="#FF8FC7" opacity=".45"/><rect width="12" height="6" fill="#FF8FC7" opacity=".45"/></pattern>`);
+  const patch = el('a', { href: 'fashion.html', class: 'patch', transform: 'rotate(-7 862 612)' }, holdsLayer);
+  el('rect', { x: 800, y: 578, width: 124, height: 68, rx: 6, fill: 'url(#gingham)', stroke: '#4a4060', 'stroke-width': 2 }, patch);
+  el('rect', { x: 807, y: 585, width: 110, height: 54, rx: 3, fill: 'none', stroke: '#4a4060', 'stroke-width': 1.6, 'stroke-dasharray': '5 4' }, patch);
+  const patchTxt = el('text', { x: 862, y: 618, 'text-anchor': 'middle', class: 'patch-text' }, patch);
+  const shuttle = el('g', { class: 'shuttle', role: 'button', tabindex: '0' }, uiLayer);
+  shuttle.innerHTML = `<path d="M-14,-34 L14,-34 L7,-6 L-7,-6 Z" fill="#fff" stroke="#4a4060" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M-7,-34 L-3,-6 M0,-34 L0,-6 M7,-34 L3,-6 M-11,-22 H11" stroke="#4a4060" stroke-width="1.5" fill="none"/>
+    <path d="M-8,-6 H8 V0 A8,8 0 0 1 -8,0 Z" fill="#F6C945" stroke="#4a4060" stroke-width="2.5"/>`;
+  const SHUTTLE_HOME = { x: 330, y: 690 };
+  let shuttleFlying = false;
+  const putShuttle = (p, a) => shuttle.setAttribute('transform', `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)}) rotate(${a.toFixed(1)})`);
+  putShuttle(SHUTTLE_HOME, 70);
+  function serve() {
+    if (shuttleFlying) return;
+    shuttleFlying = true;
+    const from = { ...SHUTTLE_HOME }, to = { x: 690, y: 690 }, dur = reduced ? 1 : 1300, t0 = performance.now();
+    (function fly(now) {
+      const t = Math.min(1, (now - t0) / dur);
+      putShuttle({ x: from.x + (to.x - from.x) * t, y: from.y - Math.sin(Math.PI * t) * 430 }, 70 + 220 * t);   // cork leads, so it flips over the top
+      if (t < 1) return requestAnimationFrame(fly);
+      say(tr('I play badminton too!', '我也打羽毛球！'), { x: to.x, y: to.y - 50 }, 1800);
+      setTimeout(() => { putShuttle(SHUTTLE_HOME, 70); shuttleFlying = false; }, 1900);
+    })(t0);
+  }
+  shuttle.addEventListener('click', serve);
+  shuttle.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); serve(); } });
 
   /* ---------- the climber (placeholder until Amanda's own avatar) ---------- */
   const climber = el('g', { class: 'climber' }, uiLayer);
@@ -228,6 +259,9 @@
 
   // text that depends on the language
   function texts() {
+    patchTxt.textContent = tr('FASHION →', '服装 →');
+    patch.setAttribute('aria-label', tr('Fashion design work', '服装设计作品'));
+    shuttle.setAttribute('aria-label', tr('Serve the shuttlecock', '把羽毛球打出去'));
     root.querySelector('.hint').textContent = tr('Click a glowing hold to climb — ring the bell at the top! (arrow keys work too)', '点亮起来的岩点往上爬，摸到顶上的铃铛就登顶！（也可以用方向键）');
     refresh();
   }
