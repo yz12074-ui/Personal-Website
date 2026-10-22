@@ -74,6 +74,16 @@ img{display:block}
 .cnote .star{width:40px;height:29px;object-fit:contain;flex-shrink:0}
 .cnote .tx{flex:1;font-size:13px;line-height:1.35}
 .spec{display:flex;gap:14px;font-size:13px}.spec span:first-child{width:64px;color:var(--p-muted)}
+.gal{position:relative}
+.gal .strip{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}.gal .strip::-webkit-scrollbar{display:none}
+.gal .strip img{flex:0 0 100%;scroll-snap-align:start;background:#fff;object-fit:contain}
+.gal .strip img:first-child{object-fit:cover}
+.gal .cnt{position:absolute;right:12px;bottom:12px;background:rgba(29,28,26,.62);color:#fff;font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px}
+.rev{display:flex;flex-direction:column;gap:4px;padding-top:12px;border-top:1px solid var(--p-line)}
+.rev:first-of-type{border-top:0;padding-top:0}
+.rev .who{display:flex;gap:8px;align-items:baseline;font-size:13px}.rev .who b{font-weight:700}
+.rev p{margin:0;font-size:13px;line-height:1.5}
+.revpics{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}.revpics img{width:64px;height:64px;border-radius:8px;object-fit:cover;flex-shrink:0}
 
 /* 02 coupon sheet */
 .ov{position:absolute;inset:0;z-index:10}
@@ -209,6 +219,13 @@ img{display:block}
 .toast{position:absolute;left:50%;top:80px;transform:translateX(-50%);z-index:30;background:var(--p-fg);color:#fff;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:600;display:flex;gap:8px;white-space:nowrap}
 .toast b{color:#7FD3A6;font-weight:800}
 
+/* tap hint: one pulsing dot on the next thing to tap */
+.tap{position:absolute;width:18px;height:18px;border-radius:50%;background:var(--p-accent);box-shadow:0 0 0 3px #fff,0 2px 6px rgba(0,0,0,.2);pointer-events:none;z-index:5;transform:translate(-50%,-50%);animation:tapb 1.4s ease-in-out infinite}
+.tap::after{content:"";position:absolute;inset:-3px;border-radius:50%;border:2px solid var(--p-accent);animation:tapr 1.4s ease-out infinite}
+.tap.w{background:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.45)}.tap.w::after{border-color:#fff}
+@keyframes tapb{0%,100%{transform:translate(-50%,-50%) scale(.85)}50%{transform:translate(-50%,-50%) scale(1.1)}}
+@keyframes tapr{from{transform:scale(1);opacity:.9}to{transform:scale(2.6);opacity:0}}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 /* RAIL (standalone page only) */
@@ -262,6 +279,12 @@ const CONFIG = {
   myItem: {
     id:"bean", name:"Giant Bean Bag Chair, Oversized Shell Shape, Faux Fur", short:"Giant Bean Bag Chair",
     price:51.14, was:88.01, rating:4.5, reviews:645, img:"beanbag.jpg", arrives:[1,6],
+    gallery:["beanbag.jpg","photo-white.jpg","photo-room-1.jpg","photo-room-2.jpg","photo-details.jpg","photo-size.jpg"],
+    topReviews:[
+      {name:"Jhimy Palma", date:"Sep 1, 2026", text:"I love it! It arrived quite quickly, packed in a vacuum-sealed box. It took a couple of hours to expand into shape, and it's quite comfortable. I needed something like this for my reading space to enjoy my fish. I bought the white one; great price and very good quality, definitely worth it! Thank you!"},
+      {name:"Mary Famulari", date:"Aug 21, 2026", text:"This chair arrived very quickly and was packaged very well! The material is actually thicker than I expected it to be, which makes it very comfortable to sit on. It's a great product for kids, as well as, adults! I would definitely recommend this product!"},
+      {name:"Cruz mari Fernandez", date:"Aug 6, 2026", text:"I loved it! It's super comfortable. I give it a 100/100! I highly recommend it for when guests come over. Thanks for the fast shipping!"},
+    ],
     specs:[["Color","Beige"],["Size",'47"W × 43"D × 33"H'],["Material","Faux fur, 100% polyester"],["Fill","High-density foam chunks"]],
     about:["Faux fur cover, soft and warm","Shell-shaped back that supports your whole body","Filled with high-density foam that springs back","Big enough for adults; give it about 48 hours to fully expand after unboxing"],
   },
@@ -324,7 +347,7 @@ const SCREENS = {
   product(){
     const m = CONFIG.myItem;
     return `${hdr("Product",{back:"noop",right:ib("cart","icon-cart.svg","Cart")})}
-    <div class="body"><div class="hero"><img src="${I(m.img)}" alt="${m.name}"></div>
+    <div class="body"><div class="hero gal"><div class="strip" id="gal">${m.gallery.map((g,i)=>`<img src="${I(g)}" alt="${m.name}, photo ${i+1}">`).join("")}</div><span class="cnt" id="galCnt">1 / ${m.gallery.length}</span></div>
       <div class="pad" style="padding-bottom:16px">
         <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:16.5px;font-weight:700;line-height:1.35">${m.name}</div>
           <div style="display:flex;gap:8px;align-items:baseline"><span style="font-size:26px;font-weight:800">${money(m.price)}</span><s class="muted s125">${money(m.was)}</s></div>
@@ -332,6 +355,9 @@ const SCREENS = {
         <button class="cnote" data-act="openPopup"><img class="star" src="${I("star.png")}" alt=""><span class="tx"><b>Spend $${CONFIG.threshold}, get $${CONFIG.discount} off + 1 gift.</b><br><span class="muted">Optional · you can also add it at checkout</span></span><img src="${I("icon-chev.svg")}" alt="" style="width:16px;height:16px"></button>
         <div class="card" style="display:flex;flex-direction:column;gap:10px"><div class="t">Details</div>${m.specs.map(([k,v])=>`<div class="spec"><span>${k}</span><span>${v}</span></div>`).join("")}</div>
         <div class="card" style="display:flex;flex-direction:column;gap:8px"><div class="t">About this item</div><ul class="bul">${m.about.map(a=>`<li style="line-height:1.6">${a}</li>`).join("")}</ul></div>
+        <div class="card" style="display:flex;flex-direction:column;gap:12px"><div style="display:flex;justify-content:space-between;align-items:baseline"><div class="t">Reviews</div><span class="muted s125">★ ${m.rating} · ${m.reviews} ratings</span></div>
+          <div class="revpics">${m.gallery.slice(1).map(g=>`<img src="${I(g)}" alt="">`).join("")}</div>
+          ${m.topReviews.map(r=>`<div class="rev"><div class="who"><b>${r.name}</b><span class="muted s125">${r.date}</span></div><p>${r.text}</p></div>`).join("")}</div>
         <div class="card muted s125">Free returns within 90 days</div>
       </div></div>
     <div class="foot" style="flex-direction:row;gap:10px"><button class="btn sec" data-act="addToCart">${S.cartAdded?"Added ✓":"Add to cart"}</button><button class="btn pri" data-act="buyNow">Buy now</button></div>`;
@@ -537,7 +563,8 @@ const OVERLAYS = {
 const screenEl = () => $("#screen");
 let page = null, ov = null, busy = false;
 function build(){ const p=document.createElement("div"); p.className="page"; p.innerHTML=SCREENS[S.screen](); return p; }
-function afterBuild(){ if(S.screen==="pick") wireFeed(); if(S.screen==="c2") wireHome(); if(S.screen==="home") showBanner(); renderRail(); }
+function wireGallery(){ const g=$("#gal"), c=$("#galCnt"); if(!g) return; g.addEventListener("scroll",()=>{ c.textContent=`${Math.round(g.scrollLeft/g.clientWidth)+1} / ${CONFIG.myItem.gallery.length}`; },{passive:true}); }
+function afterBuild(){ if(S.screen==="product") wireGallery(); if(S.screen==="pick") wireFeed(); if(S.screen==="c2") wireHome(); if(S.screen==="home") showBanner(); renderRail(); }
 // mode: "fwd" push ← 300ms · "back" push → 260ms · "fade" dissolve · "close" app-close · undefined = in place
 function render(mode, ms){
   const sc=screenEl(), old=page, next=build();
@@ -692,6 +719,40 @@ function showBanner(){
   setTimeout(()=>{ if(S.screen!=="home") return; b.animate([{transform:"translateY(-140%)"},{transform:"translateY(6%)",offset:.7},{transform:"translateY(0)"}],{duration:550,easing:"cubic-bezier(.22,1,.36,1)",fill:"forwards"}); },600);
 }
 
+/* ---------- tap hint: [selector, x, y, white-on-orange] for the next step ---------- */
+function hintFor(){
+  if(location.search.includes("nohint")) return null; // study mode: no guidance, so A and B are compared fairly
+  if(S.overlay==="popup") return S.ticket?[".a1","90%","50%",1]:[".ticket .rd","50%","50%"];
+  if(S.overlay==="reminder") return ['[data-act="remOn"]',"90%","50%",1];
+  if(S.overlay==="ios") return ['[data-act="iosAllow"]',"78%","50%"];
+  if(S.overlay) return null;
+  const t=totals();
+  switch(S.screen){
+    case "product": return [".cnote","88%","50%"];
+    case "pick": if(S.hint==="checkin"&&!S.checkin) return ['[data-act="checkinToggle"]',"95%","50%"];
+      return selList().length?["#pickFoot .btn.pri","93%","50%",1]:[".pc .ck","50%","50%"];
+    case "detail": return S.sel[S.detail]?[".foot .btn","93%","50%"]:[".foot .btn","93%","50%",1];
+    case "review": return t.qualifies&&!S.gift?[".gift","82%","16%"]:!S.pay?[".radio","92%","50%"]:[".foot .btn.pri","94%","50%",1];
+    case "checkout": return !S.pay?[".radio","92%","50%"]:[".foot .btn.pri","94%","50%",1];
+    case "done": return [".foot .btn.sec","90%","50%"];
+    case "c1": return [".foot .btn.pri","90%","50%",1];
+    case "c2": return S.reminder?null:['[data-act="reminderToggle"]',"94%","50%"];
+    case "home": return ["#nbanner","92%","30%"];
+  }
+  return null;
+}
+function placeHint(){
+  const root=S.overlay?ov:page, h=hintFor(), old=screenEl().querySelector(".tap");
+  const el=h&&root&&root.querySelector(h[0]);
+  if(!el){ old&&old.remove(); return; }
+  if(old&&old.parentNode===el) return;
+  old&&old.remove();
+  if(getComputedStyle(el).position==="static") el.style.position="relative";
+  const d=document.createElement("span"); d.className="tap"+(h[3]?" w":""); d.style.left=h[1]; d.style.top=h[2]; el.appendChild(d);
+}
+let hintQ=false;
+new MutationObserver(()=>{ if(hintQ) return; hintQ=true; requestAnimationFrame(()=>{ hintQ=false; placeHint(); }); }).observe(screenEl(),{childList:true,subtree:true});
+
 /* ---------- fit the 390×844 screen into the device ---------- */
 function fit(){
   const embed=document.documentElement.classList.contains("embed"), bez=10;
@@ -772,6 +833,7 @@ function jump(id){
 }
 document.getElementById("flow").addEventListener("click", e=>{ const b=e.target.closest("[data-jump]"); if(b) jump(b.dataset.jump); });
 addEventListener("message", e=>{ if(e.origin===location.origin && NOTES[e.data?.jump] && currentId()!==e.data.jump) jump(e.data.jump); });
+addEventListener("message", e=>{ if(e.origin===location.origin && e.data && "hint" in e.data){ S.hint=e.data.hint; placeHint(); } });
 $("#reset").onclick=()=>jump("product");
 $("#fill").onclick=()=>{ jump("pick"); S.sel={[ALL[0].id]:true}; render(); };
 
