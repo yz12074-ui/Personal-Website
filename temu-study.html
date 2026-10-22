@@ -61,10 +61,10 @@ pre{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding
 <div class="wrap" id="app"></div>
 
 <script>
-/* ===== Save each session to the "Temu AB test" Google Sheet =====
+/* ===== Save each session to the playtest sheet (2nd tab of "cookie thief 信息收集表") =====
    Same approach as cookie-thief.html: a Google Apps Script web app bound to the sheet.
    Paste its /exec URL here. Until then, the last screen shows a copyable row instead. */
-const SHEET_URL='';
+const SHEET_URL='https://script.google.com/macros/s/AKfycbz2-5ocNy4Kz3C_G0nRTWisNE5zd8jWBdTAVxGLIwzBmCuyU9bJQJnd-32iubqrmpr-hg/exec'; // rows tagged project:temu go to the 2nd tab
 const KEYS=["order","A_outcome","A_taps","A_seconds","A_paid","A_guess","A_trust","A_leave","B_outcome","B_taps","B_seconds","B_paid","B_guess","B_trust","B_leave","prefer","comment"];
 
 const $=s=>document.querySelector(s);
@@ -167,7 +167,7 @@ function render(){
       <div class="q"><label for="comment">Anything that annoyed or surprised you? (optional)</label><textarea id="comment"></textarea></div>
       <button class="btn" type="submit">Finish</button></form>`;
   if(step===6){
-    const sent=SHEET_URL&&navigator.sendBeacon(SHEET_URL,JSON.stringify(Object.fromEntries(KEYS.map(k=>[k,R[k]??""]))));
+    const sent=SHEET_URL&&navigator.sendBeacon(SHEET_URL,JSON.stringify({project:"temu",...Object.fromEntries(KEYS.map(k=>[k,R[k]??""]))}));
     app.innerHTML=`<span class="prog">Done</span><h1>Thank you!</h1>
       <div class="card">${sent?`<p>Your answers were saved. You can close this page.</p>`
         :`<p>Please copy this line and send it to the researcher.</p><pre id="row">${rowText()}</pre><button class="btn ghost" id="copy">Copy</button>`}</div>`;
