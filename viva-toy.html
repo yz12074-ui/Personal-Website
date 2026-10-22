@@ -1029,6 +1029,40 @@
         @keyframes wall-drift { to { transform: translate(-174px, -400px); } }
         @media (max-width: 768px) { .cs-wall-plane { transform: rotate(-24deg) scale(0.62); } }
         @media (prefers-reduced-motion: reduce) { .cs-wall-drift { animation: none; } }
+        /* story layout (mockup → challenge / problem / goal → intro → process → key features) */
+        .cs-mock { margin-top: 56px; margin-bottom: 0; padding: clamp(24px, 4vw, 56px); animation: fadeUp 0.9s ease 0.1s both; }
+        .cs-mock img { max-height: 560px; }
+        .cs-title { padding: 48px 0 8px; }
+        .cs-k { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 10px; }
+        .cs-serif { font-family: 'Cormorant Garamond', serif; font-size: clamp(19px, 1.7vw, 23px); line-height: 1.45; color: var(--ink); }
+        .cs-story { display: grid; grid-template-columns: 1fr 1fr; gap: 40px 56px; padding: 40px 0 96px; border-top: 0.5px solid var(--apricot-warm); margin-top: 32px; }
+        .cs-goals { list-style: none; display: flex; flex-direction: column; gap: 8px; align-self: end; }
+        .cs-goals li { display: flex; gap: 14px; align-items: baseline; padding-bottom: 8px; border-bottom: 0.5px solid var(--apricot-warm); }
+        .cs-goals span { font-family: 'Cormorant Garamond', serif; color: var(--accent); }
+        .cs-goals b { font-size: 13.5px; font-weight: 400; color: var(--ink-mid); }
+        .cs-process { display: flex; flex-direction: column; gap: 28px; }
+        .cs-pill { display: flex; justify-content: center; align-items: center; padding: 14px; border: 1px solid var(--ink-mid); border-radius: 999px; position: relative; }
+        .cs-pill::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; border-top: 1px dashed var(--apricot-deep); z-index: -1; }
+        .cs-pill span { flex: 0 1 170px; aspect-ratio: 1; border-radius: 50%; background: rgba(196, 120, 90, 0.16); display: grid; place-items: center; margin-left: -26px; font-family: 'Cormorant Garamond', serif; font-size: clamp(16px, 1.8vw, 24px); color: var(--ink); }
+        .cs-pill span:first-child { margin-left: 0; }
+        .cs-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .cs-steps p { font-size: 13px; line-height: 1.7; color: var(--ink-mid); font-weight: 300; }
+        .cs-steps .cs-step-n { font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--accent); margin-bottom: 4px; }
+        .cs-feat-head { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: end; }
+        .cs-feat-head .section-heading { font-size: clamp(32px, 3.6vw, 44px); }
+        .cs-sub { font-size: 14px; color: var(--ink-mid); font-weight: 300; margin-top: 10px; }
+        .cs-checks { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+        .cs-checks li { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--ink); }
+        .cs-checks svg { width: 15px; height: 15px; flex: none; margin-top: 3px; color: var(--accent); }
+        .cs-phones.dense { grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 18px; padding: 28px; }
+        .cs-phones.dense img { max-width: 230px; margin: 0 auto; }
+        .cs-feature .cs-chat { margin-left: auto; }
+        @media (max-width: 768px) {
+            .cs-story, .cs-feat-head { grid-template-columns: 1fr; gap: 28px; }
+            .cs-steps { grid-template-columns: 1fr 1fr; }
+            .cs-pill span { margin-left: -14px; }
+            .cs-phones.dense { grid-template-columns: repeat(2, 1fr); padding: 16px; }
+        }
 
     </style>
 </head>
