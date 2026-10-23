@@ -772,13 +772,21 @@
         .lang-toggle { margin-top: 24px; width: fit-content; font: inherit; font-size: 12px; letter-spacing: 0.04em; color: var(--ink-light); background: none; border: 0.5px solid var(--apricot-warm); border-radius: 100px; padding: 4px 12px; cursor: pointer; }
         .lang-toggle b { color: var(--ink); font-weight: 500; }
         html:lang(zh-CN) body { font-family: 'DM Sans', 'PingFang SC', 'Noto Sans SC', sans-serif; }
-        html:lang(zh-CN) .hero-name { font-size: clamp(40px, 5.2vw, 68px); line-height: 1.15; }
+        html:lang(zh-CN) .hero-name { font-size: clamp(40px, 5.6vw, 76px); line-height: 1.15; }
         .sewn { position: relative; display: inline-block; font-size: 0.8em; font-style: italic; line-height: 1.1; padding: 0.06em 0.32em 0.14em; margin: 0 0.04em; rotate: -2deg; color: #2a2433; text-decoration: none; border-radius: 4px;
             background-color: #fff; background-image: repeating-linear-gradient(0deg, rgba(255, 143, 199, 0.45) 0 7px, transparent 7px 14px), repeating-linear-gradient(90deg, rgba(255, 143, 199, 0.45) 0 7px, transparent 7px 14px);
             box-shadow: 0 3px 0 rgba(42, 36, 51, 0.18); transition: rotate 0.25s ease; }
         .sewn::after { content: ""; position: absolute; inset: 5px; border: 1.5px dashed #2a2433; border-radius: 2px; pointer-events: none; }
         .sewn:hover, .sewn:focus-visible { rotate: 1deg; }
         .sewn:focus-visible { outline: 3px solid #2a2433; outline-offset: 3px; }
+        .hero-focus { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 30px; max-width: 640px; }
+        .focus-item { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px; border: 0.5px solid var(--apricot-warm); border-radius: 12px; background: var(--card-bg); text-decoration: none; transition: border-color .25s, translate .25s; }
+        .focus-item:hover, .focus-item:focus-visible { border-color: var(--accent-light); translate: 0 -2px; }
+        .focus-k { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+        .focus-v { font-family: 'Cormorant Garamond', serif; font-size: 19px; color: var(--ink); }
+        .offscreen-line { font-family: 'Cormorant Garamond', serif; font-size: clamp(28px, 3.4vw, 40px); font-weight: 300; line-height: 1.3; color: var(--ink); }
+        .offscreen-sub { margin-top: 12px; font-size: 14px; line-height: 1.7; color: var(--ink-mid); font-weight: 300; max-width: 52ch; }
+        @media (max-width: 768px) { .hero-focus { grid-template-columns: 1fr; } }
         .card-shot { max-width: 84%; max-height: 86%; width: auto; height: auto; object-fit: contain; }
         .card-lock { display: inline-flex; vertical-align: -2px; margin-left: 6px; color: var(--ink-light); }
         .about-photo { overflow: hidden; }
@@ -805,16 +813,21 @@
 
         <!-- Hero -->
         <section class="hero" id="top">
-            <p class="hero-eyebrow" data-zh="作品集 · 2026">Portfolio · 2026</p>
-            <h1 class="hero-name" data-zh="&lt;span class=&quot;sr-only&quot;&gt;张玥妍 Amanda：&lt;/span&gt;我是一个&lt;br&gt;会&lt;a class=&quot;sewn&quot; href=&quot;fashion.html&quot;&gt;做衣服&lt;/a&gt;的&lt;br&gt;&lt;em&gt;UX 产品设计师&lt;/em&gt;。"><span class="sr-only">Amanda: </span>I’m a <em>UX &amp; product<br> designer</em> who also<br> <a class="sewn" href="fashion.html">makes clothes</a>.</h1>
-            <p class="hero-sub" data-zh="本科学服装设计，现在做数字产品设计。下了屏幕，我攀岩、打羽毛球，也自己做衣服。">
-                Fashion design grad turned digital product designer. Off screen I climb, play badminton and sew.
+            <p class="hero-eyebrow" data-zh="UX 产品设计师 · 作品集 2026">UX &amp; Product Designer · Portfolio 2026</p>
+            <h1 class="hero-name" data-zh="&lt;span class=&quot;sr-only&quot;&gt;张玥妍 Amanda：&lt;/span&gt;设计&lt;em&gt;诚实&lt;/em&gt;、&lt;br&gt;以人为本的产品。"><span class="sr-only">Amanda: </span>Designing <em>honest</em>,<br> human-centered products.</h1>
+            <p class="hero-sub" data-zh="我是张玥妍（Amanda），一名 UX 产品设计师。我从用户研究出发，尽早做原型、反复测试，设计尊重用户的流程——从诚实的结算体验，到 AI 陪伴应用和服务系统。">
+                I’m Amanda, a UX &amp; product designer. I start from research, prototype early and test often, designing flows that respect people, from honest checkouts to AI companions and service systems.
             </p>
+            <div class="hero-focus" aria-label="Focus areas">
+                <a class="focus-item" href="temu.html"><span class="focus-k" data-zh="伦理设计">Ethical design</span><span class="focus-v" data-zh="礼品卡陷阱">The Gift Card Trap →</span></a>
+                <a class="focus-item" href="lovelink.html"><span class="focus-k" data-zh="AI 交互">AI interaction</span><span class="focus-v">LoveLink →</span></a>
+                <a class="focus-item" href="viva-toy.html"><span class="focus-k" data-zh="服务设计">Service design</span><span class="focus-v">VIVA TOY →</span></a>
+            </div>
             <div class="hero-tags">
-                <span class="tag" data-zh="用户体验设计">UX Design</span>
-                <span class="tag" data-zh="产品设计">Product Design</span>
-                <span class="tag" data-zh="服装设计">Fashion Design</span>
+                <span class="tag" data-zh="用户研究">UX Research</span>
+                <span class="tag" data-zh="交互设计">Interaction Design</span>
                 <span class="tag" data-zh="原型制作">Prototyping</span>
+                <span class="tag" data-zh="服务设计">Service Design</span>
             </div>
             <div class="scroll-hint">
                 <span class="scroll-hint-line"></span> <span data-zh="向下滑动">scroll</span>
@@ -986,6 +999,13 @@
                 </div>
 
             </div>
+        </section>
+
+        <!-- Off screen: fashion background + hobbies -->
+        <section class="section offscreen" id="offscreen">
+            <div class="section-label" data-zh="屏幕之外">Off screen</div>
+            <p class="offscreen-line" data-zh="我还是一个会&lt;a class=&quot;sewn&quot; href=&quot;fashion.html&quot;&gt;做衣服&lt;/a&gt;的设计师。">I’m also a designer who <a class="sewn" href="fashion.html">makes clothes</a>.</p>
+            <p class="offscreen-sub" data-zh="本科学的是服装设计。下了屏幕，我攀岩、打羽毛球，也自己做衣服。">I studied fashion design as an undergrad. Off screen I climb, play badminton and sew.</p>
         </section>
 
         <!-- Footer -->
