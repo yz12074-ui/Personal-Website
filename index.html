@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amanda Z — Designer</title>
+    <title data-zh="张玥妍 Amanda — UX 产品设计师">Amanda Z — UX &amp; Product Designer</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -767,6 +767,23 @@
                 grid-template-columns: 1fr;
             }
         }
+        .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+        /* ─── ADDED: language switch, sewn fabric label, mockup covers ─── */
+        .lang-toggle { margin-top: 24px; width: fit-content; font: inherit; font-size: 12px; letter-spacing: 0.04em; color: var(--ink-light); background: none; border: 0.5px solid var(--apricot-warm); border-radius: 100px; padding: 4px 12px; cursor: pointer; }
+        .lang-toggle b { color: var(--ink); font-weight: 500; }
+        html:lang(zh-CN) body { font-family: 'DM Sans', 'PingFang SC', 'Noto Sans SC', sans-serif; }
+        html:lang(zh-CN) .hero-name { font-size: clamp(40px, 5.2vw, 68px); line-height: 1.15; }
+        .sewn { position: relative; display: inline-block; font-size: 0.8em; font-style: italic; line-height: 1.1; padding: 0.06em 0.32em 0.14em; margin: 0 0.04em; rotate: -2deg; color: #2a2433; text-decoration: none; border-radius: 4px;
+            background-color: #fff; background-image: repeating-linear-gradient(0deg, rgba(255, 143, 199, 0.45) 0 7px, transparent 7px 14px), repeating-linear-gradient(90deg, rgba(255, 143, 199, 0.45) 0 7px, transparent 7px 14px);
+            box-shadow: 0 3px 0 rgba(42, 36, 51, 0.18); transition: rotate 0.25s ease; }
+        .sewn::after { content: ""; position: absolute; inset: 5px; border: 1.5px dashed #2a2433; border-radius: 2px; pointer-events: none; }
+        .sewn:hover, .sewn:focus-visible { rotate: 1deg; }
+        .sewn:focus-visible { outline: 3px solid #2a2433; outline-offset: 3px; }
+        .card-shot { max-width: 84%; max-height: 86%; width: auto; height: auto; object-fit: contain; }
+        .card-lock { display: inline-flex; vertical-align: -2px; margin-left: 6px; color: var(--ink-light); }
+        .about-photo { overflow: hidden; }
+        .about-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; }
+        @media (max-width: 768px) { .lang-toggle { margin: 0 0 0 20px; align-self: center; } }
     </style>
 </head>
 
@@ -776,10 +793,11 @@
     <nav class="sidebar">
         <span class="sidebar-logo">玥妍</span>
         <div class="sidebar-nav">
-            <a href="#projects" class="nav-item active" onclick="setActive(this)">Projects</a>
-            <a href="#playground" class="nav-item" onclick="setActive(this)">Playground</a>
-            <a href="#connect" class="nav-item" onclick="setActive(this)">Connect</a>
+            <a href="#projects" class="nav-item active" onclick="setActive(this)" data-zh="作品">Projects</a>
+            <a href="#playground" class="nav-item" onclick="setActive(this)" data-zh="实验">Playground</a>
+            <a href="#connect" class="nav-item" onclick="setActive(this)" data-zh="联系">Connect</a>
         </div>
+        <button class="lang-toggle" type="button"><b>EN</b> / 中文</button>
     </nav>
 
     <!-- Main -->
@@ -787,121 +805,69 @@
 
         <!-- Hero -->
         <section class="hero" id="top">
-            <p class="hero-eyebrow">Portfolio · 2025</p>
-            <h1 class="hero-name">
-                Amanda —<br>
-                <em>designer</em> crafting<br> quiet moments.
-            </h1>
-            <p class="hero-sub">
-                Multidisciplinary designer exploring the space between form, function, and feeling. Drawn to interactions that breathe.
+            <p class="hero-eyebrow" data-zh="作品集 · 2026">Portfolio · 2026</p>
+            <h1 class="hero-name" data-zh="&lt;span class=&quot;sr-only&quot;&gt;张玥妍 Amanda：&lt;/span&gt;我是一个&lt;br&gt;会&lt;a class=&quot;sewn&quot; href=&quot;fashion.html&quot;&gt;做衣服&lt;/a&gt;的&lt;br&gt;&lt;em&gt;UX 产品设计师&lt;/em&gt;。"><span class="sr-only">Amanda: </span>I’m a <em>UX &amp; product<br> designer</em> who also<br> <a class="sewn" href="fashion.html">makes clothes</a>.</h1>
+            <p class="hero-sub" data-zh="本科学服装设计，现在做数字产品设计。下了屏幕，我攀岩、打羽毛球，也自己做衣服。">
+                Fashion design grad turned digital product designer. Off screen I climb, play badminton and sew.
             </p>
             <div class="hero-tags">
-                <span class="tag">Interaction Design</span>
-                <span class="tag">Visual Design</span>
-                <span class="tag">Brand</span>
-                <span class="tag">Motion</span>
+                <span class="tag" data-zh="用户体验设计">UX Design</span>
+                <span class="tag" data-zh="产品设计">Product Design</span>
+                <span class="tag" data-zh="服装设计">Fashion Design</span>
+                <span class="tag" data-zh="原型制作">Prototyping</span>
             </div>
             <div class="scroll-hint">
-                <span class="scroll-hint-line"></span> scroll
+                <span class="scroll-hint-line"></span> <span data-zh="向下滑动">scroll</span>
             </div>
         </section>
 
         <!-- Projects Section -->
         <section class="section" id="projects">
-            <div class="section-label">Selected Work</div>
+            <div class="section-label" data-zh="精选作品">Selected Work</div>
 
             <div class="projects-grid">
 
                 <!-- Project: Temu -->
                 <a href="temu.html" class="project-card">
-                    <div class="card-image"><img class="card-cover" src="images/temu/cover.jpg" alt="Temu's prize wheel next to the Temu app icon"><span class="card-pill">View case study</span></div>
+                    <div class="card-image"><img class="card-cover" src="images/temu/cover.jpg" alt="Temu's prize wheel next to the Temu app icon" data-zh-alt="Temu 的抽奖转盘和 Temu App 图标"><span class="card-pill" data-zh="查看案例">View case study</span></div>
                     <div class="card-content">
-                        <div class="card-head"><h3 class="card-title">The Gift Card Trap</h3><span class="card-chip">Class project</span></div>
-                        <p class="card-desc">An ethical redesign of Temu’s coupon pop-up maze</p>
-                        <ul class="card-metrics"><li><b>21→3</b><span>screens</span></li><li><b>7</b><span>dark patterns</span></li><li><b>$151→$94</b><span>checkout</span></li></ul>
-                        <div class="card-details"><div><dl><div><dt>Role</dt><dd>Solo · research & design</dd></div><div><dt>Course</dt><dd>Dark Patterns</dd></div><div><dt>Timeline</dt><dd>Sep 2026 · 1 week</dd></div></dl></div></div>
+                        <div class="card-head"><h3 class="card-title"><span data-zh="礼品卡陷阱">The Gift Card Trap</span></h3><span class="card-chip" data-zh="课程项目">Class project</span></div>
+                        <p class="card-desc" data-zh="对 Temu 优惠券弹窗迷宫的一次伦理重设计">An ethical redesign of Temu’s coupon pop-up maze</p>
+                        <ul class="card-metrics"><li><b>21→3</b><span data-zh="个页面">screens</span></li><li><b>7</b><span data-zh="种黑暗模式">dark patterns</span></li><li><b>$151→$94</b><span data-zh="结算金额">checkout</span></li></ul>
+                        <div class="card-details"><div><dl><div><dt data-zh="角色">Role</dt><dd data-zh="独立完成 · 研究与设计">Solo · research & design</dd></div><div><dt data-zh="课程">Course</dt><dd data-zh="黑暗模式">Dark Patterns</dd></div><div><dt data-zh="时间">Timeline</dt><dd data-zh="2026.09 · 1 周">Sep 2026 · 1 week</dd></div></dl></div></div>
                     </div>
                 </a>
 
-                <!-- Project: Olive -->
-                <a href="olive.html" class="project-card">
-                    <div class="card-image">
-                        <div class="card-image-inner proj-visual-2">
-                            <div class="proj-mockup" style="flex-direction:column;gap:8px;">
-                                <div style="width:36px;height:36px;border-radius:50%;background:var(--apricot-mid);"></div>
-                                <div style="display:flex;gap:10px;">
-                                    <div style="text-align:center;">
-                                        <div style="font-size:9px;font-weight:500;color:var(--ink);">90</div>
-                                        <div style="font-size:7px;color:var(--ink-light);">score</div>
-                                    </div>
-                                    <div style="text-align:center;">
-                                        <div style="font-size:9px;font-weight:500;color:var(--ink);">72</div>
-                                        <div style="font-size:7px;color:var(--ink-light);">following</div>
-                                    </div>
-                                    <div style="text-align:center;">
-                                        <div style="font-size:9px;font-weight:500;color:var(--ink);">38</div>
-                                        <div style="font-size:7px;color:var(--ink-light);">follower</div>
-                                    </div>
-                                </div>
-                                <div style="width:70%;height:1px;background:var(--apricot-warm);"></div>
-                                <div style="font-size:7px;color:var(--ink-light);">history</div>
-                            </div>
-                            <span class="proj-glyph">02</span>
-                        </div>
-                    <span class="card-pill">View case study</span></div>
+                <a href="lovelink.html" class="project-card">
+                    <div class="card-image"><div class="card-image-inner proj-visual-2"><img class="card-shot" src="images/home/lovelink-card.webp" alt="A hand holding an iPhone with the LoveLink chat screen" data-zh-alt="手持 iPhone，屏幕上是 LoveLink 聊天界面" loading="lazy"></div><span class="card-pill" data-zh="查看案例">View case study</span></div>
                     <div class="card-content">
-                        <div class="card-head"><h3 class="card-title">Olive</h3><span class="card-chip">Client work</span></div>
-                        <p class="card-desc">Brand &amp; app redesign for a holistic food scanner</p>
-                        <ul class="card-metrics"><li><b>350K+</b><span>users</span></li><li><b>1–2 wk</b><span>sprint</span></li></ul>
-                        <div class="card-details"><div><dl><div><dt>Role</dt><dd>UI · micro-interactions</dd></div><div><dt>Team</dt><dd>With Dan Alves</dd></div><div><dt>Timeline</dt><dd>Nov 2025</dd></div></dl></div></div>
+                        <div class="card-head"><h3 class="card-title"><span data-zh="LoveLink">LoveLink</span></h3><span class="card-chip" data-zh="个人项目">Personal project</span></div>
+                        <p class="card-desc" data-zh="用 AI 朋友和共建房间，让异地情侣保持亲近的 iOS App">An iOS app that keeps long-distance couples close with AI friends and a shared room</p>
+                        <ul class="card-metrics"><li><b>137</b><span data-zh="份问卷">survey responses</span></li><li><b>3</b><span data-zh="位访谈">interviews</span></li><li><b>5</b><span data-zh="个功能模块">app tabs</span></li></ul>
+                        <div class="card-details"><div><dl><div><dt data-zh="角色">Role</dt><dd data-zh="UX 研究 · UI 设计">UX research · UI design</dd></div><div><dt data-zh="平台">Platform</dt><dd data-zh="iOS App">iOS app</dd></div><div><dt data-zh="时间">Timeline</dt><dd data-zh="2024.10 – 2024.12">Oct – Dec 2024</dd></div></dl></div></div>
                     </div>
                 </a>
 
-                <!-- Project: SoftConstruct -->
-                <a href="softconstruct.html" class="project-card">
-                    <div class="card-image">
-                        <div class="card-image-inner proj-visual-3">
-                            <div class="proj-mockup" style="flex-direction:column;gap:6px;">
-                                <div style="width:80%;height:5px;background:var(--apricot-warm);border-radius:2px;"></div>
-                                <div style="width:60%;height:5px;background:var(--apricot-mid);border-radius:2px;"></div>
-                                <div style="width:72%;height:5px;background:var(--apricot-warm);border-radius:2px;"></div>
-                                <div style="margin-top:6px;width:60%;height:14px;border-radius:3px;background:var(--accent-light);opacity:0.4;"></div>
-                            </div>
-                            <span class="proj-glyph">03</span>
-                        </div>
-                    <span class="card-pill">View case study</span></div>
+                <a href="viva-toy.html" class="project-card">
+                    <div class="card-image"><div class="card-image-inner proj-visual-3"><img class="card-shot" src="images/home/viva-card.webp" alt="VIVA TOY app screens held in hand" data-zh-alt="手持的 VIVA TOY App 界面" loading="lazy"></div><span class="card-pill" data-zh="查看案例">View case study</span></div>
                     <div class="card-content">
-                        <div class="card-head"><h3 class="card-title">SoftConstruct</h3><span class="card-chip">Internship</span></div>
-                        <p class="card-desc">Landing page for the mobile game First Run</p>
-                        <ul class="card-metrics"><li><b>5</b><span>page sections</span></li><li><b>2 wk</b><span>duration</span></li></ul>
-                        <div class="card-details"><div><dl><div><dt>Role</dt><dd>Lead designer · UI &amp; prototyping</dd></div><div><dt>Team</dt><dd>SoftConstruct developers</dd></div><div><dt>Timeline</dt><dd>2023</dd></div></dl></div></div>
+                        <div class="card-head"><h3 class="card-title"><span data-zh="VIVA TOY">VIVA TOY</span></h3><span class="card-chip" data-zh="个人项目">Personal project</span></div>
+                        <p class="card-desc" data-zh="让电子玩具被修好、继续被使用的维修与循环服务">A repair-and-reuse service that keeps electronic toys in play</p>
+                        <ul class="card-metrics"><li><b>3</b><span data-zh="类用户">user groups</span></li><li><b>7</b><span data-zh="个品牌对比">toy brands compared</span></li><li><b>2</b><span data-zh="张服务蓝图">service blueprints</span></li></ul>
+                        <div class="card-details"><div><dl><div><dt data-zh="角色">Role</dt><dd data-zh="服务设计 · 商业模式">Service design · business model</dd></div><div><dt data-zh="产出">Deliverable</dt><dd data-zh="服务系统 + App">Service system + app</dd></div><div><dt data-zh="时间">Timeline</dt><dd data-zh="2024.11 – 2025.01">Nov 2024 – Jan 2025</dd></div></dl></div></div>
                     </div>
                 </a>
 
-                <!-- Project: Sonic -->
-                <a href="sonic-archive.html" class="project-card">
-                    <div class="card-image">
-                        <div class="card-image-inner proj-visual-4">
-                            <div class="proj-mockup" style="flex-direction:column;align-items:flex-start;gap:5px;padding:12px;">
-                                <div style="font-size:8px;font-weight:500;color:var(--ink);letter-spacing:0.06em;">SONIC</div>
-                                <div style="width:100%;height:1px;background:var(--apricot-warm);"></div>
-                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;width:100%;">
-                                    <div style="height:18px;background:var(--apricot-mid);border-radius:2px;"></div>
-                                    <div style="height:18px;background:var(--apricot-warm);border-radius:2px;"></div>
-                                    <div style="height:18px;background:var(--apricot-warm);border-radius:2px;"></div>
-                                    <div style="height:18px;background:var(--apricot-mid);border-radius:2px;"></div>
-                                </div>
-                            </div>
-                            <span class="proj-glyph">04</span>
-                        </div>
-                    <span class="card-pill">View case study</span></div>
+                <a href="aban.html" class="project-card">
+                    <div class="card-image"><div class="card-image-inner proj-visual-4"><img class="card-shot" src="images/home/aban-card.webp" alt="Aban AI music website on a desktop monitor" data-zh-alt="阿伴 AI 音乐创作网站，显示在台式显示器上" loading="lazy"></div><span class="card-pill" data-zh="输入密码">Enter password</span></div>
                     <div class="card-content">
-                        <div class="card-head"><h3 class="card-title">Sonic Archive</h3><span class="card-chip">Personal</span></div>
-                        <p class="card-desc">A fan web archive of Sonic the Hedgehog</p>
-                        <ul class="card-metrics"><li><b>30+</b><span>game titles</span></li><li><b>4</b><span>archive sections</span></li></ul>
-                        <div class="card-details"><div><dl><div><dt>Role</dt><dd>Solo designer &amp; developer</dd></div><div><dt>Tools</dt><dd>Figma · HTML/CSS · JS</dd></div><div><dt>Timeline</dt><dd>2024 · 3 weeks</dd></div></dl></div></div>
+                        <div class="card-head"><h3 class="card-title"><span data-zh="阿伴 Aban">Aban</span><span class="card-lock" aria-label="Password protected"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" fill="currentColor"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></svg></span></h3><span class="card-chip" data-zh="网页设计">Web design</span></div>
+                        <p class="card-desc" data-zh="把灵感变成收入的 AI 音乐网站">An AI music website that turns inspiration into income</p>
+                        
+                        <div class="card-details"><div><dl><div><dt data-zh="查看">Access</dt><dd data-zh="需要密码">Password protected</dd></div><div><dt data-zh="平台">Platform</dt><dd data-zh="网页">Web</dd></div></dl></div></div>
                     </div>
                 </a>
+
             </div>
         </section>
 
@@ -909,13 +875,27 @@
 
         <!-- Playground Section -->
         <section class="section" id="playground">
-            <div class="section-label">Playground</div>
+            <div class="section-label" data-zh="实验">Playground</div>
 
             <div class="playground-grid">
 
                 <a href="cookie-thief.html" class="play-card" style="text-decoration:none;background:#fff;">
-                    <img src="assets/cookie-thief-cover.png" alt="Cookie Thief: pixel rat offline game" style="width:100%;height:100%;object-fit:contain;">
+                    <img src="assets/cookie-thief-cover.png" alt="Cookie Thief: pixel rat offline game" data-zh-alt="Cookie Thief：像素老鼠离线小游戏" style="width:100%;height:100%;object-fit:contain;">
                     <span class="play-label">Cookie Thief</span>
+                </a>
+
+                <a href="fashion.html" class="play-card" style="text-decoration:none;">
+                    <div class="card-image-inner" style="width:100%;height:100%;background-color:#fff;background-image:repeating-linear-gradient(0deg,rgba(255,143,199,.35) 0 10px,transparent 10px 20px),repeating-linear-gradient(90deg,rgba(255,143,199,.35) 0 10px,transparent 10px 20px);">
+                        <span class="sewn" style="font-family:'Cormorant Garamond',serif;font-size:26px;" data-zh="做衣服">makes clothes</span>
+                    </div>
+                    <span class="play-label" data-zh="服装设计">Fashion design</span>
+                </a>
+
+                <a href="wall.html" class="play-card" style="text-decoration:none;">
+                    <div class="card-image-inner" style="width:100%;height:100%;background:#EFE8FB;">
+                        <div style="background:#fff;border-radius:12px;padding:14px 18px;rotate:-4deg;box-shadow:0 4px 0 rgba(74,64,96,.15);font-family:'Gaegu','ZCOOL KuaiLe',cursive;font-size:24px;color:#4A4060;" data-zh="签个名 ✎">sign here ✎</div>
+                    </div>
+                    <span class="play-label" data-zh="签名墙">Sign the wall</span>
                 </a>
 
                 <div class="play-card" onclick="void(0)">
@@ -934,7 +914,7 @@
                             <div style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(80,60,120,0.4);">is Action</div>
                         </div>
                     </div>
-                    <span class="play-label">Pixel Art Poster</span>
+                    <span class="play-label" data-zh="像素海报">Pixel Art Poster</span>
                 </div>
 
                 <div class="play-card" onclick="void(0)">
@@ -956,7 +936,7 @@
                             <div style="height:24px;background:rgba(196,100,90,0.25);border-radius:3px;"></div>
                         </div>
                     </div>
-                    <span class="play-label">iOS Explorations</span>
+                    <span class="play-label" data-zh="iOS 探索">iOS Explorations</span>
                 </div>
 
                 <div class="play-card" onclick="void(0)">
@@ -967,7 +947,7 @@
                             <div style="width:40px;height:2px;background:rgba(60,100,160,0.4);border-radius:1px;transform:rotate(-20deg);"></div>
                         </div>
                     </div>
-                    <span class="play-label">Motion Studies</span>
+                    <span class="play-label" data-zh="动效练习">Motion Studies</span>
                 </div>
 
 
@@ -978,27 +958,27 @@
 
         <!-- Connect Section -->
         <section class="section" id="connect">
-            <div class="section-label">Connect</div>
+            <div class="section-label" data-zh="联系">Connect</div>
 
             <div class="connect-grid">
 
                 <div>
-                    <div class="about-photo">悦</div>
+                    <div class="about-photo"><img src="images/home/about-photo.webp" alt="Portrait of Amanda" data-zh-alt="张玥妍的肖像" loading="lazy"></div>
                     <p class="about-text">
-                        <p>I'm Yueyan (Amanda) Zhang — a multidisciplinary designer interested in the quiet space between interaction and emotion. Started in visual design, drawn into motion and micro-interactions.</p>
-                        <p>I believe good design feels inevitable. Currently exploring new work and collaborations.</p>
+                        <p data-zh="我是张玥妍（Amanda），一名跨领域设计师，关注交互与情感之间那片安静的空间。从视觉设计起步，后来被动效和微交互吸引。">I'm Yueyan (Amanda) Zhang — a multidisciplinary designer interested in the quiet space between interaction and emotion. Started in visual design, drawn into motion and micro-interactions.</p>
+                        <p data-zh="我相信好的设计会让人觉得理所当然。目前正在寻找新的工作和合作机会。">I believe good design feels inevitable. Currently exploring new work and collaborations.</p>
                     </p>
                 </div>
 
                 <div class="connect-links">
                     <a href="#" class="connect-link">
-          Resume <span class="connect-link-arrow">↗</span>
+          <span data-zh="简历">Resume</span> <span class="connect-link-arrow">↗</span>
         </a>
                     <a href="#" class="connect-link">
           LinkedIn <span class="connect-link-arrow">↗</span>
         </a>
                     <a href="#" class="connect-link">
-          Email <span class="connect-link-arrow">↗</span>
+          <span data-zh="邮箱">Email</span> <span class="connect-link-arrow">↗</span>
         </a>
                     <a href="#" class="connect-link">
           Instagram <span class="connect-link-arrow">↗</span>
@@ -1011,8 +991,8 @@
         <!-- Footer -->
         <footer class="footer">
             <span class="footer-name">Yueyan · 玥妍</span>
-            <a href="foody.html" class="footer-year" style="text-decoration:none">Foody prototype →</a>
-            <span class="footer-year">© 2025</span>
+            <a href="foody.html" class="footer-year" style="text-decoration:none" data-zh="Foody 原型 →">Foody prototype →</a>
+            <span class="footer-year">© 2026</span>
         </footer>
 
     </div>
@@ -1083,6 +1063,7 @@
         });
     </script>
 
+    <script src="assets/i18n.js" defer></script>
 </body>
 
 </html>
