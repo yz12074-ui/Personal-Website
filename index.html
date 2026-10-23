@@ -1,1089 +1,500 @@
 <!DOCTYPE html>
-<html lang="zh">
-
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-zh="张玥妍 Amanda — UX 产品设计师">Amanda Z — UX &amp; Product Designer</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-zh="张玥妍 Amanda — UX 产品设计师">Amanda Zhang — UX &amp; Product Designer</title>
+<meta name="description" content="Amanda (Yueyan) Zhang, UX and product designer at NYU: honest checkouts, AI companions and service systems.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: the whole homepage is a design canvas (dot grid, rulers, live cursor coordinates).
+   Every block is a "frame" that shows a selection box on hover. Visitors sign in at the door and
+   their signature hangs in the Visitors frame. Same tokens as the case studies: orange = the problem,
+   teal = the redesign, yellow = highlighter. */
+:root {
+  --bg: #F2F1EC; --surface: #FFFFFF; --sunk: #E7E5DE; --ink: #1D1B19; --dim: #6A655E; --line: #D6D2C8; --dot: #CFCBC0;
+  --trap: #E8590C; --trap-soft: #FCE3D2; --honest: #0B7A66; --honest-soft: #D3EEE7; --hi: #FFE15A; --hi-o: #FFC29A;
+  --sel: #2F6BFF;
+  --f-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --f-body: "Source Serif 4", "Noto Serif SC", Georgia, serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --ruler: 22px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #171614; --surface: #211F1C; --sunk: #2A2825; --ink: #EEEAE2; --dim: #A39D93; --line: #3A3733; --dot: #3A3733;
+  --trap: #FF7A33; --trap-soft: #3D2416; --honest: #3CC4A6; --honest-soft: #14332C; --hi: #8A7414; --hi-o: #8A3D12;
+  --sel: #6F9BFF; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #171614; --surface: #211F1C; --sunk: #2A2825; --ink: #EEEAE2; --dim: #A39D93; --line: #3A3733; --dot: #3A3733;
+  --trap: #FF7A33; --trap-soft: #3D2416; --honest: #3CC4A6; --honest-soft: #14332C; --hi: #8A7414; --hi-o: #8A3D12;
+  --sel: #6F9BFF; color-scheme: dark; }
 
-    <style>
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
-         :root {
-            --apricot: #FAF5EF;
-            --apricot-mid: #F3EAE0;
-            --apricot-warm: #E8D9C8;
-            --apricot-deep: #D4C0A8;
-            --ink: #2C2118;
-            --ink-mid: #6B5A4A;
-            --ink-light: #9E8E7E;
-            --accent: #C4785A;
-            --accent-light: #E8A882;
-            --white: #FEFCFA;
-            --card-bg: rgba(255, 255, 255, 0.72);
-            --sidebar-w: 160px;
-            --transition: 0.45s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        html {
-            scroll-behavior: smooth;
-        }
-        
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--apricot);
-            color: var(--ink);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        /* Subtle grain texture */
-        
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-            background-size: 200px;
-            pointer-events: none;
-            z-index: 0;
-        }
-        /* ─── SIDEBAR ─── */
-        
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: var(--sidebar-w);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 0 0 0 36px;
-            z-index: 100;
-            gap: 10px;
-        }
-        
-        .sidebar-logo {
-            position: absolute;
-            top: 32px;
-            left: 36px;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 15px;
-            font-weight: 300;
-            color: var(--ink);
-            letter-spacing: 0.02em;
-            text-decoration: none;
-            opacity: 0.7;
-        }
-        
-        .sidebar-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        .nav-item {
-            font-size: 13px;
-            font-weight: 400;
-            color: var(--ink-light);
-            cursor: pointer;
-            letter-spacing: 0.01em;
-            transition: color 0.25s ease, transform 0.25s ease;
-            padding: 2px 0;
-            text-decoration: none;
-            width: fit-content;
-            position: relative;
-        }
-        
-        .nav-item::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 0;
-            height: 0.5px;
-            background: var(--accent);
-            transition: width 0.3s ease;
-        }
-        
-        .nav-item:hover {
-            color: var(--ink);
-            transform: translateX(4px);
-        }
-        
-        .nav-item:hover::after {
-            width: 100%;
-        }
-        
-        .nav-item.active {
-            color: var(--ink);
-        }
-        
-        .nav-item.active::after {
-            width: 100%;
-        }
-        /* ─── MAIN ─── */
-        
-        .main {
-            margin-left: var(--sidebar-w);
-            padding: 0 60px 0 20px;
-            position: relative;
-            z-index: 1;
-        }
-        /* ─── HERO ─── */
-        
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 80px 0;
-            opacity: 0;
-            transform: translateY(24px);
-            animation: fadeUp 1s ease 0.2s forwards;
-        }
-        
-        .hero-eyebrow {
-            font-size: 12px;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--ink-light);
-            margin-bottom: 28px;
-            font-weight: 400;
-        }
-        
-        .hero-name {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(52px, 7vw, 88px);
-            font-weight: 300;
-            line-height: 1.0;
-            letter-spacing: -0.02em;
-            color: var(--ink);
-            margin-bottom: 12px;
-        }
-        
-        .hero-name em {
-            font-style: italic;
-            color: var(--accent);
-        }
-        
-        .hero-sub {
-            font-size: 15px;
-            color: var(--ink-mid);
-            font-weight: 300;
-            margin-top: 20px;
-            max-width: 420px;
-            line-height: 1.65;
-        }
-        
-        .hero-tags {
-            display: flex;
-            gap: 10px;
-            margin-top: 36px;
-            flex-wrap: wrap;
-        }
-        
-        .tag {
-            font-size: 11px;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: var(--ink-mid);
-            border: 0.5px solid var(--apricot-deep);
-            padding: 5px 14px;
-            border-radius: 100px;
-            background: var(--card-bg);
-        }
-        
-        .scroll-hint {
-            position: absolute;
-            bottom: 36px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 11px;
-            color: var(--ink-light);
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            animation: bounceY 2.5s ease-in-out infinite;
-        }
-        
-        .scroll-hint-line {
-            width: 32px;
-            height: 0.5px;
-            background: var(--ink-light);
-        }
-        /* ─── SECTIONS ─── */
-        
-        .section {
-            padding: 80px 0;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.7s ease, transform 0.7s ease;
-        }
-        
-        .section.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        .section-label {
-            font-size: 11px;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            color: var(--ink-light);
-            margin-bottom: 40px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-        
-        .section-label::after {
-            content: '';
-            flex: 1;
-            height: 0.5px;
-            background: var(--apricot-warm);
-            max-width: 80px;
-        }
-        /* ─── PROJECT CARDS ─── */
-        
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 24px;
-            align-items: start; /* a card that grows on hover doesn't stretch its neighbour */
-        }
-        
-        .project-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            overflow: hidden;
-            border: 0.5px solid var(--apricot-warm);
-            cursor: pointer;
-            transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            position: relative;
-            text-decoration: none;
-            color: inherit;
-        }
-        
-        /* hover: lifts, tilts a little (alternating), and grows to show details.
-           rotate/translate are separate properties so the fade-in script's inline transform doesn't cancel them. */
-        .project-card:hover {
-            translate: 0 -4px;
-            rotate: var(--tilt, -0.8deg);
-            border-color: var(--accent-light);
-            box-shadow: 0 16px 48px rgba(196, 120, 90, 0.14);
-        }
-        .project-card:nth-child(even) { --tilt: 0.8deg; }
-        .card-cover { width: 100%; height: 100%; object-fit: cover; transition: transform .48s cubic-bezier(.22,1,.36,1); }
-        .project-card:hover .card-cover, .project-card:hover .card-image-inner { transform: scale(1.03); }
-        .card-image-inner { transition: transform .48s cubic-bezier(.22,1,.36,1); }
-        .card-pill {
-            position: absolute; left: 50%; bottom: 16px; translate: -50% 8px; opacity: 0;
-            background: var(--accent); color: #fff; border-radius: 999px; padding: 9px 20px;
-            font-size: 13px; letter-spacing: .02em; white-space: nowrap;
-            transition: opacity .26s ease, translate .26s ease; pointer-events: none;
-        }
-        .project-card:hover .card-pill { opacity: 1; translate: -50% 0; }
-        .card-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 6px; }
-        .card-head .card-title { margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .card-chip { flex: none; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-mid); background: var(--apricot-mid); border-radius: 4px; padding: 3px 7px; }
-        .card-metrics { display: flex; margin-top: 14px; list-style: none; }
-        .card-metrics li { flex: 1; padding: 0 14px; border-left: 0.5px solid var(--apricot-warm); display: flex; flex-direction: column; gap: 4px; }
-        .card-metrics li:first-child { padding-left: 0; border-left: 0; }
-        .card-metrics b { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400; color: var(--ink); line-height: 1; white-space: nowrap; }
-        .card-metrics span { font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-light); }
-        .card-details { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .32s cubic-bezier(.22,1,.36,1); }
-        .card-details > div { min-height: 0; overflow: hidden; }
-        .project-card:hover .card-details { grid-template-rows: 1fr; }
-        .card-details dl { margin: 16px 0 0; padding-top: 14px; border-top: 1px dashed var(--apricot-deep); display: grid; gap: 8px; opacity: 0; translate: 0 4px; transition: opacity .26s ease .06s, translate .26s ease .06s; }
-        .project-card:hover .card-details dl { opacity: 1; translate: 0 0; }
-        .card-details dl div { display: grid; grid-template-columns: 90px 1fr; gap: 24px; font-size: 12.5px; }
-        .card-details dt { font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-light); }
-        .card-details dd { margin: 0; color: var(--ink-mid); }
-        @media (prefers-reduced-motion: reduce) { .project-card, .card-details, .card-details dl, .card-pill, .card-cover { transition: none !important; } }
-        
-        .project-card:active {
-            transform: scale(1.01);
-        }
-        
-        
-        .card-image {
-            width: 100%;
-            aspect-ratio: 16/10;
-            background: var(--apricot-mid);
-            overflow: hidden;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        
-        .card-image-inner {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 48px;
-            font-weight: 300;
-            color: var(--apricot-deep);
-            position: relative;
-            overflow: hidden;
-        }
-        /* Placeholder visuals for each project */
-        
-        .proj-visual-1 {
-            background: linear-gradient(135deg, #F0E6D8 0%, #E2CDB8 100%);
-        }
-        
-        .proj-visual-2 {
-            background: linear-gradient(135deg, #E8D5C4 0%, #D4C0A8 100%);
-        }
-        
-        .proj-visual-3 {
-            background: linear-gradient(135deg, #EAE0D4 0%, #D8CCBE 100%);
-        }
-        
-        .proj-visual-4 {
-            background: linear-gradient(135deg, #F0E8DC 0%, #E0D0C0 100%);
-        }
-        
-        .proj-visual-5 {
-            background: linear-gradient(135deg, #E4DAD0 0%, #CDBBA8 100%);
-        }
-        
-        .proj-glyph {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 72px;
-            font-weight: 300;
-            color: rgba(196, 120, 90, 0.2);
-            position: absolute;
-            bottom: -12px;
-            right: 12px;
-            line-height: 1;
-        }
-        
-        .proj-mockup {
-            width: 52%;
-            height: 88%;
-            border-radius: 10px;
-            background: var(--white);
-            border: 0.5px solid rgba(196, 120, 90, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            color: var(--ink-light);
-            font-family: 'DM Sans', sans-serif;
-            letter-spacing: 0.04em;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .proj-mockup-wide {
-            width: 70%;
-            height: 78%;
-        }
-        /* Card content */
-        
-        .card-content {
-            padding: 20px 24px 24px;
-            background: var(--card-bg);
-        }
-        
-        .card-tag {
-            font-size: 10px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--accent);
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-        
-        .card-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 20px;
-            font-weight: 400;
-            color: var(--ink);
-            margin-bottom: 8px;
-            line-height: 1.25;
-            letter-spacing: -0.01em;
-        }
-        
-        .card-desc {
-            font-size: 13px;
-            color: var(--ink-mid);
-            line-height: 1.6;
-            font-weight: 300;
-        }
-        
-        .card-arrow {
-            display: inline-block;
-            margin-top: 12px;
-            font-size: 11px;
-            color: var(--ink-light);
-            letter-spacing: 0.04em;
-            transition: color 0.25s, transform 0.25s;
-        }
-        
-        .project-card:hover .card-arrow {
-            color: var(--accent);
-            transform: translateX(4px);
-        }
-        /* ─── PLAYGROUND ─── */
-        
-        .playground-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 14px;
-        }
-        
-        .play-card {
-            background: var(--card-bg);
-            border-radius: 14px;
-            overflow: hidden;
-            border: 0.5px solid var(--apricot-warm);
-            cursor: pointer;
-            transition: transform var(--transition), border-color var(--transition);
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-        
-        .play-card:hover {
-            transform: scale(1.04);
-            border-color: var(--accent-light);
-        }
-        
-        .play-card-inner {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            color: var(--ink-light);
-            font-weight: 300;
-            letter-spacing: 0.02em;
-            text-align: center;
-            padding: 20px;
-        }
-        
-        .play-label {
-            position: absolute;
-            bottom: 12px;
-            left: 14px;
-            font-size: 11px;
-            color: var(--ink-mid);
-            letter-spacing: 0.03em;
-        }
-        
-        .play-visual-1 {
-            background: linear-gradient(160deg, #F5E8D8 0%, #EAD4BE 100%);
-        }
-        
-        .play-visual-2 {
-            background: linear-gradient(160deg, #DDE8E0 0%, #C8D8CC 100%);
-        }
-        
-        .play-visual-3 {
-            background: linear-gradient(160deg, #E8DDF5 0%, #D4C8EA 100%);
-        }
-        
-        .play-visual-4 {
-            background: linear-gradient(160deg, #F5E8D8 0%, #E0CCBA 100%);
-        }
-        
-        .play-visual-5 {
-            background: linear-gradient(160deg, #F5DDD8 0%, #E8C8C4 100%);
-        }
-        
-        .play-visual-6 {
-            background: linear-gradient(160deg, #D8E8F5 0%, #C4D4E8 100%);
-        }
-        /* ─── CONNECT ─── */
-        
-        .connect-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 32px;
-            align-items: start;
-        }
-        
-        .about-photo {
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            background: var(--apricot-warm);
-            margin-bottom: 24px;
-            border: 2px solid var(--apricot-deep);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 24px;
-            color: var(--accent);
-            font-weight: 300;
-        }
-        
-        .about-text {
-            font-size: 14px;
-            color: var(--ink-mid);
-            line-height: 1.75;
-            font-weight: 300;
-            max-width: 360px;
-        }
-        
-        .about-text p+p {
-            margin-top: 14px;
-        }
-        
-        .connect-links {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            padding-top: 8px;
-        }
-        
-        .connect-link {
-            font-size: 16px;
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: 300;
-            color: var(--ink-mid);
-            text-decoration: none;
-            letter-spacing: 0.01em;
-            transition: color 0.25s, transform 0.25s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 0;
-            border-bottom: 0.5px solid transparent;
-            transition: all 0.25s;
-        }
-        
-        .connect-link:hover {
-            color: var(--accent);
-            transform: translateX(6px);
-            border-bottom-color: var(--apricot-warm);
-        }
-        
-        .connect-link-arrow {
-            font-size: 12px;
-            opacity: 0;
-            transition: opacity 0.25s;
-        }
-        
-        .connect-link:hover .connect-link-arrow {
-            opacity: 1;
-        }
-        /* ─── FOOTER ─── */
-        
-        .footer {
-            padding: 48px 0 60px;
-            border-top: 0.5px solid var(--apricot-warm);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .footer-name {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 13px;
-            font-weight: 300;
-            color: var(--ink-light);
-        }
-        
-        .footer-year {
-            font-size: 12px;
-            color: var(--ink-light);
-        }
-        /* ─── ANIMATIONS ─── */
-        
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(24px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes bounceY {
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(6px);
-            }
-        }
-        /* Stagger children */
-        
-        .hero-eyebrow {
-            animation: fadeUp 0.8s ease 0.1s both;
-        }
-        
-        .hero-name {
-            animation: fadeUp 0.9s ease 0.25s both;
-        }
-        
-        .hero-sub {
-            animation: fadeUp 0.9s ease 0.4s both;
-        }
-        
-        .hero-tags {
-            animation: fadeUp 0.9s ease 0.55s both;
-        }
-        
-        .scroll-hint {
-            animation: fadeUp 0.9s ease 0.7s both, bounceY 2.5s ease-in-out 1.5s infinite;
-        }
-        /* Card stagger */
-        
-        .project-card:nth-child(1) {
-            transition-delay: 0s;
-        }
-        
-        .project-card:nth-child(2) {
-            transition-delay: 0.08s;
-        }
-        
-        .project-card:nth-child(3) {
-            transition-delay: 0.16s;
-        }
-        
-        .project-card:nth-child(4) {
-            transition-delay: 0.24s;
-        }
-        
-        .play-card:nth-child(1) {
-            transition-delay: 0s;
-        }
-        
-        .play-card:nth-child(2) {
-            transition-delay: 0.06s;
-        }
-        
-        .play-card:nth-child(3) {
-            transition-delay: 0.12s;
-        }
-        
-        .play-card:nth-child(4) {
-            transition-delay: 0.18s;
-        }
-        
-        .play-card:nth-child(5) {
-            transition-delay: 0.24s;
-        }
-        
-        .play-card:nth-child(6) {
-            transition-delay: 0.30s;
-        }
-        /* Pixel art decorative element */
-        
-        .pixel-dots {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            display: grid;
-            grid-template-columns: repeat(4, 5px);
-            gap: 3px;
-        }
-        
-        .pixel-dot {
-            width: 5px;
-            height: 5px;
-            border-radius: 1px;
-            background: var(--apricot-deep);
-            opacity: 0.5;
-        }
-        
-        .pixel-dot:nth-child(odd) {
-            opacity: 0.3;
-        }
-        /* Divider decorative */
-        
-        .divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--apricot-warm) 30%, var(--apricot-warm) 70%, transparent);
-            margin: 0;
-        }
-        /* Responsive */
-        
-        @media (max-width: 768px) {
-             :root {
-                --sidebar-w: 0px;
-            }
-            .sidebar {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                top: auto;
-                width: 100%;
-                height: 56px;
-                flex-direction: row;
-                justify-content: center;
-                padding: 0 24px;
-                background: var(--apricot);
-                border-top: 0.5px solid var(--apricot-warm);
-                z-index: 100;
-            }
-            .sidebar-logo {
-                display: none;
-            }
-            .sidebar-nav {
-                flex-direction: row;
-                gap: 28px;
-            }
-            .main {
-                margin-left: 0;
-                padding: 0 24px;
-            }
-            .projects-grid {
-                grid-template-columns: 1fr;
-            }
-            .playground-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .connect-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-        /* ─── ADDED: language switch, sewn fabric label, mockup covers ─── */
-        .lang-toggle { margin-top: 24px; width: fit-content; font: inherit; font-size: 12px; letter-spacing: 0.04em; color: var(--ink-light); background: none; border: 0.5px solid var(--apricot-warm); border-radius: 100px; padding: 4px 12px; cursor: pointer; }
-        .lang-toggle b { color: var(--ink); font-weight: 500; }
-        html:lang(zh-CN) body { font-family: 'DM Sans', 'PingFang SC', 'Noto Sans SC', sans-serif; }
-        html:lang(zh-CN) .hero-name { font-size: clamp(40px, 5.6vw, 76px); line-height: 1.15; }
-        .sewn { position: relative; display: inline-block; font-size: 0.8em; font-style: italic; line-height: 1.1; padding: 0.06em 0.32em 0.14em; margin: 0 0.04em; rotate: -2deg; color: #2a2433; text-decoration: none; border-radius: 4px;
-            background-color: #fff; background-image: repeating-linear-gradient(0deg, rgba(255, 143, 199, 0.45) 0 7px, transparent 7px 14px), repeating-linear-gradient(90deg, rgba(255, 143, 199, 0.45) 0 7px, transparent 7px 14px);
-            box-shadow: 0 3px 0 rgba(42, 36, 51, 0.18); transition: rotate 0.25s ease; }
-        .sewn::after { content: ""; position: absolute; inset: 5px; border: 1.5px dashed #2a2433; border-radius: 2px; pointer-events: none; }
-        .sewn:hover, .sewn:focus-visible { rotate: 1deg; }
-        .sewn:focus-visible { outline: 3px solid #2a2433; outline-offset: 3px; }
-        .hero-focus { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 30px; max-width: 640px; }
-        .focus-item { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px; border: 0.5px solid var(--apricot-warm); border-radius: 12px; background: var(--card-bg); text-decoration: none; transition: border-color .25s, translate .25s; }
-        .focus-item:hover, .focus-item:focus-visible { border-color: var(--accent-light); translate: 0 -2px; }
-        .focus-k { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
-        .focus-v { font-family: 'Cormorant Garamond', serif; font-size: 19px; color: var(--ink); }
-        .offscreen-line { font-family: 'Cormorant Garamond', serif; font-size: clamp(28px, 3.4vw, 40px); font-weight: 300; line-height: 1.3; color: var(--ink); }
-        .offscreen-sub { margin-top: 12px; font-size: 14px; line-height: 1.7; color: var(--ink-mid); font-weight: 300; max-width: 52ch; }
-        @media (max-width: 768px) { .hero-focus { grid-template-columns: 1fr; } }
-        .card-shot { max-width: 84%; max-height: 86%; width: auto; height: auto; object-fit: contain; }
-        .card-lock { display: inline-flex; vertical-align: -2px; margin-left: 6px; color: var(--ink-light); }
-        .about-photo { overflow: hidden; }
-        .about-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; }
-        @media (max-width: 768px) { .lang-toggle { margin: 0 0 0 20px; align-self: center; } }
-    </style>
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background-color: var(--bg); color: var(--ink); font: 400 18px/1.6 var(--f-body);
+  background-image: radial-gradient(circle, var(--dot) 1.1px, transparent 1.5px); background-size: 24px 24px; background-attachment: fixed;
+  padding: calc(var(--ruler) + 64px) max(16px, 4vw) 0 calc(var(--ruler) + max(16px, 4vw)); overflow-x: hidden; }
+html:lang(zh-CN) body { font-family: var(--f-body), "PingFang SC", "Noto Sans SC", sans-serif; }
+h1, h2, h3 { font-family: var(--f-display); margin: 0; line-height: 1.05; text-wrap: balance; }
+p { margin: 0; }
+a { color: inherit; }
+button { font: inherit; color: inherit; cursor: pointer; }
+.mono { font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+:focus-visible { outline: 2px solid var(--sel); outline-offset: 3px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.canvas { max-width: 1240px; margin: 0 auto; display: flex; flex-direction: column; gap: 104px; padding-bottom: 40px; }
+
+/* ---------- rulers + cursor readout (decorative, desktop only) ---------- */
+.ruler { position: fixed; z-index: 30; background: color-mix(in srgb, var(--bg) 92%, transparent); color: var(--dim); font: 9px/1 var(--f-mono); pointer-events: none; overflow: hidden; }
+.ruler.top { top: 0; left: var(--ruler); right: 0; height: var(--ruler); border-bottom: 1px solid var(--line);
+  background-image: repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 10px); background-size: 100% 5px; background-repeat: no-repeat; background-position: 0 100%; }
+.ruler.left { top: var(--ruler); left: 0; bottom: 0; width: var(--ruler); border-right: 1px solid var(--line);
+  background-image: repeating-linear-gradient(180deg, var(--line) 0 1px, transparent 1px 10px); background-size: 5px 100%; background-repeat: no-repeat; background-position: 100% 0; }
+.ruler.corner { top: 0; left: 0; width: var(--ruler); height: var(--ruler); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.ruler span { position: absolute; }
+.ruler.top span { top: 4px; }
+.ruler.left span { left: 4px; writing-mode: vertical-rl; rotate: 180deg; }
+.ruler .mark { background: var(--sel); }
+.ruler.top .mark { top: 0; bottom: 0; width: 1px; }
+.ruler.left .mark { left: 0; right: 0; height: 1px; }
+.xy { position: fixed; left: calc(var(--ruler) + 10px); bottom: 10px; z-index: 30; font: 11px var(--f-mono); color: var(--dim); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; pointer-events: none; font-variant-numeric: tabular-nums; }
+@media (max-width: 760px), (hover: none) { :root { --ruler: 0px; } .ruler, .xy { display: none; } }
+
+/* ---------- top bar ---------- */
+.bar { position: fixed; z-index: 31; top: var(--ruler); left: var(--ruler); right: 0; height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 max(16px, 4vw);
+  background: color-mix(in srgb, var(--bg) 90%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-family: var(--f-display); font-weight: 800; font-size: 17px; white-space: nowrap; }
+.brand i { font-style: normal; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; background: var(--ink); color: var(--bg); font-size: 14px; }
+.bar nav { display: flex; align-items: center; gap: 4px; }
+.bar nav a { text-decoration: none; font: 12.5px var(--f-mono); color: var(--dim); padding: 6px 10px; border-radius: 8px; }
+.bar nav a:hover { color: var(--ink); background: var(--sunk); }
+.lang-toggle { font: 12px var(--f-mono); color: var(--dim); background: var(--surface); border: 1px solid var(--line); border-radius: 99px; padding: 5px 12px; margin-left: 6px; white-space: nowrap; }
+.lang-toggle b { color: var(--ink); font-weight: 600; }
+@media (max-width: 760px) { .bar nav a:not(.keep) { display: none; } .brand span { display: none; } }
+
+/* ---------- frames: selection box with handles on hover, name tag on top-left ---------- */
+.frame { position: relative; }
+.frame::before { content: attr(data-frame); position: absolute; left: 0; top: -22px; font: 11px var(--f-mono); color: var(--dim); white-space: nowrap; transition: color .15s; }
+.frame::after { content: ""; position: absolute; inset: -6px; border: 1.5px solid var(--sel); border-radius: 4px; opacity: 0; pointer-events: none; transition: opacity .15s;
+  background:
+    linear-gradient(var(--surface), var(--surface)) 0 0 / 8px 8px no-repeat, linear-gradient(var(--surface), var(--surface)) 100% 0 / 8px 8px no-repeat,
+    linear-gradient(var(--surface), var(--surface)) 0 100% / 8px 8px no-repeat, linear-gradient(var(--surface), var(--surface)) 100% 100% / 8px 8px no-repeat; }
+.frame:hover::after, .frame:focus-visible::after, .frame:focus-within::after { opacity: 1; }
+.frame:hover::before, .frame:focus-visible::before, .frame:focus-within::before { color: var(--sel); }
+.size-tag { position: absolute; left: 50%; bottom: -30px; translate: -50% 0; z-index: 4; font: 10.5px var(--f-mono); background: var(--sel); color: #fff; padding: 2px 6px; border-radius: 4px; opacity: 0; pointer-events: none; transition: opacity .15s; white-space: nowrap; }
+.frame:hover > .size-tag { opacity: 1; }
+
+/* ---------- hero ---------- */
+.hero { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr); gap: 52px 56px; align-items: start; padding-top: 28px; }
+.who { display: flex; flex-direction: column; gap: 22px; }
+.who .eyebrow { color: var(--trap); }
+.who h1 { font-size: clamp(44px, 6.2vw, 90px); font-weight: 800; letter-spacing: -0.035em; line-height: .98; }
+.who h1 .serif { font-family: var(--f-body); font-style: italic; font-weight: 400; letter-spacing: -0.02em; }
+.who h1 .marker { background: linear-gradient(var(--hi), var(--hi)) 0 88% / 100% 34% no-repeat; padding: 0 .04em; }
+.who h1 .chip-w { font-family: var(--f-mono); font-weight: 600; font-size: .5em; letter-spacing: 0; vertical-align: .32em; background: var(--ink); color: var(--bg); border-radius: 8px; padding: .06em .3em; }
+html:lang(zh-CN) .who h1 { font-size: clamp(40px, 5.4vw, 78px); line-height: 1.14; }
+.proof { display: flex; flex-wrap: wrap; gap: 8px; }
+.proof span { font: 12px var(--f-mono); padding: 6px 10px; border-radius: 99px; background: var(--surface); border: 1px solid var(--line); color: var(--dim); }
+.proof b { color: var(--ink); font-weight: 600; }
+.lead { font-size: 20px; color: var(--dim); max-width: 56ch; }
+.cta { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; font: 13px var(--f-mono); text-decoration: none; border: 1px solid var(--line); background: var(--surface); border-radius: 99px; padding: 10px 16px; transition: translate .2s; }
+.btn:hover { translate: 0 -2px; }
+.btn.solid { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+/* focus row: three problem areas, each linking to its project */
+.focus { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.focus a { display: flex; flex-direction: column; gap: 8px; text-decoration: none; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px 18px 16px; transition: translate .2s, border-color .2s; }
+.focus a:hover { translate: 0 -3px; border-color: var(--ink); }
+.focus .k { font: 11px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--trap); }
+.focus a:nth-child(2) .k { color: var(--honest); }
+.focus a:nth-child(3) .k { color: var(--sel); }
+.focus h3 { font-size: 22px; font-weight: 800; letter-spacing: -.01em; }
+.focus p { font-size: 15px; color: var(--dim); line-height: 1.45; }
+@media (max-width: 960px) { .hero { grid-template-columns: minmax(0, 1fr); } .focus { grid-template-columns: minmax(0, 1fr); } }
+
+/* visitors frame: signatures hang here */
+.visitors { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+.visitors header { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.visitors h2 { font-size: 20px; font-weight: 800; }
+.visitors header span { font: 11px var(--f-mono); color: var(--dim); }
+.sigs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 12px; min-height: 196px; align-content: start; padding-top: 6px; }
+.sig { position: relative; margin: 0; background: var(--bg); border-radius: 10px; padding: 12px 10px 8px; rotate: var(--r, 0deg); box-shadow: 0 2px 0 var(--line); }
+.sig::before { content: ""; position: absolute; top: -8px; left: 50%; width: 46px; height: 14px; margin-left: -23px; background: var(--c, var(--hi)); opacity: .85; rotate: -3deg; border-radius: 2px; }
+.sig img { display: block; width: 100%; aspect-ratio: 12 / 5; object-fit: contain; }
+:root[data-theme="dark"] .sig img { filter: invert(1); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .sig img { filter: invert(1); } }
+.sig small { display: block; font: 10.5px var(--f-mono); color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sig.you small { color: var(--trap); }
+.sig.landing { outline: 2px dashed var(--sel); outline-offset: 3px; }
+.visitors .empty { grid-column: 1 / -1; display: grid; place-items: center; text-align: center; font-size: 15px; color: var(--dim); border: 1.5px dashed var(--line); border-radius: 12px; padding: 20px; }
+.visitors footer { display: flex; justify-content: space-between; gap: 8px; }
+.visitors footer a, .visitors footer button { font: 12px var(--f-mono); color: var(--dim); background: none; border: 0; padding: 0; text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---------- work ---------- */
+.sec-head { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; }
+.sec-head h2 { font-size: clamp(32px, 4.4vw, 54px); font-weight: 800; letter-spacing: -.03em; }
+.sec-head p { font-size: 16px; color: var(--dim); max-width: 46ch; }
+.work { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 52px 28px; margin-top: 40px; }
+.card { display: flex; flex-direction: column; text-decoration: none; }
+.shot { position: relative; aspect-ratio: 16 / 11; border-radius: 18px; overflow: hidden; background: var(--sunk); display: grid; place-items: center; }
+.shot > img.cover { width: 100%; height: 100%; object-fit: cover; transition: scale .5s cubic-bezier(.22, 1, .36, 1); }
+.shot > img.mock { max-width: 82%; max-height: 86%; object-fit: contain; transition: scale .5s cubic-bezier(.22, 1, .36, 1); }
+.card:hover .shot > img { scale: 1.035; }
+.shot.lavender { background: #E6E1F7; } .shot.sky { background: #DCEEF7; } .shot.blue { background: #E1E3FA; }
+.pills { position: absolute; top: 14px; left: 14px; right: 14px; display: flex; flex-wrap: wrap; gap: 6px; z-index: 2; }
+.pills span { font: 11px var(--f-mono); background: rgba(255, 255, 255, .92); color: #1D1B19; border-radius: 99px; padding: 4px 10px; }
+.pills span.hot { background: #E8590C; color: #fff; }
+.card-body { display: flex; flex-direction: column; gap: 8px; padding: 16px 4px 0; }
+.card-body h3 { font-size: 28px; font-weight: 800; letter-spacing: -.02em; display: flex; align-items: center; gap: 10px; }
+.card-body h3 svg { width: 18px; height: 18px; color: var(--dim); }
+.card-body p { font-size: 17px; color: var(--dim); }
+.metrics { list-style: none; padding: 12px 0 0; margin: 4px 0 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.metrics b { display: block; font-family: var(--f-display); font-size: 26px; font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.metrics span { font: 10.5px var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--dim); }
+.card:first-child .metrics b { color: var(--trap); }
+@media (max-width: 820px) { .work { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- playground ---------- */
+.plays { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px 18px; margin-top: 40px; }
+.play { display: flex; flex-direction: column; gap: 8px; text-decoration: none; }
+.play .tile { aspect-ratio: 1; border-radius: 16px; overflow: hidden; background: var(--surface); border: 1px solid var(--line); display: grid; place-items: center; transition: translate .2s; }
+.play:hover .tile { translate: 0 -3px; }
+.play .tile img { width: 100%; height: 100%; object-fit: contain; background: #fff; }
+.play b { font-family: var(--f-display); font-size: 17px; font-weight: 600; margin-top: 4px; }
+.play span.d { font: 11px var(--f-mono); color: var(--dim); }
+.gingham { background-color: #fff !important; background-image: repeating-linear-gradient(0deg, rgba(255, 143, 199, .4) 0 10px, transparent 10px 20px), repeating-linear-gradient(90deg, rgba(255, 143, 199, .4) 0 10px, transparent 10px 20px); }
+.sewn { position: relative; display: inline-block; font-family: var(--f-body); font-style: italic; color: #1D1B19; background-color: #fff; padding: .08em .35em .14em; rotate: -3deg; border-radius: 4px; box-shadow: 0 3px 0 rgba(29, 27, 25, .18); text-decoration: none;
+  background-image: repeating-linear-gradient(0deg, rgba(255, 143, 199, .45) 0 7px, transparent 7px 14px), repeating-linear-gradient(90deg, rgba(255, 143, 199, .45) 0 7px, transparent 7px 14px); }
+.sewn::after { content: ""; position: absolute; inset: 4px; border: 1.5px dashed #1D1B19; border-radius: 2px; pointer-events: none; }
+@media (max-width: 820px) { .plays { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* ---------- about + off screen ---------- */
+.about { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 40px; align-items: start; }
+.about img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 18px; filter: grayscale(1); }
+.about .txt { display: flex; flex-direction: column; gap: 16px; }
+.about h2 { font-size: clamp(30px, 3.8vw, 44px); font-weight: 800; letter-spacing: -.025em; }
+.about p { max-width: 62ch; color: var(--dim); }
+.about .offscreen { margin-top: 8px; padding-top: 22px; border-top: 1px dashed var(--line); font: 600 clamp(24px, 2.8vw, 32px)/1.35 var(--f-display); color: var(--ink); letter-spacing: -.01em; max-width: none; }
+.offscreen small { display: block; margin-top: 10px; font: 15px/1.6 var(--f-body); color: var(--dim); letter-spacing: 0; }
+@media (max-width: 760px) { .about { grid-template-columns: minmax(0, 1fr); } .about img { max-width: 220px; } }
+.foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding: 22px 0 36px; border-top: 1px solid var(--line); font: 12px var(--f-mono); color: var(--dim); }
+.foot a { text-decoration: none; }
+
+/* ---------- signature door ---------- */
+.door { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 16px;
+  background-color: var(--bg); background-image: radial-gradient(circle, var(--dot) 1.1px, transparent 1.5px); background-size: 24px 24px; transition: opacity .5s ease; }
+.door.out { opacity: 0; pointer-events: none; }
+.door-card { width: min(640px, 100%); display: flex; flex-direction: column; gap: 16px; animation: rise .6s cubic-bezier(.22, 1, .36, 1); }
+@keyframes rise { from { opacity: 0; translate: 0 16px; } }
+.door-card .mono { color: var(--dim); }
+.door-card h2 { font-size: clamp(32px, 5.2vw, 56px); font-weight: 800; letter-spacing: -.03em; margin-bottom: 14px; }
+.door-card h2 em { font-family: var(--f-body); font-weight: 400; }
+.pad-frame { position: relative; background: #fff; border-radius: 6px; }
+.pad-frame::before { content: "Frame · Signature"; position: absolute; left: 0; top: -20px; font: 11px var(--f-mono); color: var(--sel); }
+.pad-frame::after { content: ""; position: absolute; inset: -5px; border: 1.5px solid var(--sel); border-radius: 4px; pointer-events: none;
+  background: linear-gradient(var(--surface), var(--surface)) 0 0 / 8px 8px no-repeat, linear-gradient(var(--surface), var(--surface)) 100% 0 / 8px 8px no-repeat, linear-gradient(var(--surface), var(--surface)) 0 100% / 8px 8px no-repeat, linear-gradient(var(--surface), var(--surface)) 100% 100% / 8px 8px no-repeat; }
+.pad { position: relative; z-index: 1; display: block; width: 100%; aspect-ratio: 12 / 5; touch-action: none; cursor: crosshair; }
+.pad-line { position: absolute; left: 7%; right: 7%; bottom: 22%; border-top: 1.5px dashed #D6D2C8; pointer-events: none; }
+.pad-x { position: absolute; left: 4%; bottom: 23%; font: 600 22px var(--f-display); color: #B9B4A8; pointer-events: none; }
+.pad-hint { position: absolute; inset: 0; display: grid; place-items: center; font: 13px var(--f-mono); color: #6A655E; pointer-events: none; transition: opacity .2s; }
+.door-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+.door-row input { flex: 1 1 180px; min-width: 0; font: 15px var(--f-body); border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 99px; padding: 10px 16px; }
+.door-actions { display: flex; gap: 8px; }
+.door-actions button { border: 1px solid var(--line); background: var(--surface); border-radius: 99px; padding: 10px 16px; font: 13px var(--f-mono); }
+.door-actions .go { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.door-actions .go[aria-disabled="true"] { opacity: .45; cursor: not-allowed; }
+.door .skip { align-self: center; font: 12px var(--f-mono); color: var(--dim); background: none; border: 0; text-decoration: underline; text-underline-offset: 3px; }
+.flyer { position: fixed; z-index: 101; pointer-events: none; background: #fff; border-radius: 10px; box-shadow: 0 18px 40px rgba(0, 0, 0, .18); transform-origin: 0 0; }
+.flyer img { display: block; width: 100%; height: 100%; object-fit: contain; }
+/* homepage blocks arrive one by one after the door opens */
+.arriving .canvas > * { opacity: 0; translate: 0 14px; }
+.arrived .canvas > * { transition: opacity .5s ease, translate .6s cubic-bezier(.22, 1, .36, 1); transition-delay: calc(var(--i, 0) * 110ms); }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
 </head>
-
 <body>
+<div class="ruler corner" aria-hidden="true"></div>
+<div class="ruler top" id="rulerTop" aria-hidden="true"><span class="mark"></span></div>
+<div class="ruler left" id="rulerLeft" aria-hidden="true"><span class="mark"></span></div>
+<div class="xy" id="xy" aria-hidden="true">X 0 · Y 0</div>
 
-    <!-- Sidebar -->
-    <nav class="sidebar">
-        <span class="sidebar-logo">玥妍</span>
-        <div class="sidebar-nav">
-            <a href="#projects" class="nav-item active" onclick="setActive(this)" data-zh="作品">Projects</a>
-            <a href="#playground" class="nav-item" onclick="setActive(this)" data-zh="实验">Playground</a>
-            <a href="#connect" class="nav-item" onclick="setActive(this)" data-zh="联系">Connect</a>
-        </div>
-        <button class="lang-toggle" type="button"><b>EN</b> / 中文</button>
-    </nav>
+<header class="bar">
+  <a class="brand" href="#top"><i>玥</i><span>Amanda Zhang</span></a>
+  <nav aria-label="Main">
+    <a href="#work" class="keep" data-zh="作品">Work</a>
+    <a href="#playground" data-zh="实验">Playground</a>
+    <a href="#about" data-zh="关于">About</a>
+    <a href="wall.html" data-zh="签名墙">Wall</a>
+    <button class="lang-toggle" type="button"><b>EN</b> / 中文</button>
+  </nav>
+</header>
 
-    <!-- Main -->
-    <div class="main">
-
-        <!-- Hero -->
-        <section class="hero" id="top">
-            <p class="hero-eyebrow" data-zh="UX 产品设计师 · 作品集 2026">UX &amp; Product Designer · Portfolio 2026</p>
-            <h1 class="hero-name" data-zh="&lt;span class=&quot;sr-only&quot;&gt;张玥妍 Amanda：&lt;/span&gt;设计&lt;em&gt;诚实&lt;/em&gt;、&lt;br&gt;以人为本的产品。"><span class="sr-only">Amanda: </span>Designing <em>honest</em>,<br> human-centered products.</h1>
-            <p class="hero-sub" data-zh="我是张玥妍（Amanda），一名 UX 产品设计师。我从用户研究出发，尽早做原型、反复测试，设计尊重用户的流程——从诚实的结算体验，到 AI 陪伴应用和服务系统。">
-                I’m Amanda, a UX &amp; product designer. I start from research, prototype early and test often, designing flows that respect people, from honest checkouts to AI companions and service systems.
-            </p>
-            <div class="hero-focus" aria-label="Focus areas">
-                <a class="focus-item" href="temu.html"><span class="focus-k" data-zh="伦理设计">Ethical design</span><span class="focus-v" data-zh="礼品卡陷阱">The Gift Card Trap →</span></a>
-                <a class="focus-item" href="lovelink.html"><span class="focus-k" data-zh="AI 交互">AI interaction</span><span class="focus-v">LoveLink →</span></a>
-                <a class="focus-item" href="viva-toy.html"><span class="focus-k" data-zh="服务设计">Service design</span><span class="focus-v">VIVA TOY →</span></a>
-            </div>
-            <div class="hero-tags">
-                <span class="tag" data-zh="用户研究">UX Research</span>
-                <span class="tag" data-zh="交互设计">Interaction Design</span>
-                <span class="tag" data-zh="原型制作">Prototyping</span>
-                <span class="tag" data-zh="服务设计">Service Design</span>
-            </div>
-            <div class="scroll-hint">
-                <span class="scroll-hint-line"></span> <span data-zh="向下滑动">scroll</span>
-            </div>
-        </section>
-
-        <!-- Projects Section -->
-        <section class="section" id="projects">
-            <div class="section-label" data-zh="精选作品">Selected Work</div>
-
-            <div class="projects-grid">
-
-                <!-- Project: Temu -->
-                <a href="temu.html" class="project-card">
-                    <div class="card-image"><img class="card-cover" src="images/temu/cover.jpg" alt="Temu's prize wheel next to the Temu app icon" data-zh-alt="Temu 的抽奖转盘和 Temu App 图标"><span class="card-pill" data-zh="查看案例">View case study</span></div>
-                    <div class="card-content">
-                        <div class="card-head"><h3 class="card-title"><span data-zh="礼品卡陷阱">The Gift Card Trap</span></h3><span class="card-chip" data-zh="课程项目">Class project</span></div>
-                        <p class="card-desc" data-zh="对 Temu 优惠券弹窗迷宫的一次伦理重设计">An ethical redesign of Temu’s coupon pop-up maze</p>
-                        <ul class="card-metrics"><li><b>21→3</b><span data-zh="个页面">screens</span></li><li><b>7</b><span data-zh="种黑暗模式">dark patterns</span></li><li><b>$151→$94</b><span data-zh="结算金额">checkout</span></li></ul>
-                        <div class="card-details"><div><dl><div><dt data-zh="角色">Role</dt><dd data-zh="独立完成 · 研究与设计">Solo · research & design</dd></div><div><dt data-zh="课程">Course</dt><dd data-zh="黑暗模式">Dark Patterns</dd></div><div><dt data-zh="时间">Timeline</dt><dd data-zh="2026.09 · 1 周">Sep 2026 · 1 week</dd></div></dl></div></div>
-                    </div>
-                </a>
-
-                <a href="lovelink.html" class="project-card">
-                    <div class="card-image"><div class="card-image-inner proj-visual-2"><img class="card-shot" src="images/home/lovelink-card.webp" alt="A hand holding an iPhone with the LoveLink chat screen" data-zh-alt="手持 iPhone，屏幕上是 LoveLink 聊天界面" loading="lazy"></div><span class="card-pill" data-zh="查看案例">View case study</span></div>
-                    <div class="card-content">
-                        <div class="card-head"><h3 class="card-title"><span data-zh="LoveLink">LoveLink</span></h3><span class="card-chip" data-zh="个人项目">Personal project</span></div>
-                        <p class="card-desc" data-zh="用 AI 朋友和共建房间，让异地情侣保持亲近的 iOS App">An iOS app that keeps long-distance couples close with AI friends and a shared room</p>
-                        <ul class="card-metrics"><li><b>137</b><span data-zh="份问卷">survey responses</span></li><li><b>3</b><span data-zh="位访谈">interviews</span></li><li><b>5</b><span data-zh="个功能模块">app tabs</span></li></ul>
-                        <div class="card-details"><div><dl><div><dt data-zh="角色">Role</dt><dd data-zh="UX 研究 · UI 设计">UX research · UI design</dd></div><div><dt data-zh="平台">Platform</dt><dd data-zh="iOS App">iOS app</dd></div><div><dt data-zh="时间">Timeline</dt><dd data-zh="2024.10 – 2024.12">Oct – Dec 2024</dd></div></dl></div></div>
-                    </div>
-                </a>
-
-                <a href="viva-toy.html" class="project-card">
-                    <div class="card-image"><div class="card-image-inner proj-visual-3"><img class="card-shot" src="images/home/viva-card.webp" alt="VIVA TOY app screens held in hand" data-zh-alt="手持的 VIVA TOY App 界面" loading="lazy"></div><span class="card-pill" data-zh="查看案例">View case study</span></div>
-                    <div class="card-content">
-                        <div class="card-head"><h3 class="card-title"><span data-zh="VIVA TOY">VIVA TOY</span></h3><span class="card-chip" data-zh="个人项目">Personal project</span></div>
-                        <p class="card-desc" data-zh="让电子玩具被修好、继续被使用的维修与循环服务">A repair-and-reuse service that keeps electronic toys in play</p>
-                        <ul class="card-metrics"><li><b>3</b><span data-zh="类用户">user groups</span></li><li><b>7</b><span data-zh="个品牌对比">toy brands compared</span></li><li><b>2</b><span data-zh="张服务蓝图">service blueprints</span></li></ul>
-                        <div class="card-details"><div><dl><div><dt data-zh="角色">Role</dt><dd data-zh="服务设计 · 商业模式">Service design · business model</dd></div><div><dt data-zh="产出">Deliverable</dt><dd data-zh="服务系统 + App">Service system + app</dd></div><div><dt data-zh="时间">Timeline</dt><dd data-zh="2024.11 – 2025.01">Nov 2024 – Jan 2025</dd></div></dl></div></div>
-                    </div>
-                </a>
-
-                <a href="aban.html" class="project-card">
-                    <div class="card-image"><div class="card-image-inner proj-visual-4"><img class="card-shot" src="images/home/aban-card.webp" alt="Aban AI music website on a desktop monitor" data-zh-alt="阿伴 AI 音乐创作网站，显示在台式显示器上" loading="lazy"></div><span class="card-pill" data-zh="输入密码">Enter password</span></div>
-                    <div class="card-content">
-                        <div class="card-head"><h3 class="card-title"><span data-zh="阿伴 Aban">Aban</span><span class="card-lock" aria-label="Password protected"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" fill="currentColor"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></svg></span></h3><span class="card-chip" data-zh="网页设计">Web design</span></div>
-                        <p class="card-desc" data-zh="把灵感变成收入的 AI 音乐网站">An AI music website that turns inspiration into income</p>
-                        <ul class="card-metrics"><li><b>AI</b><span data-zh="音乐创作">music creation</span></li><li><b data-zh="网页">Web</b><span data-zh="平台">platform</span></li><li><b data-zh="密码">Locked</b><span data-zh="找我要访问权限">ask me for access</span></li></ul>
-                        <div class="card-details"><div><dl><div><dt data-zh="查看">Access</dt><dd data-zh="需要密码">Password protected</dd></div><div><dt data-zh="平台">Platform</dt><dd data-zh="网页">Web</dd></div></dl></div></div>
-                    </div>
-                </a>
-
-            </div>
-        </section>
-
-        <div class="divider"></div>
-
-        <!-- Playground Section -->
-        <section class="section" id="playground">
-            <div class="section-label" data-zh="实验">Playground</div>
-
-            <div class="playground-grid">
-
-                <a href="cookie-thief.html" class="play-card" style="text-decoration:none;background:#fff;">
-                    <img src="assets/cookie-thief-cover.png" alt="Cookie Thief: pixel rat offline game" data-zh-alt="Cookie Thief：像素老鼠离线小游戏" style="width:100%;height:100%;object-fit:contain;">
-                    <span class="play-label">Cookie Thief</span>
-                </a>
-
-                <a href="fashion.html" class="play-card" style="text-decoration:none;">
-                    <div class="card-image-inner" style="width:100%;height:100%;background-color:#fff;background-image:repeating-linear-gradient(0deg,rgba(255,143,199,.35) 0 10px,transparent 10px 20px),repeating-linear-gradient(90deg,rgba(255,143,199,.35) 0 10px,transparent 10px 20px);">
-                        <span class="sewn" style="font-family:'Cormorant Garamond',serif;font-size:26px;" data-zh="做衣服">makes clothes</span>
-                    </div>
-                    <span class="play-label" data-zh="服装设计">Fashion design</span>
-                </a>
-
-                <a href="wall.html" class="play-card" style="text-decoration:none;">
-                    <div class="card-image-inner" style="width:100%;height:100%;background:#EFE8FB;">
-                        <div style="background:#fff;border-radius:12px;padding:14px 18px;rotate:-4deg;box-shadow:0 4px 0 rgba(74,64,96,.15);font-family:'Gaegu','ZCOOL KuaiLe',cursive;font-size:24px;color:#4A4060;" data-zh="签个名 ✎">sign here ✎</div>
-                    </div>
-                    <span class="play-label" data-zh="签名墙">Sign the wall</span>
-                </a>
-
-                <div class="play-card" onclick="void(0)">
-                    <div class="card-image-inner play-visual-2" style="width:100%;height:100%;">
-                        <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:rgba(80,100,90,0.4);text-align:center;line-height:1.2;">
-                            Gen<br>erative
-                        </div>
-                    </div>
-                    <span class="play-label">Processing / p5.js</span>
-                </div>
-
-                <div class="play-card" onclick="void(0)">
-                    <div class="card-image-inner play-visual-3" style="width:100%;height:100%;">
-                        <div style="display:flex;flex-direction:column;gap:3px;">
-                            <div style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(80,60,120,0.5);">Every Byte</div>
-                            <div style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(80,60,120,0.4);">is Action</div>
-                        </div>
-                    </div>
-                    <span class="play-label" data-zh="像素海报">Pixel Art Poster</span>
-                </div>
-
-                <div class="play-card" onclick="void(0)">
-                    <div class="card-image-inner play-visual-4" style="width:100%;height:100%;">
-                        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
-                            <div style="width:28px;height:48px;border-radius:4px;background:rgba(196,120,90,0.2);border:1px solid rgba(196,120,90,0.3);"></div>
-                            <div style="font-size:8px;color:rgba(120,80,60,0.5);letter-spacing:0.06em;">3D Scene</div>
-                        </div>
-                    </div>
-                    <span class="play-label">Twinmotion / VR</span>
-                </div>
-
-                <div class="play-card" onclick="void(0)">
-                    <div class="card-image-inner play-visual-5" style="width:100%;height:100%;">
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
-                            <div style="height:24px;background:rgba(196,100,90,0.2);border-radius:3px;"></div>
-                            <div style="height:24px;background:rgba(196,100,90,0.3);border-radius:3px;"></div>
-                            <div style="height:24px;background:rgba(196,100,90,0.15);border-radius:3px;"></div>
-                            <div style="height:24px;background:rgba(196,100,90,0.25);border-radius:3px;"></div>
-                        </div>
-                    </div>
-                    <span class="play-label" data-zh="iOS 探索">iOS Explorations</span>
-                </div>
-
-                <div class="play-card" onclick="void(0)">
-                    <div class="card-image-inner play-visual-6" style="width:100%;height:100%;">
-                        <div style="display:flex;flex-direction:column;gap:5px;align-items:center;">
-                            <div style="width:40px;height:2px;background:rgba(60,100,160,0.3);border-radius:1px;transform:rotate(-20deg);"></div>
-                            <div style="width:32px;height:2px;background:rgba(60,100,160,0.2);border-radius:1px;transform:rotate(-20deg);"></div>
-                            <div style="width:40px;height:2px;background:rgba(60,100,160,0.4);border-radius:1px;transform:rotate(-20deg);"></div>
-                        </div>
-                    </div>
-                    <span class="play-label" data-zh="动效练习">Motion Studies</span>
-                </div>
-
-
-            </div>
-        </section>
-
-        <div class="divider"></div>
-
-        <!-- Connect Section -->
-        <section class="section" id="connect">
-            <div class="section-label" data-zh="联系">Connect</div>
-
-            <div class="connect-grid">
-
-                <div>
-                    <div class="about-photo"><img src="images/home/about-photo.webp" alt="Portrait of Amanda" data-zh-alt="张玥妍的肖像" loading="lazy"></div>
-                    <p class="about-text">
-                        <p data-zh="我是张玥妍（Amanda），一名跨领域设计师，关注交互与情感之间那片安静的空间。从视觉设计起步，后来被动效和微交互吸引。">I'm Yueyan (Amanda) Zhang — a multidisciplinary designer interested in the quiet space between interaction and emotion. Started in visual design, drawn into motion and micro-interactions.</p>
-                        <p data-zh="我相信好的设计会让人觉得理所当然。目前正在寻找新的工作和合作机会。">I believe good design feels inevitable. Currently exploring new work and collaborations.</p>
-                    </p>
-                </div>
-
-                <div class="connect-links">
-                    <a href="#" class="connect-link">
-          <span data-zh="简历">Resume</span> <span class="connect-link-arrow">↗</span>
-        </a>
-                    <a href="#" class="connect-link">
-          LinkedIn <span class="connect-link-arrow">↗</span>
-        </a>
-                    <a href="#" class="connect-link">
-          <span data-zh="邮箱">Email</span> <span class="connect-link-arrow">↗</span>
-        </a>
-                    <a href="#" class="connect-link">
-          Instagram <span class="connect-link-arrow">↗</span>
-        </a>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- Off screen: fashion background + hobbies -->
-        <section class="section offscreen" id="offscreen">
-            <div class="section-label" data-zh="屏幕之外">Off screen</div>
-            <p class="offscreen-line" data-zh="我还是一个会&lt;a class=&quot;sewn&quot; href=&quot;fashion.html&quot;&gt;做衣服&lt;/a&gt;的设计师。">I’m also a designer who <a class="sewn" href="fashion.html">makes clothes</a>.</p>
-            <p class="offscreen-sub" data-zh="本科学的是服装设计。下了屏幕，我攀岩、打羽毛球，也自己做衣服。">I studied fashion design as an undergrad. Off screen I climb, play badminton and sew.</p>
-        </section>
-
-        <!-- Footer -->
-        <footer class="footer">
-            <span class="footer-name">Yueyan · 玥妍</span>
-            <a href="foody.html" class="footer-year" style="text-decoration:none" data-zh="Foody 原型 →">Foody prototype →</a>
-            <span class="footer-year">© 2026</span>
-        </footer>
-
+<main class="canvas" id="top">
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <div class="who frame" data-frame="Frame · Intro">
+      <p class="eyebrow mono" data-zh="张玥妍 Amanda · UX 产品设计师 · 纽约">Amanda (Yueyan) Zhang · UX &amp; Product Designer · NYC</p>
+      <h1 data-zh="我设计&lt;span class=&quot;serif&quot;&gt;诚实&lt;/span&gt;的产品：从&lt;span class=&quot;marker&quot;&gt;结算流程&lt;/span&gt;到 &lt;span class=&quot;chip-w&quot;&gt;AI&lt;/span&gt; 陪伴。">I design <span class="serif">honest</span> products, from <span class="marker">checkout flows</span> to <span class="chip-w">AI</span> companions.</h1>
+      <p class="lead" data-zh="我从用户研究出发，尽早做原型、找真人测试。每个案例都有可以点的原型，和背后的数据。">I start from research, prototype early and test with real people. Every case study comes with a clickable prototype and the numbers behind it.</p>
+      <div class="proof" aria-label="Quick facts">
+        <span data-zh="在 &lt;b&gt;NYU&lt;/b&gt; 读书">Studying at <b>NYU</b></span>
+        <span data-zh="&lt;b&gt;4&lt;/b&gt; 个案例"><b>4</b> case studies</span>
+        <span data-zh="做过 &lt;b&gt;A/B&lt;/b&gt; 测试的重设计"><b>A/B</b>-tested redesign</span>
+        <span data-zh="本科 &lt;b&gt;服装设计&lt;/b&gt;">BA in <b>fashion design</b></span>
+      </div>
+      <div class="cta">
+        <a class="btn solid" href="#work" data-zh="看作品 ↓">See the work ↓</a>
+        <a class="btn" href="temu.html" data-zh="从最完整的开始：Temu →">Start with Temu →</a>
+      </div>
+      <span class="size-tag" aria-hidden="true"></span>
     </div>
 
-    <script>
-        // Intersection observer for section reveal
-        const sections = document.querySelectorAll('.section');
-        const cards = document.querySelectorAll('.project-card, .play-card');
+    <aside class="visitors frame" data-frame="Frame · Visitors" aria-labelledby="visitors-title">
+      <header><h2 id="visitors-title" data-zh="来过的人">Signed in</h2><span id="visCount"></span></header>
+      <div class="sigs" id="sigs"></div>
+      <footer><a href="wall.html" data-zh="看整面签名墙 →">See the whole wall →</a><button type="button" id="signAgain" data-zh="签个名">Sign</button></footer>
+    </aside>
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, {
-            threshold: 0.1,
-            rootMargin: '0px 0px -60px 0px'
-        });
+    <div class="focus" aria-label="What I work on">
+      <a class="frame" data-frame="Ethical design" href="temu.html"><span class="k" data-zh="伦理设计">Ethical design</span><h3 data-zh="删掉套路，留下优惠">Keep the deal, drop the tricks</h3><p data-zh="Temu 的优惠券迷宫：21 个页面变成 3 个，结算从 $151 降到 $94。">Temu’s coupon maze: 21 screens down to 3, checkout from $151 to $94.</p></a>
+      <a class="frame" data-frame="AI interaction" href="lovelink.html"><span class="k" data-zh="AI 交互">AI interaction</span><h3 data-zh="吵架之前，先问 AI">Talk to the AI before you fight</h3><p data-zh="LoveLink：137 份问卷和 3 位访谈，为异地情侣设计 AI 朋友。">LoveLink: 137 survey responses and 3 interviews behind AI friends for long-distance couples.</p></a>
+      <a class="frame" data-frame="Service design" href="viva-toy.html"><span class="k" data-zh="服务设计">Service design</span><h3 data-zh="让旧玩具重新被爱">Let old toys be loved again</h3><p data-zh="VIVA TOY：3 类用户、7 个品牌的保修对比、2 张服务蓝图。">VIVA TOY: 3 user groups, 7 brands’ warranties compared, 2 service blueprints.</p></a>
+    </div>
+  </section>
 
-        sections.forEach(s => observer.observe(s));
+  <!-- ===== WORK ===== -->
+  <section id="work">
+    <div class="sec-head">
+      <h2 data-zh="精选作品">Selected work</h2>
+      <p data-zh="每个项目都从一个真实的问题开始，以原型和数据结束。">Each one starts with a real problem and ends with a prototype and numbers.</p>
+    </div>
+    <div class="work">
+      <a class="card frame" data-frame="01 · The Gift Card Trap" href="temu.html">
+        <div class="shot"><img class="cover" src="images/temu/cover.jpg" alt="Temu's prize wheel next to the Temu app icon" data-zh-alt="Temu 的抽奖转盘和 Temu App 图标"><div class="pills"><span class="hot" data-zh="A/B 测试">A/B tested</span><span data-zh="课程项目">class project</span><span data-zh="独立完成">solo</span></div></div>
+        <div class="card-body"><h3 data-zh="礼品卡陷阱">The Gift Card Trap</h3><p data-zh="对 Temu 优惠券弹窗迷宫的一次伦理重设计。">An ethical redesign of Temu’s coupon pop-up maze.</p>
+          <ul class="metrics"><li><b>21→3</b><span data-zh="页面">screens</span></li><li><b>7</b><span data-zh="种黑暗模式">dark patterns</span></li><li><b>$151→$94</b><span data-zh="结算金额">checkout</span></li></ul></div>
+      </a>
+      <a class="card frame" data-frame="02 · LoveLink" href="lovelink.html">
+        <div class="shot lavender"><img class="mock" src="images/home/lovelink-card.webp" alt="A hand holding an iPhone with the LoveLink chat screen" data-zh-alt="手持 iPhone，屏幕上是 LoveLink 聊天界面" loading="lazy"><div class="pills"><span>0→1</span><span data-zh="AI 交互">AI interaction</span><span>iOS</span></div></div>
+        <div class="card-body"><h3>LoveLink</h3><p data-zh="用 AI 朋友和共建房间，让异地情侣保持亲近的 iOS App。">An iOS app that keeps long-distance couples close with AI friends and a shared room.</p>
+          <ul class="metrics"><li><b>137</b><span data-zh="份问卷">survey responses</span></li><li><b>3</b><span data-zh="位访谈">interviews</span></li><li><b>5</b><span data-zh="个功能模块">app tabs</span></li></ul></div>
+      </a>
+      <a class="card frame" data-frame="03 · VIVA TOY" href="viva-toy.html">
+        <div class="shot sky"><img class="mock" src="images/home/viva-card.webp" alt="VIVA TOY app screens held in hand" data-zh-alt="手持的 VIVA TOY App 界面" loading="lazy"><div class="pills"><span data-zh="服务设计">service design</span><span data-zh="商业模式">business model</span><span data-zh="个人项目">personal</span></div></div>
+        <div class="card-body"><h3>VIVA TOY</h3><p data-zh="让电子玩具被修好、继续被使用的维修与循环服务。">A repair-and-reuse service that keeps electronic toys in play.</p>
+          <ul class="metrics"><li><b>3</b><span data-zh="类用户">user groups</span></li><li><b>7</b><span data-zh="个品牌对比">brands compared</span></li><li><b>2</b><span data-zh="张服务蓝图">blueprints</span></li></ul></div>
+      </a>
+      <a class="card frame" data-frame="04 · Aban" href="aban.html">
+        <div class="shot blue"><img class="mock" src="images/home/aban-card.webp" alt="Aban AI music website on a desktop monitor" data-zh-alt="阿伴 AI 音乐创作网站，显示在台式显示器上" loading="lazy"><div class="pills"><span data-zh="需要密码">password</span><span data-zh="网页">web</span><span data-zh="AI 音乐">AI music</span></div></div>
+        <div class="card-body"><h3><span data-zh="阿伴 Aban">Aban</span><svg viewBox="0 0 24 24" role="img" aria-label="Password protected"><rect x="5" y="11" width="14" height="10" rx="2" fill="currentColor"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></svg></h3><p data-zh="把灵感变成收入的 AI 音乐网站。找我要密码。">An AI music website that turns inspiration into income. Ask me for the password.</p>
+          <ul class="metrics"><li><b>AI</b><span data-zh="音乐创作">music creation</span></li><li><b data-zh="网页">Web</b><span data-zh="平台">platform</span></li><li><b data-zh="密码">Locked</b><span data-zh="找我要访问权限">ask for access</span></li></ul></div>
+      </a>
+    </div>
+  </section>
 
-        // Card fade-in observer
-        const cardObserver = new IntersectionObserver((entries) => {
-            entries.forEach((entry, i) => {
-                if (entry.isIntersecting) {
-                    setTimeout(() => {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                    }, 0);
-                }
-            });
-        }, {
-            threshold: 0.05
-        });
+  <!-- ===== PLAYGROUND ===== -->
+  <section id="playground">
+    <div class="sec-head">
+      <h2 data-zh="实验">Playground</h2>
+      <p data-zh="小原型和小游戏，每个都在试一个想法。">Small prototypes and games, each one testing a single idea.</p>
+    </div>
+    <div class="plays">
+      <a class="play frame" data-frame="Cookie Thief" href="cookie-thief.html"><div class="tile"><img src="assets/cookie-thief-cover.png" alt="Pixel rat offline game, game over screen" data-zh-alt="像素老鼠离线小游戏的 Game Over 画面" loading="lazy"></div><b>Cookie Thief</b><span class="d" data-zh="一个黑暗模式小游戏">a dark-pattern game</span></a>
+      <a class="play frame" data-frame="Foody" href="foody.html"><div class="tile"><span style="font:800 32px var(--f-display);letter-spacing:-.02em">Foody</span></div><b data-zh="Foody 原型">Foody prototype</b><span class="d" data-zh="可以点的 App 原型">clickable app prototype</span></a>
+      <a class="play frame" data-frame="Fashion" href="fashion.html"><div class="tile gingham"><span class="sewn" style="font-size:24px" data-zh="做衣服">makes clothes</span></div><b data-zh="服装设计">Fashion design</b><span class="d" data-zh="本科作品">undergrad work</span></a>
+      <a class="play frame" data-frame="Wall" href="wall.html"><div class="tile"><span style="font:italic 400 26px var(--f-body);rotate:-4deg" data-zh="签个名 ✎">sign here ✎</span></div><b data-zh="签名墙">Signature wall</b><span class="d" data-zh="每位访客一张卡">one card per visitor</span></a>
+    </div>
+  </section>
 
-        cards.forEach(card => {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(16px)';
-            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease, box-shadow 0.45s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.45s cubic-bezier(0.4, 0, 0.2, 1), scale 0.45s cubic-bezier(0.4, 0, 0.2, 1), rotate 0.32s cubic-bezier(0.22, 1, 0.36, 1), translate 0.32s cubic-bezier(0.22, 1, 0.36, 1)';
-            cardObserver.observe(card);
-        });
+  <!-- ===== ABOUT ===== -->
+  <section id="about" class="about frame" data-frame="Frame · About">
+    <img src="images/home/about-photo.webp" alt="Portrait of Amanda" data-zh-alt="张玥妍的肖像" loading="lazy">
+    <div class="txt">
+      <h2 data-zh="你好，我是玥妍。">Hi, I’m Amanda.</h2>
+      <!-- TODO(Amanda): draft bio, rewrite in your own words -->
+      <p data-zh="我是张玥妍（Amanda），在纽约大学读书，做 UX 和产品设计。我关心一个产品对用户是不是诚实：真实价格是不是一开始就看得到，想离开的时候能不能离开。我习惯先做研究，再用可以点的原型去验证想法。">I’m Amanda (Yueyan) Zhang, a UX &amp; product designer studying at NYU. I care about whether a product is honest with people: can they see the real price up front, and can they leave when they want to? I research first, then test ideas with prototypes people can actually tap.</p>
+      <p class="offscreen" data-zh="下了屏幕，我是一个会&lt;a class=&quot;sewn&quot; href=&quot;fashion.html&quot;&gt;做衣服&lt;/a&gt;的设计师。&lt;small&gt;本科学的是服装设计。我还攀岩、打羽毛球。&lt;/small&gt;">Off screen, I’m a designer who <a class="sewn" href="fashion.html">makes clothes</a>.<small>I studied fashion design as an undergrad. I also climb and play badminton.</small></p>
+    </div>
+  </section>
 
-        // Active nav
-        function setActive(el) {
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            el.classList.add('active');
-        }
+  <footer class="foot">
+    <span>Amanda (Yueyan) Zhang · 张玥妍</span>
+    <a href="wall.html" data-zh="在墙上签名 ✎">Sign the wall ✎</a>
+    <span>© 2026</span>
+  </footer>
+</main>
 
-        // Scroll-based active nav
-        const sectionIds = ['projects', 'playground', 'connect'];
-        const navItems = document.querySelectorAll('.nav-item');
+<!-- ===== THE DOOR: sign in to enter ===== -->
+<div class="door" id="door" role="dialog" aria-modal="true" aria-labelledby="door-title" hidden>
+  <div class="door-card">
+    <p class="mono" data-zh="欢迎来到我的画布">Welcome to my canvas</p>
+    <h2 id="door-title" data-zh="进来之前，&lt;em&gt;签个名&lt;/em&gt;吧。">Sign in. <em>Literally.</em></h2>
+    <div class="pad-frame">
+      <canvas class="pad" id="pad" width="960" height="400" aria-label="Signature pad: draw your signature with a mouse or finger"></canvas>
+      <span class="pad-x" aria-hidden="true">×</span><span class="pad-line" aria-hidden="true"></span>
+      <span class="pad-hint" id="padHint" data-zh="用鼠标或手指在这里签名。签名会挂在我的主页上。">Draw your signature here. It will hang on my homepage.</span>
+    </div>
+    <div class="door-row">
+      <input id="signName" type="text" maxlength="20" autocomplete="nickname" placeholder="Your name (optional)" aria-label="Your name (optional)">
+      <div class="door-actions">
+        <button type="button" id="clearPad" data-zh="擦掉">Clear</button>
+        <button type="button" class="go" id="enter" aria-disabled="true" data-zh="签好了，进来 →">Enter →</button>
+      </div>
+    </div>
+    <button type="button" class="skip" id="skipDoor" data-zh="跳过，直接看作品">Skip and see the work</button>
+  </div>
+</div>
 
-        window.addEventListener('scroll', () => {
-            let current = '';
-            sectionIds.forEach(id => {
-                const el = document.getElementById(id);
-                if (el && window.scrollY >= el.offsetTop - 200) {
-                    current = id;
-                }
-            });
-            navItems.forEach(n => {
-                n.classList.remove('active');
-                if (n.getAttribute('href') === '#' + current) {
-                    n.classList.add('active');
-                }
-            });
-        });
-    </script>
+<script src="assets/wall-config.js"></script>
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const zh = () => document.documentElement.lang === 'zh-CN';
+  const tr = (en, z) => (zh() ? z : en);
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const store = {
+    get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+  };
+  const ENDPOINT = window.WALL_ENDPOINT || '';
+  const TAPE = ['#FFE15A', '#FFC29A', '#9FE0CF', '#F9B9C9', '#B9CCFF'];
 
-    <script src="assets/i18n.js" defer></script>
+  /* ---------- rulers + live cursor coordinates ---------- */
+  const R = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--ruler')) || 0;
+  function rulers() {
+    const top = $('#rulerTop'), left = $('#rulerLeft');
+    top.querySelectorAll('span:not(.mark)').forEach(n => n.remove());
+    left.querySelectorAll('span:not(.mark)').forEach(n => n.remove());
+    for (let x = 0; x < innerWidth; x += 100) { const s = document.createElement('span'); s.style.left = x + 3 + 'px'; s.textContent = x; top.append(s); }
+    for (let y = 100; y < innerHeight; y += 100) { const s = document.createElement('span'); s.style.top = y + 3 + 'px'; s.textContent = y; left.append(s); }
+  }
+  rulers(); addEventListener('resize', rulers);
+  let raf = 0, px = 0, py = 0;
+  addEventListener('pointermove', e => {
+    px = e.clientX; py = e.clientY;
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      raf = 0;
+      $('#xy').textContent = `X ${Math.round(px + scrollX)} · Y ${Math.round(py + scrollY)}`;
+      $('#rulerTop .mark').style.left = px - R() + 'px';
+      $('#rulerLeft .mark').style.top = py - R() + 'px';
+    });
+  }, { passive: true });
+  // Figma-style size readout on hovered frames
+  document.querySelectorAll('.frame').forEach(f => f.addEventListener('pointerenter', () => {
+    const t = f.querySelector(':scope > .size-tag'); if (!t) return;
+    const r = f.getBoundingClientRect(); t.textContent = `${Math.round(r.width)} × ${Math.round(r.height)}`;
+  }));
+
+  /* ---------- signatures: the same cards as wall.html ---------- */
+  let cards = [];
+  async function loadCards() {
+    if (!ENDPOINT) return store.get('wall-demo', []);
+    try { const r = await fetch(ENDPOINT); return (await r.json()).items || []; } catch { return store.get('wall-demo', []); }
+  }
+  const mine = new Set(store.get('wall-mine', []));
+  function renderSigs(landingId) {
+    const box = $('#sigs'); box.replaceChildren();
+    const list = [...cards].reverse().filter(c => typeof c.sig === 'string' && c.sig.startsWith('data:image/png;base64,')).slice(0, 6);
+    $('#visCount').textContent = tr(`${cards.length} signature${cards.length === 1 ? '' : 's'}`, `${cards.length} 个签名`);
+    if (!list.length) {
+      const e = document.createElement('div'); e.className = 'empty';
+      e.textContent = tr('No signatures yet. Be the first one.', '还没有人签名，来当第一个吧。');
+      box.append(e); return;
+    }
+    list.forEach((c, i) => {
+      const d = document.createElement('figure');
+      d.className = 'sig' + (mine.has(c.id) ? ' you' : '') + (c.id === landingId ? ' landing' : '');
+      d.id = 'sig-' + c.id;
+      d.style.setProperty('--r', ((i % 3) - 1) * 1.6 + 'deg');
+      d.style.setProperty('--c', TAPE[i % TAPE.length]);
+      const img = document.createElement('img'); img.src = c.sig; img.alt = tr(`Signature of ${c.name}`, `${c.name} 的签名`);
+      const cap = document.createElement('small'); cap.textContent = (mine.has(c.id) ? tr('you · ', '你 · ') : '') + c.name;
+      d.append(img, cap); box.append(d);
+    });
+  }
+
+  /* ---------- the door ---------- */
+  const door = $('#door'), pad = $('#pad'), g = pad.getContext('2d');
+  let inked = false, drawing = false, last = null, minX, minY, maxX, maxY;
+  g.lineCap = g.lineJoin = 'round'; g.lineWidth = 6; g.strokeStyle = '#1D1B19';
+  const pos = e => { const r = pad.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width * pad.width, y: (e.clientY - r.top) / r.height * pad.height }; };
+  pad.addEventListener('pointerdown', e => { drawing = true; last = pos(e); pad.setPointerCapture(e.pointerId); });
+  pad.addEventListener('pointermove', e => {
+    if (!drawing) return;
+    const p = pos(e), mid = { x: (last.x + p.x) / 2, y: (last.y + p.y) / 2 };
+    g.beginPath(); g.moveTo(last.mx ?? last.x, last.my ?? last.y); g.quadraticCurveTo(last.x, last.y, mid.x, mid.y); g.stroke();
+    last = { x: p.x, y: p.y, mx: mid.x, my: mid.y };
+    minX = Math.min(minX, p.x); minY = Math.min(minY, p.y); maxX = Math.max(maxX, p.x); maxY = Math.max(maxY, p.y);
+    if (!inked) { inked = true; $('#padHint').style.opacity = 0; $('#enter').setAttribute('aria-disabled', 'false'); }
+  });
+  ['pointerup', 'pointercancel'].forEach(t => pad.addEventListener(t, () => { drawing = false; }));
+  function clearPad() { g.clearRect(0, 0, pad.width, pad.height); inked = false; minX = minY = Infinity; maxX = maxY = -Infinity; $('#padHint').style.opacity = 1; $('#enter').setAttribute('aria-disabled', 'true'); }
+  $('#clearPad').onclick = clearPad;
+  // stored signature: trimmed to the ink, scaled into 240 × 100 (a few KB, same format as wall.html)
+  function sigData() {
+    const m = 18, w = Math.max(40, maxX - minX + m * 2), h = Math.max(30, maxY - minY + m * 2);
+    const out = document.createElement('canvas'); out.width = 240; out.height = 100;
+    const s = Math.min(240 / w, 100 / h), o = out.getContext('2d');
+    o.drawImage(pad, minX - m, minY - m, w, h, (240 - w * s) / 2, (100 - h * s) / 2, w * s, h * s);
+    return out.toDataURL('image/png');
+  }
+
+  function openDoor() { clearPad(); door.hidden = false; door.classList.remove('out'); document.body.style.overflow = 'hidden'; }
+  function closeDoor() { door.classList.add('out'); document.body.style.overflow = ''; setTimeout(() => { door.hidden = true; }, 500); }
+  function arrive() {
+    if (reduced) return;
+    document.querySelectorAll('.canvas > *').forEach((n, i) => n.style.setProperty('--i', i));
+    document.documentElement.classList.add('arriving');
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      document.documentElement.classList.replace('arriving', 'arrived');
+      setTimeout(() => document.documentElement.classList.remove('arrived'), 1400);
+    }));
+  }
+
+  $('#skipDoor').onclick = () => { store.set('door-seen', 1); closeDoor(); arrive(); };
+  $('#signAgain').onclick = openDoor;
+  door.addEventListener('keydown', e => { if (e.key === 'Escape') $('#skipDoor').click(); });
+
+  $('#enter').onclick = async () => {
+    if (!inked) { $('#padHint').style.opacity = 1; $('#padHint').textContent = tr('Draw a signature first ✎', '先签个名吧 ✎'); return; }
+    const name = ($('#signName').value.trim() || tr('a visitor', '一位访客')).slice(0, 20);
+    const card = { id: 'local-' + Date.now(), name, note: '', color: '#B9A7F2', sig: sigData(), likes: 0, time: new Date().toISOString().slice(0, 10) };
+    const from = pad.getBoundingClientRect();
+    cards.push(card); mine.add(card.id); store.set('wall-mine', [...mine]); store.set('door-seen', 1);
+    if (!ENDPOINT) store.set('wall-demo', cards); else fetch(ENDPOINT, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'add', ...card }) }).catch(() => {});
+    renderSigs(card.id);
+    const target = document.getElementById('sig-' + card.id);
+    if (reduced || !target) { closeDoor(); return; }
+    // fly the signature out of the pad and hang it on the Visitors frame
+    target.style.visibility = 'hidden';
+    const fly = document.createElement('div'); fly.className = 'flyer';
+    fly.innerHTML = `<img src="${card.sig}" alt="">`;
+    Object.assign(fly.style, { left: from.left + 'px', top: from.top + 'px', width: from.width + 'px', height: from.height + 'px' });
+    document.body.append(fly);
+    closeDoor(); arrive();
+    await new Promise(r => setTimeout(r, 450));
+    const to = target.getBoundingClientRect(), sx = to.width / from.width, sy = to.height / from.height;
+    const anim = fly.animate([
+      { transform: 'translate(0, 0) scale(1) rotate(0deg)' },
+      { transform: `translate(${(to.left - from.left) * .5}px, ${(to.top - from.top) * .3 - 90}px) scale(${(sx + 1) / 2}, ${(sy + 1) / 2}) rotate(-7deg)`, offset: .45 },
+      { transform: `translate(${to.left - from.left}px, ${to.top - from.top}px) scale(${sx}, ${sy}) rotate(0deg)` },
+    ], { duration: 1100, easing: 'cubic-bezier(.5, 0, .2, 1)', fill: 'forwards' });
+    const land = () => { if (!fly.isConnected) return; target.style.visibility = ''; fly.remove(); setTimeout(() => target.classList.remove('landing'), 2400); };
+    anim.onfinish = land;
+    setTimeout(land, 1600);   // backgrounded tabs pause animations: hang it up anyway
+  };
+
+  new MutationObserver(() => renderSigs()).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+  loadCards().then(d => { cards = d; renderSigs(); });
+  // First visit opens the door. Returning visitors, deep links (#work…) and ?nodoor go straight in.
+  if (!store.get('door-seen', 0) && !location.hash && !/nodoor/.test(location.search)) openDoor();
+})();
+</script>
+<script src="assets/i18n.js" defer></script>
 </body>
-
 </html>

@@ -134,10 +134,11 @@ input[type=text] { width: 100%; border: 0; background: #fff; border-radius: 14px
   </form>
 </dialog>
 
+<script src="assets/wall-config.js"></script>
 <script>
 /* ---------- config ---------- */
-// TODO(Amanda): paste the Apps Script web-app URL here. Empty = demo mode (saved in this browser only).
-const ENDPOINT = '';
+// The Apps Script URL lives in assets/wall-config.js (shared with the homepage). Empty = demo mode.
+const ENDPOINT = window.WALL_ENDPOINT || '';
 const COLORS = ['#B9A7F2', '#A8D8F0', '#FFC8A8', '#F7A8C8', '#A8E0B8'];
 const COOLDOWN_MS = 10 * 60 * 1000;   // one card per browser per 10 minutes
 const SIG_W = 240, SIG_H = 100;        // stored signature size: small PNG, a few KB
