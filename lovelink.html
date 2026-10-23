@@ -1,1291 +1,295 @@
 <!DOCTYPE html>
-<html lang="zh">
-
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-zh="LoveLink — 张玥妍">LoveLink — Amanda Zhang</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
-
-    <style>
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
-         :root {
-            --apricot: #FAF5EF;
-            --apricot-mid: #F3EAE0;
-            --apricot-warm: #E8D9C8;
-            --apricot-deep: #D4C0A8;
-            --ink: #2C2118;
-            --ink-mid: #6B5A4A;
-            --ink-light: #9E8E7E;
-            --accent: #C4785A;
-            --accent-light: #E8A882;
-            --white: #FEFCFA;
-            --card-bg: rgba(255, 255, 255, 0.72);
-            --sidebar-w: 160px;
-            --content-max: 900px;
-        }
-        
-        html {
-            scroll-behavior: smooth;
-        }
-        
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--apricot);
-            color: var(--ink);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-            background-size: 200px;
-            pointer-events: none;
-            z-index: 0;
-        }
-        /* ─── SIDEBAR ─── */
-        
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: var(--sidebar-w);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 0 0 0 36px;
-            z-index: 100;
-            gap: 10px;
-        }
-        
-        .sidebar-logo {
-            position: absolute;
-            top: 32px;
-            left: 36px;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 15px;
-            font-weight: 300;
-            color: var(--ink);
-            letter-spacing: 0.02em;
-            text-decoration: none;
-            opacity: 0.7;
-            transition: opacity 0.25s;
-        }
-        
-        .sidebar-logo:hover {
-            opacity: 1;
-        }
-        
-        .sidebar-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        .nav-item {
-            font-size: 13px;
-            font-weight: 400;
-            color: var(--ink-light);
-            cursor: pointer;
-            letter-spacing: 0.01em;
-            transition: color 0.25s ease, transform 0.25s ease;
-            padding: 2px 0;
-            text-decoration: none;
-            width: fit-content;
-            position: relative;
-        }
-        
-        .nav-item::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 0;
-            height: 0.5px;
-            background: var(--accent);
-            transition: width 0.3s ease;
-        }
-        
-        .nav-item:hover {
-            color: var(--ink);
-            transform: translateX(4px);
-        }
-        
-        .nav-item:hover::after {
-            width: 100%;
-        }
-        /* ─── BACK BUTTON ─── */
-        
-        .back-btn {
-            position: fixed;
-            top: 32px;
-            left: calc(var(--sidebar-w) + 40px);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            color: var(--ink-light);
-            text-decoration: none;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            z-index: 50;
-            transition: color 0.25s, transform 0.25s;
-            opacity: 0;
-            animation: fadeIn 0.6s ease 0.3s forwards;
-        }
-        
-        .back-btn:hover {
-            color: var(--accent);
-            transform: translateX(-3px);
-        }
-        
-        .back-btn svg {
-            width: 14px;
-            height: 14px;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 1.5;
-        }
-        /* ─── MAIN ─── */
-        
-        .main {
-            margin-left: var(--sidebar-w);
-            padding: 0 80px 0 60px;
-            position: relative;
-            z-index: 1;
-            max-width: calc(var(--sidebar-w) + var(--content-max) + 80px);
-        }
-        /* ─── HERO SECTION ─── */
-        
-        .project-hero {
-            padding: 100px 0 60px;
-            opacity: 0;
-            animation: fadeUp 0.9s ease 0.15s forwards;
-        }
-        
-        .project-tag {
-            font-size: 11px;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            color: var(--accent);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .project-tag::before {
-            content: '';
-            width: 24px;
-            height: 0.5px;
-            background: var(--accent);
-        }
-        
-        .project-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(40px, 5vw, 64px);
-            font-weight: 300;
-            line-height: 1.05;
-            letter-spacing: -0.02em;
-            color: var(--ink);
-            margin-bottom: 28px;
-        }
-        
-        .project-title em {
-            font-style: italic;
-            color: var(--accent);
-        }
-        
-        .project-meta {
-            display: flex;
-            gap: 36px;
-            flex-wrap: wrap;
-        }
-        
-        .meta-item {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-        }
-        
-        .meta-label {
-            font-size: 10px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--ink-light);
-        }
-        
-        .meta-value {
-            font-size: 13px;
-            color: var(--ink-mid);
-            font-weight: 300;
-        }
-        /* ─── DIVIDER ─── */
-        
-        .divider {
-            height: 0.5px;
-            background: linear-gradient(90deg, var(--apricot-warm), transparent);
-            margin: 48px 0;
-            opacity: 0;
-            animation: fadeIn 0.8s ease 0.5s forwards;
-        }
-        /* ─── HERO IMAGE GRID ─── */
-        
-        .hero-image-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            grid-template-rows: auto auto;
-            gap: 12px;
-            margin-bottom: 80px;
-            opacity: 0;
-            animation: fadeUp 0.9s ease 0.35s forwards;
-        }
-        
-        .img-placeholder {
-            border-radius: 14px;
-            background: var(--apricot-mid);
-            border: 0.5px solid var(--apricot-warm);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .img-placeholder.tall {
-            grid-row: span 2;
-        }
-        
-        .img-placeholder.wide {
-            grid-column: span 2;
-        }
-        
-        .img-placeholder img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            border-radius: 14px;
-        }
-        
-        .img-inner-label {
-            position: absolute;
-            bottom: 14px;
-            left: 16px;
-            font-size: 11px;
-            color: rgba(44, 33, 24, 0.4);
-            letter-spacing: 0.05em;
-            background: var(--card-bg);
-            padding: 3px 10px;
-            border-radius: 100px;
-        }
-        /* Placeholder visuals */
-        
-        .ph-olive-1 {
-            background: linear-gradient(160deg, #F0E8D4 0%, #C8BA90 100%);
-            min-height: 340px;
-        }
-        
-        .ph-olive-2 {
-            background: #4A6741;
-            min-height: 160px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .ph-olive-3 {
-            background: #8B2E1A;
-            min-height: 160px;
-        }
-        
-        .ph-olive-4 {
-            background: linear-gradient(160deg, #8B9E45 0%, #6B7A35 100%);
-            min-height: 160px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .ph-olive-5 {
-            background: linear-gradient(160deg, #E8DEC8 0%, #D4C89A 100%);
-            min-height: 160px;
-        }
-        
-        .stat-text {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 18px;
-            font-weight: 400;
-            color: #E8D89A;
-            text-align: center;
-            line-height: 1.4;
-            padding: 24px;
-        }
-        
-        .cta-pill {
-            background: #E8D89A;
-            color: #4A6741;
-            font-size: 13px;
-            font-weight: 500;
-            padding: 10px 24px;
-            border-radius: 100px;
-            letter-spacing: 0.02em;
-        }
-        /* ─── BRIEF SECTION ─── */
-        
-        .brief-section {
-            display: grid;
-            grid-template-columns: 1fr 1.4fr;
-            gap: 60px;
-            margin-bottom: 80px;
-            opacity: 0;
-            animation: fadeUp 0.8s ease 0.55s forwards;
-        }
-        
-        .brief-left {
-            display: flex;
-            flex-direction: column;
-            gap: 36px;
-        }
-        
-        .brief-block {}
-        
-        .brief-block-label {
-            font-size: 11px;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--ink-light);
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 0.5px solid var(--apricot-warm);
-        }
-        
-        .brief-block-text {
-            font-size: 13.5px;
-            color: var(--ink-mid);
-            line-height: 1.75;
-            font-weight: 300;
-        }
-        
-        .brief-right {}
-        
-        .challenge-label {
-            font-size: 11px;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--ink-light);
-            margin-bottom: 20px;
-        }
-        
-        .challenge-text {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(28px, 3.5vw, 44px);
-            font-weight: 300;
-            line-height: 1.2;
-            color: var(--ink);
-            letter-spacing: -0.01em;
-        }
-        /* ─── APPROACH SECTION ─── */
-        
-        .approach-section {
-            margin-bottom: 80px;
-            opacity: 0;
-        }
-        
-        .section-heading {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 32px;
-            font-weight: 300;
-            color: var(--ink);
-            margin-bottom: 32px;
-            letter-spacing: -0.01em;
-        }
-        
-        .two-col-text {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            margin-bottom: 36px;
-        }
-        
-        .col-block-title {
-            font-size: 12px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--ink-mid);
-            margin-bottom: 12px;
-            font-weight: 500;
-        }
-        
-        .col-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        
-        .col-list li {
-            font-size: 13.5px;
-            color: var(--ink-mid);
-            font-weight: 300;
-            padding-left: 16px;
-            position: relative;
-            line-height: 1.6;
-        }
-        
-        .col-list li::before {
-            content: '—';
-            position: absolute;
-            left: 0;
-            color: var(--apricot-deep);
-            font-size: 11px;
-        }
-        /* ─── IMAGE PLACEHOLDER FULL ─── */
-        
-        .img-full {
-            width: 100%;
-            border-radius: 16px;
-            background: var(--apricot-mid);
-            border: 0.5px solid var(--apricot-warm);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .img-full-label {
-            position: absolute;
-            bottom: 16px;
-            left: 20px;
-            font-size: 11px;
-            color: var(--ink-light);
-            letter-spacing: 0.05em;
-        }
-        
-        .ph-screens {
-            background: linear-gradient(160deg, #8B9E45 0%, #4A6741 100%);
-            min-height: 360px;
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
-            padding: 24px;
-            align-items: center;
-        }
-        
-        .screen-mini {
-            background: #E8DEC8;
-            border-radius: 6px;
-            aspect-ratio: 9/19;
-            display: flex;
-            flex-direction: column;
-            padding: 6px 4px;
-            gap: 3px;
-        }
-        
-        .screen-mini-bar {
-            height: 3px;
-            background: rgba(74, 103, 65, 0.3);
-            border-radius: 2px;
-        }
-        
-        .screen-mini-bar.accent-bar {
-            background: rgba(74, 103, 65, 0.6);
-            width: 60%;
-        }
-        /* ─── MEDIA SECTION ─── */
-        
-        .media-section {
-            margin-bottom: 80px;
-            opacity: 0;
-        }
-        
-        .media-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-        
-        .video-placeholder {
-            width: 100%;
-            border-radius: 14px;
-            background: var(--ink);
-            aspect-ratio: 16/9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: opacity 0.25s;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .video-placeholder:hover {
-            opacity: 0.88;
-        }
-        
-        .play-icon {
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .play-icon svg {
-            width: 18px;
-            height: 18px;
-            fill: white;
-            margin-left: 3px;
-        }
-        
-        .video-label {
-            position: absolute;
-            bottom: 14px;
-            left: 16px;
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.5);
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-        }
-        
-        .link-row {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-        
-        .ext-link {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            color: var(--ink-light);
-            text-decoration: none;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            padding: 10px 18px;
-            border-radius: 100px;
-            border: 0.5px solid var(--apricot-warm);
-            background: var(--card-bg);
-            transition: color 0.25s, border-color 0.25s, transform 0.25s;
-        }
-        
-        .ext-link:hover {
-            color: var(--accent);
-            border-color: var(--accent-light);
-            transform: translateY(-2px);
-        }
-        
-        .ext-link svg {
-            width: 11px;
-            height: 11px;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 1.5;
-        }
-        /* ─── CONCLUSION ─── */
-        
-        .conclusion-section {
-            margin-bottom: 80px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            opacity: 0;
-        }
-        
-        .concl-block {}
-        
-        .concl-label {
-            font-size: 11px;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--ink-light);
-            margin-bottom: 14px;
-            padding-bottom: 10px;
-            border-bottom: 0.5px solid var(--apricot-warm);
-        }
-        
-        .concl-text {
-            font-size: 13.5px;
-            color: var(--ink-mid);
-            font-weight: 300;
-            line-height: 1.75;
-        }
-        /* ─── SEE NEXT ─── */
-        
-        .see-next-section {
-            padding: 60px 0 0;
-            border-top: 0.5px solid var(--apricot-warm);
-            opacity: 0;
-        }
-        
-        .see-next-label {
-            font-size: 10px;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            color: var(--ink-light);
-            margin-bottom: 28px;
-        }
-        
-        .next-cards {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 60px;
-        }
-        
-        .next-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            overflow: hidden;
-            border: 0.5px solid var(--apricot-warm);
-            cursor: pointer;
-            text-decoration: none;
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.4s;
-            display: block;
-        }
-        
-        .next-card:hover {
-            transform: translateY(-4px) scale(1.01);
-            border-color: var(--accent-light);
-        }
-        
-        .next-card-img {
-            width: 100%;
-            aspect-ratio: 16/9;
-            background: var(--apricot-mid);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-        
-        .next-card-body {
-            padding: 16px 20px 20px;
-        }
-        
-        .next-card-direction {
-            font-size: 10px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--ink-light);
-            margin-bottom: 6px;
-        }
-        
-        .next-card-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 18px;
-            font-weight: 400;
-            color: var(--ink);
-            line-height: 1.25;
-            margin-bottom: 6px;
-        }
-        
-        .next-card-desc {
-            font-size: 12px;
-            color: var(--ink-light);
-            font-weight: 300;
-            line-height: 1.5;
-        }
-        /* Placeholder visuals for next cards */
-        
-        .ph-next-1 {
-            background: linear-gradient(135deg, #2C2118 0%, #4A3828 100%);
-        }
-        
-        .ph-next-2 {
-            background: linear-gradient(135deg, #E8DEC8 0%, #D4C89A 100%);
-        }
-        /* ─── VIBE FOOTER ─── */
-        
-        .vibe-footer {
-            background: var(--ink);
-            margin: 0 -80px 0 -60px;
-            padding: 80px 80px 64px 60px;
-            position: relative;
-            overflow: hidden;
-            opacity: 0;
-        }
-        
-        .vibe-footer::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(ellipse at 80% 50%, rgba(196, 120, 90, 0.08) 0%, transparent 60%);
-        }
-        
-        .vibe-pretext {
-            font-size: 11px;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.3);
-            margin-bottom: 28px;
-        }
-        
-        .vibe-headline {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(36px, 4.5vw, 60px);
-            font-weight: 300;
-            color: rgba(255, 255, 255, 0.95);
-            line-height: 1.1;
-            letter-spacing: -0.02em;
-            margin-bottom: 40px;
-        }
-        
-        .vibe-headline em {
-            font-style: italic;
-            color: var(--accent-light);
-        }
-        
-        .vibe-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 52px;
-        }
-        
-        .vibe-tag {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.5);
-            border: 0.5px solid rgba(255, 255, 255, 0.15);
-            padding: 6px 16px;
-            border-radius: 100px;
-            letter-spacing: 0.04em;
-            transition: color 0.25s, border-color 0.25s;
-        }
-        
-        .vibe-tag:hover {
-            color: var(--accent-light);
-            border-color: rgba(232, 168, 130, 0.4);
-        }
-        
-        .vibe-bottom {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            border-top: 0.5px solid rgba(255, 255, 255, 0.08);
-            padding-top: 28px;
-        }
-        
-        .vibe-copy {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.25);
-            letter-spacing: 0.04em;
-        }
-        
-        .vibe-links {
-            display: flex;
-            gap: 20px;
-        }
-        
-        .vibe-link {
-            font-size: 11px;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.35);
-            text-decoration: none;
-            transition: color 0.25s;
-        }
-        
-        .vibe-link:hover {
-            color: var(--accent-light);
-        }
-        /* ─── ANIMATIONS ─── */
-        
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-        
-        .reveal {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.7s ease, transform 0.7s ease;
-        }
-        
-        .reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        /* Progress bar */
-        
-        .reading-progress {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 1.5px;
-            background: var(--accent);
-            z-index: 200;
-            transition: width 0.1s linear;
-            width: 0%;
-        }
-        /* Mobile */
-        
-        @media (max-width: 768px) {
-             :root {
-                --sidebar-w: 0px;
-            }
-            .sidebar {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                top: auto;
-                width: 100%;
-                height: 56px;
-                flex-direction: row;
-                justify-content: center;
-                padding: 0 24px;
-                background: var(--apricot);
-                border-top: 0.5px solid var(--apricot-warm);
-            }
-            .sidebar-logo {
-                display: none;
-            }
-            .sidebar-nav {
-                flex-direction: row;
-                gap: 28px;
-            }
-            .main {
-                margin-left: 0;
-                padding: 0 24px 80px;
-            }
-            .hero-image-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-            .img-placeholder.tall {
-                grid-row: auto;
-            }
-            .brief-section {
-                grid-template-columns: 1fr;
-                gap: 32px;
-            }
-            .two-col-text {
-                grid-template-columns: 1fr;
-                gap: 24px;
-            }
-            .media-grid {
-                grid-template-columns: 1fr;
-            }
-            .conclusion-section {
-                grid-template-columns: 1fr;
-            }
-            .next-cards {
-                grid-template-columns: 1fr;
-            }
-            .vibe-footer {
-                margin: 0 -24px;
-                padding: 60px 24px 48px;
-            }
-            .vibe-bottom {
-                flex-direction: column;
-                gap: 16px;
-                align-items: flex-start;
-            }
-        }
-    
-        /* ─── ADDED: bilingual switch + case-study blocks (same tokens as above) ─── */
-        .lang-toggle { margin-top: 24px; width: fit-content; font: inherit; font-size: 12px; letter-spacing: 0.04em; color: var(--ink-light); background: none; border: 0.5px solid var(--apricot-warm); border-radius: 100px; padding: 4px 12px; cursor: pointer; }
-        .lang-toggle b { color: var(--ink); font-weight: 500; }
-        html:lang(zh-CN) body { font-family: 'DM Sans', 'PingFang SC', 'Noto Sans SC', sans-serif; }
-        .cs-hero { padding: 40px; margin-bottom: 64px; background: linear-gradient(160deg, var(--apricot-mid) 0%, var(--apricot-warm) 100%); }
-        .cs-hero img { max-height: 520px; width: auto; max-width: 100%; }
-        .cs { margin-bottom: 80px; }
-        .cs > * + * { margin-top: 28px; }
-        .cs > .brief-block-label + * { margin-top: 0; }
-        .cs .section-heading { margin-bottom: 0; max-width: 22ch; }
-        .cs-body { max-width: 640px; }
-        .cs-lead { max-width: 34ch; font-size: clamp(22px, 2.4vw, 28px); line-height: 1.35; }
-        .cs-note { font-size: 12px; color: var(--ink-light); font-style: italic; }
-        .cs-callout { border-left: 2px solid var(--accent); padding: 4px 0 4px 20px; max-width: 640px; }
-        .cs-callout p { font-family: 'Cormorant Garamond', serif; font-size: 22px; line-height: 1.4; color: var(--ink); }
-        .cs-grid, .stats { display: grid; gap: 14px; }
-        .g2 { grid-template-columns: repeat(2, 1fr); } .g3 { grid-template-columns: repeat(3, 1fr); } .g4 { grid-template-columns: repeat(4, 1fr); } .g5 { grid-template-columns: repeat(5, 1fr); }
-        .cs-card, .cs-quote { margin: 0; background: var(--card-bg); border: 0.5px solid var(--apricot-warm); border-radius: 14px; padding: 20px 22px; }
-        .cs-card h4 { font-family: 'Cormorant Garamond', serif; font-size: 21px; font-weight: 400; color: var(--ink); margin-bottom: 6px; }
-        .cs-card p { font-size: 13.5px; line-height: 1.7; color: var(--ink-mid); font-weight: 300; }
-        .stats div { border-top: 1px solid var(--apricot-warm); padding-top: 12px; }
-        .stats b { display: block; font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 38px; line-height: 1.1; color: var(--accent); }
-        .stats span { font-size: 12.5px; color: var(--ink-mid); font-weight: 300; }
-        .cs-quote { display: flex; flex-direction: column; justify-content: space-between; gap: 18px; }
-        .cs-quote blockquote { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-style: italic; line-height: 1.4; color: var(--ink); }
-        .cs-quote figcaption { font-size: 11px; letter-spacing: 0.06em; color: var(--ink-light); }
-        .cs-chips { display: flex; flex-wrap: wrap; gap: 10px; }
-        .cs-chips .tag { font-size: 12px; letter-spacing: 0.02em; text-transform: none; color: var(--ink-mid); border: 0.5px solid var(--apricot-deep); padding: 7px 16px; border-radius: 100px; background: var(--card-bg); }
-        .cs-timeline { list-style: none; display: flex; overflow-x: auto; padding-bottom: 6px; }
-        .cs-timeline li { flex: 1 0 120px; position: relative; padding: 26px 12px 0 0; }
-        .cs-timeline li::before { content: ''; position: absolute; top: 6px; left: 0; right: 0; border-top: 1px dashed var(--apricot-deep); }
-        .cs-timeline li::after { content: ''; position: absolute; top: 2px; left: 0; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); }
-        .cs-timeline span { display: block; font-size: 10px; letter-spacing: 0.1em; color: var(--ink-light); }
-        .cs-timeline b { font-size: 13px; font-weight: 400; color: var(--ink-mid); }
-        .cs-donut { display: flex; align-items: center; gap: 28px; max-width: 640px; }
-        .cs-donut svg { width: 128px; flex: none; }
-        .cs-donut .track { fill: none; stroke: var(--apricot-warm); stroke-width: 10; }
-        .cs-donut .val { fill: none; stroke: var(--accent); stroke-width: 10; stroke-linecap: round; }
-        .cs-donut text { font-family: 'Cormorant Garamond', serif; font-size: 26px; fill: var(--ink); }
-        .cs-donut p { font-size: 14px; line-height: 1.7; color: var(--ink-mid); font-weight: 300; }
-        .cs-num { list-style: none; display: grid; gap: 0 40px; }
-        .cs-num li { display: flex; gap: 14px; padding: 14px 0; border-top: 0.5px solid var(--apricot-warm); font-size: 13.5px; line-height: 1.7; color: var(--ink-mid); font-weight: 300; }
-        .cs-num li > span { flex: none; min-width: 2ch; font-family: 'Cormorant Garamond', serif; font-size: 18px; line-height: 1.3; color: var(--accent); }
-        .cs-num strong { font-weight: 500; color: var(--ink); }
-        .cs-pairs { display: grid; }
-        .cs-pair { display: grid; grid-template-columns: 36px 1fr 28px 1.7fr; gap: 16px; align-items: baseline; padding: 16px 0; border-top: 0.5px solid var(--apricot-warm); }
-        .cs-pair .n { font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--accent); }
-        .cs-pair .from { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--ink); }
-        .cs-pair .arrow { color: var(--accent-light); }
-        .cs-pair .to { font-size: 13.5px; line-height: 1.7; color: var(--ink-mid); font-weight: 300; }
-        .cs-pair strong, .cs-body strong { font-weight: 500; color: var(--ink); }
-        .cs-table { overflow-x: auto; }
-        .cs-table table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-        .cs-table th { text-align: left; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 400; color: var(--ink-light); padding: 0 16px 10px 0; border-bottom: 0.5px solid var(--apricot-deep); }
-        .cs-table td { padding: 14px 16px 14px 0; border-bottom: 0.5px solid var(--apricot-warm); color: var(--ink-mid); font-weight: 300; line-height: 1.6; vertical-align: top; }
-        .cs-table td:first-child { font-family: 'Cormorant Garamond', serif; font-size: 19px; color: var(--ink); white-space: nowrap; }
-        .cs-phones { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 190px)); justify-content: center; gap: 28px; padding: 36px 24px; border-radius: 16px; background: var(--apricot-mid); border: 0.5px solid var(--apricot-warm); }
-        .cs-phones figure { text-align: center; }
-        .cs-phones img { width: 100%; }
-        .cs-phones figcaption, .cs-gallery figcaption { margin-top: 10px; font-size: 11px; letter-spacing: 0.05em; color: var(--ink-light); }
-        .cs-figure { padding: 0; background: #fff; }
-        .cs-figure img { width: 100%; display: block; }
-        .cs-gallery { display: flex; flex-wrap: wrap; gap: 14px; }
-        .cs-gallery figure { min-width: 140px; display: flex; align-items: center; justify-content: center; padding: 24px; border-radius: 14px; background: var(--apricot-mid); border: 0.5px solid var(--apricot-warm); }
-        .cs-gallery img { max-height: 260px; width: auto; max-width: 100%; }
-        .cs-chat { display: flex; flex-direction: column; gap: 10px; max-width: 560px; }
-        .bubble { max-width: 85%; padding: 12px 16px; border-radius: 16px; background: var(--card-bg); border: 0.5px solid var(--apricot-warm); font-size: 13.5px; line-height: 1.6; color: var(--ink-mid); }
-        .bubble b { display: block; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; color: var(--ink); margin-bottom: 2px; }
-        .bubble.right { align-self: flex-end; background: var(--accent); border-color: var(--accent); color: var(--white); }
-        .bubble.right b { color: inherit; }
-        .cs-swatches { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 14px; }
-        .cs-swatches i { display: block; height: 72px; border-radius: 10px; margin-bottom: 10px; border: 0.5px solid rgba(0,0,0,0.06); }
-        .cs-swatches b { display: block; font-size: 12px; font-weight: 500; letter-spacing: 0.04em; color: var(--ink); }
-        .cs-swatches span { font-size: 12px; color: var(--ink-light); }
-        .cs-kv { display: grid; max-width: 640px; }
-        .cs-kv div { display: grid; grid-template-columns: 110px 1fr; gap: 16px; padding: 12px 0; border-top: 0.5px solid var(--apricot-warm); }
-        .cs-kv dt { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-light); padding-top: 3px; }
-        .cs-kv dd { font-size: 13.5px; line-height: 1.7; color: var(--ink-mid); font-weight: 300; }
-        .cs-next-img { background: linear-gradient(135deg, #F0E6D8 0%, #E2CDB8 100%); padding: 16px; }
-        .cs-next-img img { max-height: 100%; width: auto; max-width: 100%; }
-        [data-zoom] { cursor: zoom-in; }
-        .zoom-box { border: 0; padding: 0; width: 96vw; height: 94vh; max-width: 96vw; max-height: 94vh; border-radius: 16px; background: var(--apricot); overflow: hidden; }
-        .zoom-box::backdrop { background: rgba(44, 33, 24, 0.7); }
-        .zoom-box > div { width: 100%; height: 100%; overflow: auto; display: flex; }
-        .zoom-box img { margin: auto; max-width: none; }
-        .zoom-close { position: absolute; top: 12px; right: 12px; z-index: 1; font: inherit; font-size: 12px; border: 0.5px solid var(--apricot-warm); border-radius: 100px; padding: 6px 14px; background: var(--white); cursor: pointer; }
-        @media (max-width: 900px) { .g4, .g5 { grid-template-columns: repeat(2, 1fr); } .g3 { grid-template-columns: 1fr 1fr; } }
-        @media (max-width: 768px) {
-            .lang-toggle { margin: 0 0 0 24px; align-self: center; }
-            .g2, .g3, .g4, .g5 { grid-template-columns: 1fr; }
-            .stats.g4 { grid-template-columns: 1fr 1fr; }
-            .cs-hero { padding: 20px; }
-            .cs-pair { grid-template-columns: 32px 1fr; } .cs-pair .arrow { display: none; } .cs-pair .to { grid-column: 2; }
-            .cs-donut { flex-direction: column; align-items: flex-start; }
-            .cs-phones { grid-template-columns: repeat(2, 1fr); padding: 20px; gap: 20px; }
-            .cs-table thead { display: none; }
-            .cs-table table, .cs-table tbody, .cs-table tr, .cs-table td { display: block; }
-            .cs-table tr { padding: 12px 0; border-bottom: 0.5px solid var(--apricot-warm); }
-            .cs-table td { border: 0; padding: 2px 0; white-space: normal; }
-            .cs-kv div { grid-template-columns: 1fr; gap: 2px; }
-        }
-        @media (max-width: 768px) { .vibe-footer { margin: 0; } }
-        /* hi-fi wall: tilted plane drifting up-left; one step = one column + one row (seamless) */
-        .cs-wall { position: relative; height: clamp(380px, 46vw, 600px); overflow: hidden; margin-left: -20px; margin-right: -20px;
-            -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent), linear-gradient(transparent, #000 14%, #000 86%, transparent);
-            -webkit-mask-composite: source-in; mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent), linear-gradient(transparent, #000 14%, #000 86%, transparent); mask-composite: intersect; }
-        .cs-wall-plane { position: absolute; left: 50%; top: 50%; transform: rotate(-24deg); }
-        .cs-wall-drift { position: absolute; animation: wall-drift 36s linear infinite; }
-        .cs-wall img { position: absolute; width: 150px; filter: drop-shadow(0 12px 18px rgba(44, 33, 24, 0.14)); }
-        @keyframes wall-drift { to { transform: translate(-174px, -400px); } }
-        @media (max-width: 768px) { .cs-wall-plane { transform: rotate(-24deg) scale(0.62); } }
-        @media (prefers-reduced-motion: reduce) { .cs-wall-drift { animation: none; } }
-        /* story layout (mockup → challenge / problem / goal → intro → process → key features) */
-        .cs-mock { margin-top: 56px; margin-bottom: 0; padding: clamp(24px, 4vw, 56px); animation: fadeUp 0.9s ease 0.1s both; }
-        .cs-mock img { max-height: 560px; }
-        .cs-title { padding: 48px 0 8px; }
-        .cs-k { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 10px; }
-        .cs-serif { font-family: 'Cormorant Garamond', serif; font-size: clamp(19px, 1.7vw, 23px); line-height: 1.45; color: var(--ink); }
-        .cs-story { display: grid; grid-template-columns: 1fr 1fr; gap: 40px 56px; padding: 40px 0 96px; border-top: 0.5px solid var(--apricot-warm); margin-top: 32px; }
-        .cs-goals { list-style: none; display: flex; flex-direction: column; gap: 8px; align-self: end; }
-        .cs-goals li { display: flex; gap: 14px; align-items: baseline; padding-bottom: 8px; border-bottom: 0.5px solid var(--apricot-warm); }
-        .cs-goals span { font-family: 'Cormorant Garamond', serif; color: var(--accent); }
-        .cs-goals b { font-size: 13.5px; font-weight: 400; color: var(--ink-mid); }
-        .cs-process { display: flex; flex-direction: column; gap: 28px; }
-        .cs-pill { display: flex; justify-content: center; align-items: center; padding: 14px; border: 1px solid var(--ink-mid); border-radius: 999px; position: relative; }
-        .cs-pill::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; border-top: 1px dashed var(--apricot-deep); z-index: -1; }
-        .cs-pill span { flex: 0 1 170px; aspect-ratio: 1; border-radius: 50%; background: rgba(196, 120, 90, 0.16); display: grid; place-items: center; margin-left: -26px; font-family: 'Cormorant Garamond', serif; font-size: clamp(16px, 1.8vw, 24px); color: var(--ink); }
-        .cs-pill span:first-child { margin-left: 0; }
-        .cs-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-        .cs-steps p { font-size: 13px; line-height: 1.7; color: var(--ink-mid); font-weight: 300; }
-        .cs-steps .cs-step-n { font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--accent); margin-bottom: 4px; }
-        .cs-feat-head { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: end; }
-        .cs-feat-head .section-heading { font-size: clamp(32px, 3.6vw, 44px); }
-        .cs-sub { font-size: 14px; color: var(--ink-mid); font-weight: 300; margin-top: 10px; }
-        .cs-checks { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-        .cs-checks li { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--ink); }
-        .cs-checks svg { width: 15px; height: 15px; flex: none; margin-top: 3px; color: var(--accent); }
-        .cs-phones.dense { grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 18px; padding: 28px; }
-        .cs-phones.dense img { max-width: 230px; margin: 0 auto; }
-        .cs-feature .cs-chat { margin-left: auto; }
-        @media (max-width: 768px) {
-            .cs-story, .cs-feat-head { grid-template-columns: 1fr; gap: 28px; }
-            .cs-steps { grid-template-columns: 1fr 1fr; }
-            .cs-pill span { margin-left: -14px; }
-            .cs-phones.dense { grid-template-columns: repeat(2, 1fr); padding: 16px; }
-        }
-
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LoveLink — Amanda Zhang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="assets/case.css">
 </head>
-
 <body>
-
-    <!-- Progress bar -->
-    <div class="reading-progress" id="progress"></div>
-
-    <!-- Sidebar -->
-    <nav class="sidebar">
-        <a href="index.html" class="sidebar-logo">玥妍</a>
-        <div class="sidebar-nav">
-            <a href="index.html#projects" class="nav-item" data-zh="作品">Projects</a>
-            <a href="index.html#playground" class="nav-item" data-zh="实验">Playground</a>
-            <a href="index.html#connect" class="nav-item" data-zh="联系">Connect</a>
-        </div>
-        <button class="lang-toggle" type="button"><b>EN</b> / 中文</button>
+<div class="shell">
+  <aside class="toc">
+    <a class="home" href="index.html#work" data-zh="← 全部作品">← All work</a>
+    <button class="lang-toggle" type="button"><b>EN</b> / 中文</button>
+    <span class="meta" data-zh="目录">CONTENTS</span>
+    <nav id="toc">
+      <a href="#context" data-zh="背景">Context</a>
+      <a href="#findings" data-zh="调研发现">What I found</a>
+      <a href="#pare" data-zh="收敛">Pare it down</a>
+      <a href="#fix1" data-zh="方案 1 · AI 朋友">Fix 1 · AI friends</a>
+      <a href="#fix2" data-zh="方案 2 · 共建房间">Fix 2 · Shared room</a>
+      <a href="#fix3" data-zh="方案 3 · 首页">Fix 3 · Home</a>
+      <a href="#system" data-zh="视觉规范">Visual system</a>
+      <a href="#tradeoffs" data-zh="取舍">Trade-offs</a>
+      <a href="#reflection" data-zh="反思">Reflection</a>
     </nav>
+  </aside>
 
-    <!-- Back button -->
-    <a href="index.html" class="back-btn">
-        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span data-zh="返回">Back</span>
-    </a>
+  <main>
+    <div class="toc-m"><a href="index.html#work" data-zh="← 全部作品">← All work</a><button class="lang-toggle" type="button"><b>EN</b> / 中文</button></div>
+    <section class="hero" id="top">
+      <div class="stage" aria-label="Fan of LoveLink screens. Hover to spread them.">
+        <div class="stage-title" data-zh="想你，<br>我还在。<small>LoveLink · 异地恋情侣 iOS App</small>">Miss you.<br>Still here.<small>LoveLink · iOS app for long-distance couples</small></div>
+        <div class="counter"><span>RESEARCH</span><strong>n = 137</strong><span data-zh="问卷 · 3 位访谈">survey · 3 interviews</span></div>
+        <div class="fan">
+          <img src="images/lovelink/lovelink-splash.webp" alt="" style="--r:-30deg;--x:-60px;--rh:-40deg;--xh:-200px">
+          <img src="images/lovelink/lovelink-link.webp" alt="" style="--r:-18deg;--x:-36px;--rh:-24deg;--xh:-120px">
+          <img src="images/lovelink/lovelink-home.webp" alt="" style="--r:-6deg;--x:-12px;--rh:-8deg;--xh:-40px">
+          <img src="images/lovelink/lovelink-chat.webp" alt="" style="--r:6deg;--x:12px;--rh:8deg;--xh:40px">
+          <img src="images/lovelink/lovelink-album.webp" alt="" style="--r:18deg;--x:36px;--rh:24deg;--xh:120px">
+          <img src="images/lovelink/lovelink-room.webp" alt="" style="--r:30deg;--x:60px;--rh:40deg;--xh:200px">
+        </div>
+      </div>
+      <div class="tags"><span class="tag" data-zh="个人项目">Personal project</span><span class="tag" data-zh="UX 研究">UX research</span><span class="tag" data-zh="AI 交互">AI interaction</span><span class="tag" data-zh="iOS App">iOS app</span></div>
+      <h1 data-zh="<span class=&quot;star&quot;>✳</span>LoveLink：让异地恋一直在线"><span class="star">✳</span>LoveLink: keeping long-distance love online</h1>
+      <p class="lead" data-zh="异地恋情侣不缺聊天工具，缺的是对方没法回复时的陪伴。我设计了一款 iOS App：AI 朋友、共建房间和见面倒计时。">Couples who live apart don’t lack ways to message. They lack company when the other one can’t answer. I designed an iOS app with AI friends, a shared room and a reunion countdown.</p>
+      <div class="info">
+        <div><span class="mono" data-zh="角色">Role</span><span data-zh="独立完成 · 研究与设计">Solo · research &amp; design</span></div>
+        <div><span class="mono" data-zh="背景">Context</span>Personal project</div>
+        <div><span class="mono" data-zh="时间">Timeline</span><span data-zh="2024.10 – 2024.12">Oct – Dec 2024</span></div>
+        <div><span class="mono" data-zh="工具">Tools</span><span data-zh="问卷、访谈、Figma、借助 AI 搭建的可交互原型">Survey, interviews, Figma, an AI-built tappable prototype</span></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><strong>137</strong><span data-zh="份问卷">survey responses</span></div>
+        <div class="stat"><strong>3</strong><span data-zh="位深度访谈">in-depth interviews</span></div>
+        <div class="stat t"><strong>48.1%</strong><span data-zh="常常或偶尔没有安全感">often or sometimes insecure</span></div>
+        <div class="stat t"><strong>13.6%</strong><span data-zh="的异地恋最终结婚">of LDRs end in marriage</span></div>
+      </div>
+    </section>
 
-    <!-- Main content -->
-    <div class="main">
-        <!-- ── MOCKUP ── -->
-        <div class="img-full cs-hero cs-mock"><img class="" src="images/home/lovelink-card.webp" alt="A hand holding an iPhone with the LoveLink chat screen and its AI friend shortcuts" data-zh-alt="手持 iPhone，屏幕上是 LoveLink 聊天界面和 AI 朋友快捷入口" decoding="async"></div>
-        <section class="project-hero cs-title">
-            <p class="project-tag" data-zh="UI | UX App 设计">UI | UX APP DESIGN</p>
-            <h1 class="project-title" data-zh="LoveLink · &lt;br&gt;&lt;em&gt;让异地的爱，始终在线&lt;/em&gt;">LoveLink — <br><em>Keep long-distance love online.</em></h1>
-            <div class="project-meta"><div class="meta-item"><span class="meta-label" data-zh="类型">Type</span><span class="meta-value" data-zh="个人项目">Personal project</span></div><div class="meta-item"><span class="meta-label" data-zh="时间">Timeline</span><span class="meta-value" data-zh="2024.10 – 2024.12">Oct – Dec 2024</span></div><div class="meta-item"><span class="meta-label" data-zh="平台">Platform</span><span class="meta-value">iOS App</span></div></div>
-        </section>
-        <section class="cs-story">
-            <div><p class="cs-k" data-zh="挑战">The Challenge</p><p class="cs-serif" data-zh="为 18–35 岁的异地恋情侣设计一款 App，让他们在时差、忙碌和距离之下，依然保持情感上的亲近。">Design an app that helps long-distance couples aged 18–35 stay emotionally close when time zones, busy schedules and distance keep them apart.</p></div>
-            <div><p class="cs-k" data-zh="问题陈述">Problem Statement</p><p class="cs-serif" data-zh="我们如何让异地恋情侣在对方无法回应时，依然感到被陪伴、有安全感，并在分开的日子里继续创造共同回忆？">How might we help long-distance couples feel supported and secure when their partner can’t answer, and keep building shared memories while they’re apart?</p></div>
-            <div><p class="cs-k" data-zh="目标">Goal</p><p class="cs-serif" data-zh="一款为异地恋情侣设计的 App：用 AI 朋友提供情绪陪伴，用共建的虚拟房间创造共同回忆，让两个人的关系更有韧性。">LoveLink is an iOS app for couples who live apart. AI friends offer emotional support when your partner can’t answer, and a shared virtual room lets two people build memories together — making the relationship more resilient and fulfilling.</p></div>
-            <ol class="cs-goals"><li><span>01</span><b data-zh="创造共同回忆">Create shared memories</b></li><li><span>02</span><b data-zh="情感陪伴">Emotional companionship</b></li><li><span>03</span><b data-zh="AI 法官">AI referee</b></li><li><span>04</span><b data-zh="增强安全感">A stronger sense of security</b></li><li><span>05</span><b data-zh="更有效的沟通">More effective communication</b></li></ol>
-        </section>
-        <section class="cs reveal">
-            <p class="brief-block-label" data-zh="介绍">Intro</p>
-            <div class="cs-wall" role="img" aria-label="A slowly drifting wall of LoveLink high-fidelity screens" data-zh-aria="缓慢漂移的 LoveLink 高保真界面墙"><div class="cs-wall-plane"><div class="cs-wall-drift"><img src="images/lovelink/lovelink-album.webp" alt="" loading="lazy" decoding="async" style="left:-1119px;top:-1877px"><img src="images/lovelink/lovelink-home.webp" alt="" loading="lazy" decoding="async" style="left:-1119px;top:-1537px"><img src="images/lovelink/lovelink-link.webp" alt="" loading="lazy" decoding="async" style="left:-1119px;top:-1197px"><img src="images/lovelink/lovelink-splash.webp" alt="" loading="lazy" decoding="async" style="left:-1119px;top:-857px"><img src="images/lovelink/lovelink-chat.webp" alt="" loading="lazy" decoding="async" style="left:-1119px;top:-517px"><img src="images/lovelink/lovelink-album.webp" alt="" loading="lazy" decoding="async" style="left:-1119px;top:-177px"><img src="images/lovelink/lovelink-home.webp" alt="" loading="lazy" decoding="async" style="left:-1119px;top:163px"><img src="images/lovelink/lovelink-link.webp" alt="" loading="lazy" decoding="async" style="left:-1119px;top:503px"><img src="images/lovelink/lovelink-splash.webp" alt="" loading="lazy" decoding="async" style="left:-1119px;top:843px"><img src="images/lovelink/lovelink-chat.webp" alt="" loading="lazy" decoding="async" style="left:-945px;top:-1817px"><img src="images/lovelink/lovelink-album.webp" alt="" loading="lazy" decoding="async" style="left:-945px;top:-1477px"><img src="images/lovelink/lovelink-home.webp" alt="" loading="lazy" decoding="async" style="left:-945px;top:-1137px"><img src="images/lovelink/lovelink-link.webp" alt="" loading="lazy" decoding="async" style="left:-945px;top:-797px"><img src="images/lovelink/lovelink-splash.webp" alt="" loading="lazy" decoding="async" style="left:-945px;top:-457px"><img src="images/lovelink/lovelink-chat.webp" alt="" loading="lazy" decoding="async" style="left:-945px;top:-117px"><img src="images/lovelink/lovelink-album.webp" alt="" loading="lazy" decoding="async" style="left:-945px;top:223px"><img src="images/lovelink/lovelink-home.webp" alt="" loading="lazy" decoding="async" style="left:-945px;top:563px"><img src="images/lovelink/lovelink-link.webp" alt="" loading="lazy" decoding="async" style="left:-945px;top:903px"><img src="images/lovelink/lovelink-splash.webp" alt="" loading="lazy" decoding="async" style="left:-771px;top:-1757px"><img src="images/lovelink/lovelink-chat.webp" alt="" loading="lazy" decoding="async" style="left:-771px;top:-1417px"><img src="images/lovelink/lovelink-album.webp" alt="" loading="lazy" decoding="async" style="left:-771px;top:-1077px"><img src="images/lovelink/lovelink-home.webp" alt="" loading="lazy" decoding="async" style="left:-771px;top:-737px"><img src="images/lovelink/lovelink-link.webp" alt="" loading="lazy" decoding="async" style="left:-771px;top:-397px"><img src="images/lovelink/lovelink-splash.webp" alt="" loading="lazy" decoding="async" style="left:-771px;top:-57px"><img src="images/lovelink/lovelink-chat.webp" alt="" loading="lazy" decoding="async" style="left:-771px;top:283px"><img src="images/lovelink/lovelink-album.webp" alt="" loading="lazy" decoding="async" style="left:-771px;top:623px"><img src="images/lovelink/lovelink-home.webp" alt="" loading="lazy" decoding="async" style="left:-771px;top:963px"><img src="images/lovelink/lovelink-link.webp" alt="" loading="lazy" decoding="async" style="left:-597px;top:-1697px"><img src="images/lovelink/lovelink-splash.webp" alt="" loading="lazy" decoding="async" style="left:-597px;top:-1357px"><img src="images/lovelink/lovelink-chat.webp" alt="" loading="lazy" decoding="async" style="left:-597px;top:-1017px"><img src="images/lovelink/lovelink-album.webp" alt="" loading="lazy" decoding="async" style="left:-597px;top:-677px"><img src="images/lovelink/lovelink-home.webp" alt="" loading="lazy" decoding="async" style="left:-597px;top:-337px"><img src="images/lovelink/lovelink-link.webp" alt="" loading="lazy" decoding="async" style="left:-597px;top:3px"><img src="images/lovelink/lovelink-splash.webp" alt="" loading="lazy" decoding="async" style="left:-597px;top:343px"><img src="images/lovelink/lovelink-chat.webp" alt="" loading="lazy" decoding="async" style="left:-597px;top:683px"><img src="images/lovelink/lovelink-album.webp" alt="" loading="lazy" decoding="async" style="left:-597px;top:1023px"><img src="images/lovelink/lovelink-home.webp" alt="" loading="lazy" decoding="async" style="left:-423px;top:-1637px"><img src="images/lovelink/lovelink-link.webp" alt="" loading="lazy" decoding="async" style="left:-423px;top:-1297px"><img src="images/lovelink/lovelink-splash.webp" alt="" loading="lazy" decoding="async" style="left:-423px;top:-957px"><img src="images/lovelink/lovelink-chat.webp" alt="" loading="lazy" decoding="async" style="left:-423px;top:-617px"><img src="images/lovelink/lovelink-album.webp" alt="" loading="lazy" decoding="async" style="left:-423px;top:-277px"><img src="images/lovelink/lovelink-home.webp" alt="" loading="lazy" decoding="async" style="left:-423px;top:63px"><img src="images/lovelink/lovelink-link.webp" alt="" loading="lazy" decoding="async" style="left:-423px;top:403px"><img src="images/lovelink/lovelink-splash.webp" alt="" loading="lazy" decoding="async" style="left:-423px;top:743px"><img src="images/lovelink/lovelink-chat.webp" alt="" loading="lazy" decoding="async" style="left:-423px;top:1083px"><img src="images/lovelink/lovelink-album.webp" alt="" loading="lazy" decoding="async" style="left:-249px;top:-1577px"><img src="images/lovelink/lovelink-home.webp" alt="" loading="lazy" decoding="async" style="left:-249px;top:-1237px"><img src="images/lovelink/lovelink-link.webp" alt="" loading="lazy" decoding="async" style="left:-249px;top:-897px"><img src="images/lovelink/lovelink-splash.webp" alt="" loading="lazy" decoding="async" style="left:-249px;top:-557px"><img src="images/lovelink/lovelink-chat.webp" alt="" loading="lazy" decoding="async" style="left:-249px;top:-217px"><img src="images/lovelink/lovelink-album.webp" alt="" loading="lazy" decoding="async" style="left:-249px;top:123px"><img src="images/lovelink/lovelink-home.webp" alt="" loading="lazy" decoding="async" style="left:-249px;top:463px"><img src="images/lovelink/lovelink-link.webp" alt="" loading="lazy" decoding="async" style="left:-249px;top:803px"><img src="images/lovelink/lovelink-splash.webp" alt="" loading="lazy" decoding="async" style="left:-249px;top:1143px"><img src="images/lovelink/lovelink-chat.webp" alt="" loading="lazy" decoding="async" style="left:-75px;top:-1517px"><img src="images/lovelink/lovelink-album.webp" alt="" loading="lazy" decoding="async" style="left:-75px;top:-1177px"><img src="images/lovelink/lovelink-home.webp" alt="" loading="lazy" decoding="async" style="left:-75px;top:-837px"><img src="images/lovelink/lovelink-link.webp" alt="" loading="lazy" decoding="async" style="left:-75px;top:-497px"><img src="images/lovelink/lovelink-splash.webp" alt="" loading="lazy" decoding="async" style="left:-75px;top:-157px"><img src="images/lovelink/lovelink-chat.webp" alt="" loading="lazy" decoding="async" style="left:-75px;top:183px"><img src="images/lovelink/lovelink-album.webp" alt="" loading="lazy" decoding="async" style="left:-75px;top:523px"><img src="images/lovelink/lovelink-home.webp" alt="" loading="lazy" decoding="async" style="left:-75px;top:863px"><img src="images/lovelink/lovelink-link.webp" alt="" loading="lazy" decoding="async" style="left:-75px;top:1203px"><img src="images/lovelink/lovelink-splash.webp" alt="" loading="lazy" decoding="async" style="left:99px;top:-1457px"><img src="images/lovelink/lovelink-chat.webp" alt="" loading="lazy" decoding="async" style="left:99px;top:-1117px"><img src="images/lovelink/lovelink-album.webp" alt="" loading="lazy" decoding="async" style="left:99px;top:-777px"><img src="images/lovelink/lovelink-home.webp" alt="" loading="lazy" decoding="async" style="left:99px;top:-437px"><img src="images/lovelink/lovelink-link.webp" alt="" loading="lazy" decoding="async" style="left:99px;top:-97px"><img src="images/lovelink/lovelink-splash.webp" alt="" loading="lazy" decoding="async" style="left:99px;top:243px"><img src="images/lovelink/lovelink-chat.webp" alt="" loading="lazy" decoding="async" style="left:99px;top:583px"><img src="images/lovelink/lovelink-album.webp" alt="" loading="lazy" decoding="async" style="left:99px;top:923px"><img src="images/lovelink/lovelink-home.webp" alt="" loading="lazy" decoding="async" style="left:99px;top:1263px"><img src="images/lovelink/lovelink-link.webp" alt="" loading="lazy" decoding="async" style="left:273px;top:-1397px"><img src="images/lovelink/lovelink-splash.webp" alt="" loading="lazy" decoding="async" style="left:273px;top:-1057px"><img src="images/lovelink/lovelink-chat.webp" alt="" loading="lazy" decoding="async" style="left:273px;top:-717px"><img src="images/lovelink/lovelink-album.webp" alt="" loading="lazy" decoding="async" style="left:273px;top:-377px"><img src="images/lovelink/lovelink-home.webp" alt="" loading="lazy" decoding="async" style="left:273px;top:-37px"><img src="images/lovelink/lovelink-link.webp" alt="" loading="lazy" decoding="async" style="left:273px;top:303px"><img src="images/lovelink/lovelink-splash.webp" alt="" loading="lazy" decoding="async" style="left:273px;top:643px"><img src="images/lovelink/lovelink-chat.webp" alt="" loading="lazy" decoding="async" style="left:273px;top:983px"><img src="images/lovelink/lovelink-album.webp" alt="" loading="lazy" decoding="async" style="left:273px;top:1323px"><img src="images/lovelink/lovelink-home.webp" alt="" loading="lazy" decoding="async" style="left:447px;top:-1337px"><img src="images/lovelink/lovelink-link.webp" alt="" loading="lazy" decoding="async" style="left:447px;top:-997px"><img src="images/lovelink/lovelink-splash.webp" alt="" loading="lazy" decoding="async" style="left:447px;top:-657px"><img src="images/lovelink/lovelink-chat.webp" alt="" loading="lazy" decoding="async" style="left:447px;top:-317px"><img src="images/lovelink/lovelink-album.webp" alt="" loading="lazy" decoding="async" style="left:447px;top:23px"><img src="images/lovelink/lovelink-home.webp" alt="" loading="lazy" decoding="async" style="left:447px;top:363px"><img src="images/lovelink/lovelink-link.webp" alt="" loading="lazy" decoding="async" style="left:447px;top:703px"><img src="images/lovelink/lovelink-splash.webp" alt="" loading="lazy" decoding="async" style="left:447px;top:1043px"><img src="images/lovelink/lovelink-chat.webp" alt="" loading="lazy" decoding="async" style="left:447px;top:1383px"><img src="images/lovelink/lovelink-album.webp" alt="" loading="lazy" decoding="async" style="left:621px;top:-1277px"><img src="images/lovelink/lovelink-home.webp" alt="" loading="lazy" decoding="async" style="left:621px;top:-937px"><img src="images/lovelink/lovelink-link.webp" alt="" loading="lazy" decoding="async" style="left:621px;top:-597px"><img src="images/lovelink/lovelink-splash.webp" alt="" loading="lazy" decoding="async" style="left:621px;top:-257px"><img src="images/lovelink/lovelink-chat.webp" alt="" loading="lazy" decoding="async" style="left:621px;top:83px"><img src="images/lovelink/lovelink-album.webp" alt="" loading="lazy" decoding="async" style="left:621px;top:423px"><img src="images/lovelink/lovelink-home.webp" alt="" loading="lazy" decoding="async" style="left:621px;top:763px"><img src="images/lovelink/lovelink-link.webp" alt="" loading="lazy" decoding="async" style="left:621px;top:1103px"><img src="images/lovelink/lovelink-splash.webp" alt="" loading="lazy" decoding="async" style="left:621px;top:1443px"><img src="images/lovelink/lovelink-chat.webp" alt="" loading="lazy" decoding="async" style="left:795px;top:-1217px"><img src="images/lovelink/lovelink-album.webp" alt="" loading="lazy" decoding="async" style="left:795px;top:-877px"><img src="images/lovelink/lovelink-home.webp" alt="" loading="lazy" decoding="async" style="left:795px;top:-537px"><img src="images/lovelink/lovelink-link.webp" alt="" loading="lazy" decoding="async" style="left:795px;top:-197px"><img src="images/lovelink/lovelink-splash.webp" alt="" loading="lazy" decoding="async" style="left:795px;top:143px"><img src="images/lovelink/lovelink-chat.webp" alt="" loading="lazy" decoding="async" style="left:795px;top:483px"><img src="images/lovelink/lovelink-album.webp" alt="" loading="lazy" decoding="async" style="left:795px;top:823px"><img src="images/lovelink/lovelink-home.webp" alt="" loading="lazy" decoding="async" style="left:795px;top:1163px"><img src="images/lovelink/lovelink-link.webp" alt="" loading="lazy" decoding="async" style="left:795px;top:1503px"><img src="images/lovelink/lovelink-splash.webp" alt="" loading="lazy" decoding="async" style="left:969px;top:-1157px"><img src="images/lovelink/lovelink-chat.webp" alt="" loading="lazy" decoding="async" style="left:969px;top:-817px"><img src="images/lovelink/lovelink-album.webp" alt="" loading="lazy" decoding="async" style="left:969px;top:-477px"><img src="images/lovelink/lovelink-home.webp" alt="" loading="lazy" decoding="async" style="left:969px;top:-137px"><img src="images/lovelink/lovelink-link.webp" alt="" loading="lazy" decoding="async" style="left:969px;top:203px"><img src="images/lovelink/lovelink-splash.webp" alt="" loading="lazy" decoding="async" style="left:969px;top:543px"><img src="images/lovelink/lovelink-chat.webp" alt="" loading="lazy" decoding="async" style="left:969px;top:883px"><img src="images/lovelink/lovelink-album.webp" alt="" loading="lazy" decoding="async" style="left:969px;top:1223px"><img src="images/lovelink/lovelink-home.webp" alt="" loading="lazy" decoding="async" style="left:969px;top:1563px"></div></div></div>
-            <p class="challenge-text cs-lead" data-zh="一款为异地恋情侣打造的 App，用 AI 陪伴、共同计划与共建空间，让相隔两地的关系更坚韧、更充实。">An app that helps long-distance couples stay close through AI companionship, shared plans and a space they build together.</p>
-        </section>
-        <section class="cs reveal">
-            <p class="brief-block-label" data-zh="设计流程">Design Process</p>
-            <div class="cs-process"><div class="cs-pill"><span data-zh="调研">Discover</span><span data-zh="定义">Define</span><span data-zh="设计">Design</span><span data-zh="原型">Prototype</span></div><div class="cs-steps"><div><p class="cs-step-n">01</p><p data-zh="背景调研">Background research</p><p data-zh="问卷（137 份）与 3 位访谈">Survey (n = 137) &amp; 3 interviews</p></div><div><p class="cs-step-n">02</p><p data-zh="定义问题">Problem definition</p><p data-zh="功能架构">Information architecture</p></div><div><p class="cs-step-n">03</p><p data-zh="线框图">Wireframes</p><p data-zh="视觉规范">Visual system</p></div><div><p class="cs-step-n">04</p><p data-zh="高保真原型">Hi-fi prototype</p><p data-zh="真机用户测试">User testing on a real phone</p></div></div></div>
-        </section>
-        <div class="divider" style="opacity:1;"></div>
-        <section class="cs cs-feature reveal">
-            <div class="cs-feat-head">
-                <div><p class="brief-block-label cs-k" data-zh="核心功能 1">Key feature 1</p><h2 class="section-heading" data-zh="首页与绑定">Home &amp; Pairing</h2><p class="cs-sub" data-zh="首页：一眼看到彼此。">Home: see each other at a glance.</p></div>
-                <ul class="cs-checks"><li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span data-zh="绑定伴侣">Pair with your partner</span></li><li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span data-zh="状态一目了然">Status at a glance</span></li><li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span data-zh="共同回忆墙">Shared memory wall</span></li><li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span data-zh="聊天里的 SOS">SOS in chat</span></li></ul>
-            </div>
-            
-            <div class="cs-phones dense"><figure><img class="" src="images/lovelink/lovelink-link.webp" alt="Pairing screen with ‘Link Your Love’ and a field for the partner’s LoveLink ID" data-zh-alt="绑定页：「Link Your Love」和输入对方 LoveLink ID 的输入框" loading="lazy" decoding="async" data-zoom tabindex="0" role="button"><figcaption data-zh="绑定">Pair</figcaption></figure><figure><img class="" src="images/lovelink/lovelink-home.webp" alt="LoveLink home: days until meeting, partner’s local time, shared to-dos, voice message and both statuses" data-zh-alt="LoveLink 首页：见面倒计时、对方当地时间、共同待办、语音留言和双方状态" loading="lazy" decoding="async" data-zoom tabindex="0" role="button"><figcaption data-zh="首页">Home</figcaption></figure><figure><img class="" src="images/lovelink/lovelink-album.webp" alt="Shared album: a collage of the couple’s photos and places" data-zh-alt="共同相册：两人照片和去过地方拼成的回忆墙" loading="lazy" decoding="async" data-zoom tabindex="0" role="button"><figcaption data-zh="回忆墙">Memory wall</figcaption></figure><figure><img class="" src="images/lovelink/lovelink-chat.webp" alt="Chat with the SOS menu open: Help &amp; Advice, Argue mode, Voice message mode" data-zh-alt="聊天页打开 SOS 菜单：求助建议、吵架模式、语音留言模式" loading="lazy" decoding="async" data-zoom tabindex="0" role="button"><figcaption data-zh="聊天 SOS">SOS in chat</figcaption></figure></div>
-            
-        </section>
-        <div class="divider" style="opacity:1;"></div>
-        <section class="cs cs-feature reveal">
-            <div class="cs-feat-head">
-                <div><p class="brief-block-label cs-k" data-zh="核心功能 2">Key feature 2</p><h2 class="section-heading" data-zh="AI 朋友">AI Friends</h2><p class="cs-sub" data-zh="AI 朋友法官：吵架之前，先听我说。">AI friends as referees: talk to us before you fight.</p></div>
-                <ul class="cs-checks"><li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span data-zh="情绪陪伴">Emotional support</span></li><li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span data-zh="吵架模式">Argue mode</span></li><li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span data-zh="个性化建议">Personalized advice</span></li><li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span data-zh="SOS 求助">SOS</span></li></ul>
-            </div>
-            <p class="brief-block-text cs-body" data-zh="两个 AI 朋友 &lt;strong&gt;ELVO&lt;/strong&gt; 和 &lt;strong&gt;VELO&lt;/strong&gt; 永远站在你这边。在吵架模式里，它们从两个角度讨论你的抱怨：一个认真对待你的感受，一个帮你理解对方可能的处境。">Two AI friends, <strong>ELVO</strong> and <strong>VELO</strong>, are always on your side. In Argue mode they debate your complaint from both sides — one takes your feelings seriously, the other explains what your partner might be going through.</p>
-            <div class="cs-phones dense"><figure><img class="" src="images/lovelink/lovelink-ai.webp" alt="AI friend ELVO screen: ‘I am listening’ with suggestion chips Gift ideas, Plan a date, Remind me" data-zh-alt="AI 朋友 ELVO 界面：「I am listening」，下方是送礼建议、约会计划、提醒等快捷选项" loading="lazy" decoding="async" data-zoom tabindex="0" role="button"><figcaption data-zh="AI 朋友">AI friend</figcaption></figure><figure><img class="" src="images/lovelink/lovelink-aipk.webp" alt="Argue mode: ELVO and VELO discuss the complaint ‘He forgot my birthday!’ from two sides" data-zh-alt="吵架模式：ELVO 和 VELO 从两个角度讨论「他忘了我的生日！」" loading="lazy" decoding="async" data-zoom tabindex="0" role="button"><figcaption data-zh="吵架模式">Argue mode</figcaption></figure></div>
-            <div class="cs-chat"><div class="bubble right"><b data-zh="你">You</b><span>“He forgot my birthday!”</span></div><div class="bubble left"><b>ELVO</b><span>“How could Rick forget Helen’s birthday? That’s just unforgivable!”</span></div><div class="bubble left"><b>VELO</b><span>“Rick might have been overwhelmed with work. It’s not an excuse, but the date may have just slipped his mind.”</span></div></div>
-        </section>
-        <div class="divider" style="opacity:1;"></div>
-        <section class="cs cs-feature reveal">
-            <div class="cs-feat-head">
-                <div><p class="brief-block-label cs-k" data-zh="核心功能 3">Key feature 3</p><h2 class="section-heading" data-zh="共建房间">Shared Space</h2><p class="cs-sub" data-zh="共建房间：把想象中的家，一起装出来。">Build the home you imagine, together.</p></div>
-                <ul class="cs-checks"><li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span data-zh="一起装修卧室">Decorate the bedroom together</span></li><li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span data-zh="完成待办赚积分">Earn credits with to-dos</span></li><li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span data-zh="共享冰箱与菜谱">Shared fridge &amp; recipes</span></li><li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span data-zh="留声机">Phonograph</span></li></ul>
-            </div>
-            
-            <div class="cs-phones dense"><figure><img class="" src="images/lovelink/lovelink-room.webp" alt="Design Room: a 3D bedroom with options for wall color, floor and bed" data-zh-alt="设计房间：3D 卧室，可选墙色、地板和床型" loading="lazy" decoding="async" data-zoom tabindex="0" role="button"><figcaption data-zh="设计房间">Design room</figcaption></figure><figure><img class="" src="images/lovelink/lovelink-store.webp" alt="Store with a mystery box banner and furniture priced in credits" data-zh-alt="商店：盲盒横幅和用积分购买的家具" loading="lazy" decoding="async" data-zoom tabindex="0" role="button"><figcaption data-zh="商店">Store</figcaption></figure><figure><img class="" src="images/lovelink/lovelink-fridge.webp" alt="Shared fridge door covered with photos, notes and recipe stickers" data-zh-alt="共享冰箱门，贴满照片、便签和菜谱贴纸" loading="lazy" decoding="async" data-zoom tabindex="0" role="button"><figcaption data-zh="共享冰箱">Shared fridge</figcaption></figure><figure><img class="" src="images/lovelink/lovelink-phono.webp" alt="Phonograph screen: a record player for leaving voice messages, with a ‘Hold to leave a message’ button" data-zh-alt="留声机界面：用唱片机留语音，底部是「按住留言」按钮" loading="lazy" decoding="async" data-zoom tabindex="0" role="button"><figcaption data-zh="留声机">Phonograph</figcaption></figure></div>
-            
-        </section>
+    <!-- TODO(Amanda): Context is written from the copy doc. If you have a personal reason for this project, add one sentence in your own words. -->
+    <section id="context" class="wide">
+      <div class="ctx">
+        <div class="txt">
+          <span class="eyebrow" data-zh="背景">Context</span>
+          <h2 data-zh="两个时区，一段感情。">Two time zones, one relationship.</h2>
+          <p data-zh="异地恋在 18–35 岁的年轻人中很常见：上学、换工作、长期出差、回家照顾家人，或者在网上认识。">Long-distance relationships are common between 18 and 35: school, a new job, a long business trip, a family to care for, or someone you met online.</p>
+          <p data-zh="我问到的每一对都有聊天、通话和照片。但仍有 <span class=&quot;num&quot;>75%</span> 的人说，感情不顺会影响正常生活；大多数人说最多只能 <span class=&quot;num&quot;>3 个月</span>不见面。">Every couple I asked already had chat, calls and photos. Still, <span class="num">75%</span> said a struggling relationship disrupted their normal life, and most said <span class="num">3 months</span> was the longest they could go without meeting.</p>
+          <p data-zh="难的不是少了某个功能，而是一个城市的凌晨三点，你想说话的人在另一个城市睡着了。">The hard moment isn’t a missing feature. It’s 3 a.m. in one city, and the person you want to talk to is asleep in the other.</p>
+          <p data-zh="<span class=&quot;emph&quot;>所以我设计的是消息之间的空白，而不是消息本身。</span>"><span class="emph">So I designed for the gaps between messages, not the messages themselves.</span></p>
+          <div class="meters">
+            <div class="meter"><span data-zh="界面">Screen</span><strong id="mScr">1/9</strong></div>
+            <div class="meter"><span data-zh="Tab">Tab</span><strong id="mTab">—</strong></div>
+          </div>
+          <span class="chip none" id="mFeat" data-zh="打开 App">Opening the app</span>
+        </div>
+        <div class="device" id="loopApp"></div>
+      </div>
+    </section>
 
-        <div class="divider" style="opacity:1;"></div>
-        <section class="cs reveal">
-            <p class="brief-block-label" data-zh="调研 — 背景">Discover — Background</p>
-            <p class="challenge-text cs-lead" data-zh="异地恋在 18–35 岁的年轻人中很常见：因为上学、工作调动、长期出差、回家照顾家人，或者在网上认识。数字工具让他们跨城市、跨国家保持联系，但很多人依然过得很辛苦。">Long-distance relationships (LDRs) are common among people aged 18–35. Couples are separated by school, work transfers, long business trips, family care, or meeting online. Digital tools keep them connected across cities and countries, yet many still struggle.</p>
-            <div class="cs-chips"><span class="tag" data-zh="缺少聊天话题">Running out of things to talk about</span><span class="tag" data-zh="一方想放弃">One person wants to give up</span><span class="tag" data-zh="信任动摇">Lost trust</span><span class="tag" data-zh="生病或遇到意外时无法照顾对方">Can’t take care of each other when sick or in trouble</span><span class="tag" data-zh="联系不上">Can’t get in touch</span><span class="tag" data-zh="害怕改变自己">Fear of changing who I am</span></div>
-        </section>
+    <section>
+      <!-- TODO(Amanda): draft problem statement, rewrite if you framed it differently -->
+      <div class="hmw">
+        <span class="mono" data-zh="问题陈述">Problem statement</span>
+        <p data-zh="我们如何让异地恋情侣在对方无法回复时也感到被陪伴，并在分开时继续创造共同的回忆？">How might we help long-distance couples feel supported when the other can’t answer, and keep building memories while they’re apart?</p>
+      </div>
+    </section>
 
-        <div class="divider" style="opacity:1;"></div>
-        <section class="cs reveal">
-            <p class="brief-block-label" data-zh="调研 — 研究洞察">Discover — Research</p>
-            <h2 class="section-heading" data-zh="异地恋，难在哪里？">What makes long distance so hard?</h2>
-            <p class="brief-block-text cs-body" data-zh="我用一周时间做了问卷（137 份），并深度访谈了 3 位用户，了解异地恋情侣真实的困扰与需求。">I ran a survey (137 responses) over one week and in-depth interviews with 3 people, to understand the real struggles and needs of long-distance couples.</p>
-            <div class="cs-donut"><svg viewBox="0 0 128 128" role="img" aria-label="13.6%"><circle cx="64" cy="64" r="54" class="track"/><circle cx="64" cy="64" r="54" class="val" stroke-dasharray="46.1 339.3" transform="rotate(-90 64 64)"/><text x="64" y="72" text-anchor="middle">13.6%</text></svg><p data-zh="的异地恋最终修成正果（一项针对 2,900 位有过异地恋经历者的公开调查）。">of long-distance couples end up married (public survey of 2,900 people who had been in an LDR).</p></div>
-            <div class="stats g4"><div><b>75%</b><span data-zh="认为异地恋不顺会影响正常生活">say a failing LDR disrupts their normal life</span></div><div><b>48.1%</b><span data-zh="常常或偶尔没有安全感">often or occasionally feel insecure</span></div><div><b data-zh="3 个月">3 months</b><span data-zh="大多数人最多能忍受不见面的时长">the longest most people can go without meeting</span></div><div><b data-zh="1,400 万">14 million</b><span data-zh="美国处于异地恋的情侣数量">couples in the US are in an LDR</span></div></div>
-            <p class="cs-note" data-zh="个人问卷调研（n=137）与公开研究。">Personal survey (n = 137) and public research.</p>
-            <div class="cs-grid g4"><div class="cs-card"><h4 data-zh="沟通断断续续">Broken communication</h4><p data-zh="时差与忙碌打断联系。">Time zones and busy schedules interrupt contact.</p></div><div class="cs-card"><h4 data-zh="缺少陪伴">Lack of company</h4><p data-zh="想念时无法即时回应。">No instant response when you miss each other.</p></div><div class="cs-card"><h4 data-zh="缺少共同回忆">No shared memories</h4><p data-zh="没有可以一起做的事。">Nothing to do together.</p></div><div class="cs-card"><h4 data-zh="信任与安全感">Trust &amp; security</h4><p data-zh="担心对方在失联时移情别恋。">Anxiety that the other person will drift away.</p></div></div>
-            <div class="cs-grid g3"><figure class="cs-quote"><blockquote data-zh="「最常有的感觉是焦虑。失联的时候，我会担心对方喜欢上别人。」">“The most frequent feeling is anxiety. I worry the other person will fall for someone else when we lose contact.”</blockquote><figcaption data-zh="Inna，24 岁，正在异地">Inna, 24 · in an LDR now</figcaption></figure><figure class="cs-quote"><blockquote data-zh="「我们都很想念对方，但线上联系永远比不上见面。」">“We both missed each other, but virtual contact was never as good as being together.”</blockquote><figcaption data-zh="Tomas Yang，26 岁，异地 2 年">Tomas Yang, 26 · 2-year LDR</figcaption></figure><figure class="cs-quote"><blockquote data-zh="「我觉得异地恋缺少新鲜感和激情，所以分隔两地后我就结束了这段关系。」">“I thought an LDR lacked freshness and passion, so I ended it once we moved to different cities.”</blockquote><figcaption data-zh="Dan Martin，24 岁，没有异地经历">Dan Martin, 24 · no LDR experience</figcaption></figure></div>
-        </section>
+    <section id="findings" class="wide">
+      <span class="eyebrow" data-zh="调研发现">What I found</span>
+      <h2 data-zh="四个缺口，一种感受。">Four gaps, one feeling.</h2>
+      <p data-zh="一周的问卷（137 份）和 3 位深度访谈。悬停卡片，听他们自己说。">A one-week survey (137 responses) and three interviews. Hover a card to hear it in people’s own words.</p>
+      <div class="pgrid">
+        <div class="pcard frame" tabindex="0"><span class="mono" style="opacity:.6" data-zh="大背景 · 2,900 人的公开调查">The frame · public survey of 2,900 people</span>
+          <span class="big">13.6%</span>
+          <h3 data-zh="的异地恋最终结婚。其余的，大多在沉默中走散。">of long-distance couples end up married. The rest mostly drift apart in the silences.</h3>
+          <div class="back"><span class="mono" data-zh="为什么重要">Why it matters</span><span data-zh="大家说的问题不是距离本身，而是等待、猜测和想念。">Distance itself isn’t the problem people describe. The waiting, guessing and missing are.</span></div></div>
+        <div class="pcard" tabindex="0"><h3 data-zh="沟通断裂">Broken communication</h3><p class="front" data-zh="时差和忙碌打断联系。">Time zones and busy schedules interrupt contact.</p>
+          <div class="back"><span class="mono" data-zh="Tomas Yang，26 岁 · 异地 2 年">Tomas Yang, 26 · 2-year LDR</span><span data-zh="「我们都很想对方，但线上联系永远比不上在一起。」">“We both missed each other, but virtual contact was never as good as being together.”</span></div></div>
+        <div class="pcard" tabindex="0"><h3 data-zh="缺少陪伴">Lack of company</h3><p class="front" data-zh="想对方的时候，得不到即时回应。">No instant response when you miss each other.</p>
+          <div class="back"><span class="mono" data-zh="问卷">Survey</span><span data-zh="75% 的人说，异地恋不顺会影响正常生活。">75% say a failing LDR disrupts their normal life.</span></div></div>
+        <div class="pcard" tabindex="0"><h3 data-zh="缺少共同回忆">No shared memories</h3><p class="front" data-zh="没有可以一起做的事。">Nothing to do together.</p>
+          <div class="back"><span class="mono" data-zh="Dan Martin，24 岁 · 拒绝异地">Dan Martin, 24 · no LDR</span><span data-zh="「我觉得异地恋缺少新鲜感和激情，所以搬到不同城市后就分手了。」">“I thought an LDR lacked freshness and passion, so I ended it once we moved to different cities.”</span></div></div>
+        <div class="pcard" tabindex="0"><h3 data-zh="信任与安全感">Trust &amp; security</h3><p class="front" data-zh="担心对方渐渐走远。">Anxiety that the other person will drift away.</p>
+          <div class="back"><span class="mono" data-zh="Inna，24 岁 · 正在异地">Inna, 24 · in an LDR now</span><span data-zh="「最常有的感觉是焦虑。失联的时候，我担心对方会喜欢上别人。」">“The most frequent feeling is anxiety. I worry the other person will fall for someone else when we lose contact.”</span></div></div>
+      </div>
+      <!-- TODO(Amanda): "14 million couples in the US" needs a source before it goes back on the page; quotes were shortened, check them against your notes -->
+      <p class="cap" data-zh="来源：个人问卷（n = 137）、3 位访谈，以及一项 2,900 位有过异地恋经历者的公开调查。">Sources: personal survey (n = 137), 3 interviews, and a public survey of 2,900 people who had been in an LDR.</p>
+    </section>
 
-        <div class="divider" style="opacity:1;"></div>
-        <section class="cs reveal">
-            <p class="brief-block-label" data-zh="定义 — 从问题到方案">Define — From problems to solutions</p>
-            <h2 class="section-heading" data-zh="少一点猜测，多一点陪伴。">Less guessing, more company.</h2>
-            <div class="cs-pairs"><div class="cs-pair"><span class="n">01</span><p class="from" data-zh="沟通断断续续">Broken communication</p><span class="arrow" aria-hidden="true">→</span><p class="to" data-zh="&lt;strong&gt;留声机语音留言&lt;/strong&gt;：错过实时聊天，也能留下一段温暖的声音。"><strong>Phonograph voice messages</strong> — Missed the live chat? Leave a warm voice message instead.</p></div><div class="cs-pair"><span class="n">02</span><p class="from" data-zh="想念时缺少陪伴">Lack of company</p><span class="arrow" aria-hidden="true">→</span><p class="to" data-zh="&lt;strong&gt;AI 朋友&lt;/strong&gt;：根据聊天情绪即时给出陪伴和建议。"><strong>AI friends</strong> — Read the mood of the chat and offer support and advice in the moment.</p></div><div class="cs-pair"><span class="n">03</span><p class="from" data-zh="缺少共同回忆">No shared memories</p><span class="arrow" aria-hidden="true">→</span><p class="to" data-zh="&lt;strong&gt;共建虚拟房间&lt;/strong&gt;：一起装修卧室，完成待办赚积分开家具盲盒。"><strong>A shared virtual room</strong> — Decorate a bedroom together; finish to-dos to earn credits for furniture mystery boxes.</p></div><div class="cs-pair"><span class="n">04</span><p class="from" data-zh="安全感不足">Low sense of security</p><span class="arrow" aria-hidden="true">→</span><p class="to" data-zh="&lt;strong&gt;共享日程与重逢倒计时&lt;/strong&gt;，加上星座和性格测试的正向提示。"><strong>Shared schedules and a reunion countdown</strong>, plus positive nudges from horoscope and personality tests.</p></div></div>
-            <div class="cs-phones"><figure><img class="" src="images/lovelink/lovelink-phono.webp" alt="Phonograph screen: a record player for leaving voice messages, with a ‘Hold to leave a message’ button" data-zh-alt="留声机界面：用唱片机留语音，底部是「按住留言」按钮" loading="lazy" decoding="async" data-zoom tabindex="0" role="button"><figcaption data-zh="留声机">Phonograph</figcaption></figure><figure><img class="" src="images/lovelink/lovelink-home.webp" alt="LoveLink home: days until meeting, partner’s local time, shared to-dos, voice message and both statuses" data-zh-alt="LoveLink 首页：见面倒计时、对方当地时间、共同待办、语音留言和双方状态" loading="lazy" decoding="async" data-zoom tabindex="0" role="button"><figcaption data-zh="首页">Home</figcaption></figure></div>
-        </section>
+    <section id="pare">
+      <span class="eyebrow" data-zh="收敛">Pare it down</span>
+      <h2 data-zh="六个困扰，四个能用设计解决。">Six struggles. Four I could design for.</h2>
+      <div class="dump" id="dump">
+        <span class="cut" data-zh="没话聊">Running out of things to talk about</span><span class="cut" data-zh="一方想放弃">One person wants to give up</span><span class="cut" data-zh="生病时没法照顾">Can’t care for each other when sick</span><span class="cut" data-zh="怕改变自己">Fear of changing who I am</span>
+        <span class="keep" data-zh="沟通断裂">Broken communication</span><span class="keep" data-zh="缺少陪伴">Lack of company</span><span class="keep" data-zh="缺少共同回忆">No shared memories</span><span class="keep" data-zh="信任与安全感">Trust &amp; security</span>
+      </div>
+      <button class="b solid" id="pareBtn" data-zh="收敛 →">Pare it down →</button>
+      <div class="rules">
+        <div class="rule" data-zh="对方不在线时，有人陪。">Company when they’re offline.</div>
+        <div class="rule" data-zh="有能一起做的事。">Something to do together.</div>
+        <div class="rule" data-zh="吵架前先冷静。">Cool down before you fight.</div>
+        <div class="rule" data-zh="永远知道什么时候见面。">Always know when you’ll meet.</div>
+      </div>
+    </section>
 
-        <div class="divider" style="opacity:1;"></div>
-        <section class="cs reveal">
-            <p class="brief-block-label" data-zh="定义 — 功能架构">Define — Information architecture</p>
-            <h2 class="section-heading" data-zh="五个 Tab，覆盖异地恋的日常。">Five tabs that cover the everyday of a long-distance relationship.</h2>
-            <div class="cs-table"><table><thead><tr><th>Tab</th><th data-zh="功能">Features</th></tr></thead><tbody><tr><td data-label="Tab" data-zh="聊天">Chat</td><td data-label="Features" data-zh="AI 朋友 · 吵架模式（防正面冲突）· 语音留言模式">AI friends · Argue mode (avoid direct fights) · Voice message mode</td></tr><tr><td data-label="Tab" data-zh="房间">Room</td><td data-label="Features" data-zh="一起设计卧室 · 积分系统 · 商店与家具盲盒">Design the bedroom together · Credit system · Store &amp; furniture mystery box</td></tr><tr><td data-label="Tab" data-zh="首页">Home</td><td data-label="Features" data-zh="双方状态 · 待办清单 · 纪念日提醒 · 惊喜策划 · 重逢倒计时">Both partners’ status · To-do list · Anniversary reminders · Surprise planning · Reunion countdown</td></tr><tr><td data-label="Tab" data-zh="测试">Test</td><td data-label="Features" data-zh="每日运势 · 性格测试（MBTI / 血型）· 积极心理暗示">Daily horoscope · Personality tests (MBTI / blood type) · Positive affirmations</td></tr><tr><td data-label="Tab" data-zh="我的">Me</td><td data-label="Features" data-zh="个人资料 · 相册 · 解除绑定 · 设置">Profile · Album · Unlink · Settings</td></tr></tbody></table></div>
-            <div class="cs-callout"><p data-zh="首页是中心：打开 App 就能看到对方的状态、距离和下一次见面的倒计时。">Home is the center: open the app and you see your partner’s status, the distance between you, and the countdown to your next meeting.</p></div>
-        </section>
+    <section class="wide">
+      <span class="eyebrow ok" data-zh="先画框架">Paper first</span>
+      <h2 data-zh="五个 Tab，先理清再上色。">Five tabs, mapped before any pixels.</h2>
+      <p data-zh="聊天、房间、首页、测试和我的。首页在中间：打开 App 就能看到对方的状态、当地时间和见面倒计时。点击放大。">Chat, Room, Home, Test and Me. Home sits in the middle: open the app and you see your partner’s status, the time where they are, and the days until you meet. Click to zoom.</p>
+      <img class="wire" id="wire" src="images/lovelink/lovelink-wireframe.webp" alt="Wireframe map of every LoveLink flow: sign up, home, chat, room, test and me" loading="lazy">
+    </section>
 
-        <div class="divider" style="opacity:1;"></div>
-        <section class="cs reveal">
-            <p class="brief-block-label" data-zh="设计 — 线框图">Design — Wireframes</p>
-            <figure class="img-full cs-figure"><img class="" src="images/lovelink/lovelink-wireframe.webp" alt="Wireframe map of all LoveLink flows: sign-up, home, chat, room, test and me" data-zh-alt="LoveLink 全部流程的线框图：注册、首页、聊天、房间、测试和我的" loading="lazy" decoding="async" data-zoom tabindex="0" role="button"></figure>
-            <ol class="cs-num g5"><li><span>01</span><p><span data-zh="注册 / 登录 / 绑定伴侣">Sign up / Log in / Pair</span></p></li><li><span>02</span><p><span data-zh="首页：状态、待办、倒计时">Home: status, to-dos, countdown</span></p></li><li><span>03</span><p><span data-zh="聊天：AI 朋友、吵架模式、语音">Chat: AI friends, Argue mode, voice</span></p></li><li><span>04</span><p><span data-zh="房间：设计、商店、相册">Room: design, store, album</span></p></li><li><span>05</span><p><span data-zh="测试与我的">Test &amp; Me</span></p></li></ol>
-        </section>
+    <section id="fix1" class="wide">
+      <span class="eyebrow ok" data-zh="方案 1 · 缺少陪伴">Fix 1 · Lack of company</span>
+      <h2 data-zh="吵架之前，先和 AI 说。">Talk to the AI before you fight.</h2>
+      <p data-zh="两个 AI 朋友 <b>ELVO</b> 和 <b>VELO</b>，在对方不在时接住你的情绪。吵架模式里，它们各站一边。悬停查看。">Two AI friends, <b>ELVO</b> and <b>VELO</b>, catch your feelings when your partner can’t. In Argue mode they take both sides. Hover a pin.</p>
+      <div class="fix">
+        <div class="device" id="fix1Phone"></div>
+        <div class="pins" data-phone="fix1Phone">
+          <button class="pin" data-shot="lovelink-chat"><em>1</em><div data-zh="<b>聊天里的 SOS</b>情绪上头时一键求助：建议、吵架模式，或改发语音。"><b>SOS in any chat</b>One tap when emotions run high: advice, Argue mode, or a voice message instead.</div></button>
+          <button class="pin" data-shot="lovelink-ai"><em>2</em><div data-zh="<b>有人在听</b>对方不在线时，AI 朋友像朋友一样回应你。"><b>Someone who listens</b>When your partner is offline, an AI friend answers like a friend would.</div></button>
+          <button class="pin" data-shot="lovelink-aipk"><em>3</em><div data-zh="<b>吵架模式</b>先说给 AI 听。一个站你这边，一个帮你理解对方。"><b>Argue mode</b>Say it to the AI first. One friend takes your side, the other explains theirs.</div></button>
+        </div>
+      </div>
+      <div class="chat" id="chat" aria-label="Argue mode example">
+        <div class="bub me" data-zh="<b>你</b>「他忘了我的生日！」"><b>You</b>“He forgot my birthday!”</div>
+        <div class="bub" data-zh="<b>ELVO · 站你这边</b>「Rick 怎么能忘了 Helen 的生日？太过分了！」"><b>ELVO · on your side</b>“How could Rick forget Helen’s birthday? That’s just unforgivable!”</div>
+        <div class="bub" data-zh="<b>VELO · 站他那边</b>「Rick 可能工作太忙了。这不是借口，但他也许只是一时忘了日子。」"><b>VELO · on his side</b>“Rick might have been overwhelmed with work. It’s not an excuse, but the date may have just slipped his mind.”</div>
+      </div>
+    </section>
 
-        <div class="divider" style="opacity:1;"></div>
-        <section class="cs reveal">
-            <p class="brief-block-label" data-zh="设计 — 视觉规范">Design — Visual system</p>
-            <h2 class="section-heading" data-zh="浪漫的紫，温暖的粉。">Romantic purple, warm pink.</h2>
-            <dl class="cs-kv"><div><dt>Logo</dt><dd data-zh="爱心（Love）+ 定位（Location）= 相隔两地的爱，再与 Link 结合，就是 LoveLink。">A heart (Love) + a location pin (Location) = love across two places. Add “Link”, and you get LoveLink.</dd></div><div><dt data-zh="字体">Typeface</dt><dd>PingFang HK (Semibold / Medium / Regular)</dd></div></dl>
-            <div class="cs-swatches"><div><i style="background:#8177E0"></i><b>#8177E0</b><span data-zh="主色 · 浪漫紫">Primary · Romantic purple</span></div><div><i style="background:#D2AFE8"></i><b>#D2AFE8</b><span data-zh="辅助 · 丁香紫">Secondary · Lilac</span></div><div><i style="background:#FF95C3"></i><b>#FF95C3</b><span data-zh="强调 · 樱花粉">Accent · Sakura pink</span></div><div><i style="background:#FEEF8C"></i><b>#FEEF8C</b><span data-zh="点缀 · 暖黄">Highlight · Warm yellow</span></div><div><i style="background:#DFDCF7"></i><b>#DFDCF7</b><span data-zh="背景 · 雾紫">Background · Mist purple</span></div></div>
-            <div class="cs-gallery"><figure style="flex:1"><img class="" src="images/lovelink/lovelink-appicon.webp" alt="LoveLink app icon: two heart-shaped pins on a pink-to-purple gradient" data-zh-alt="LoveLink App 图标：粉紫渐变上的两个爱心定位图形" loading="lazy" decoding="async"></figure><figure style="flex:2"><img class="" src="images/lovelink/lovelink-wordmark.webp" alt="LOVELINK wordmark in purple" data-zh-alt="紫色的 LOVELINK 字标" loading="lazy" decoding="async"></figure><figure style="flex:2"><img class="" src="images/lovelink/lovelink-logo-construction.webp" alt="Logo construction: Love + Location = Love&amp;Location; Link + Love&amp;Location = LoveLink" data-zh-alt="Logo 构成：Love + Location = Love&amp;Location；Link + Love&amp;Location = LoveLink" loading="lazy" decoding="async" data-zoom tabindex="0" role="button"></figure></div>
-            <figure class="img-full cs-figure"><img class="" src="images/lovelink/lovelink-ui-kit.webp" alt="UI kit: tab bar states, toggle interactions and the purple icon set" data-zh-alt="UI 组件：底部导航状态、按钮交互和紫色图标集" loading="lazy" decoding="async" data-zoom tabindex="0" role="button"></figure>
-        </section>
+    <section id="fix2" class="wide">
+      <span class="eyebrow ok" data-zh="方案 2 · 缺少共同回忆">Fix 2 · No shared memories</span>
+      <h2 data-zh="把想象中的家，一起装出来。">Build the home you imagine, together.</h2>
+      <p data-zh="一起布置的共享卧室。完成待办赚积分，积分开家具盲盒，冰箱里能看到两边今晚吃什么。">A shared bedroom you decorate as a pair. To-dos earn credits, credits open furniture mystery boxes, and the fridge shows what’s for dinner on both sides.</p>
+      <div class="ci-row">
+        <figure><img src="images/lovelink/lovelink-room.webp" alt="Design Room: a 3D bedroom with wall colour, floor and bed options" loading="lazy"><figcaption data-zh="1 · 设计房间">1 · Design the room</figcaption></figure>
+        <figure><img src="images/lovelink/lovelink-store.webp" alt="Store with a mystery box banner and furniture priced in credits" loading="lazy"><figcaption data-zh="2 · 花积分">2 · Spend credits</figcaption></figure>
+        <figure><img src="images/lovelink/lovelink-fridge.webp" alt="Shared fridge door with photos, notes and recipe stickers" loading="lazy"><figcaption data-zh="3 · 共享冰箱">3 · Share the fridge</figcaption></figure>
+        <figure><img src="images/lovelink/lovelink-album.webp" alt="Shared album: a wall of the couple's photos and places" loading="lazy"><figcaption data-zh="4 · 钉一段回忆">4 · Pin a memory</figcaption></figure>
+      </div>
+      <div class="ci-rules">
+        <div data-zh="<b>两种品味，一个房间</b>地板、墙色和床一起挑。"><b>Two tastes, one room</b>Floor, wall colour and bed are picked together.</div>
+        <div data-zh="<b>待办换积分</b>共同任务变成家具，日常变成游戏。"><b>To-dos earn credits</b>Shared tasks turn into furniture, so routine becomes play.</div>
+        <div data-zh="<b>两个人的冰箱</b>看看对方厨房里有什么，一起决定晚饭。"><b>A fridge for two</b>See what’s in each other’s kitchen and decide dinner together.</div>
+        <div data-zh="<b>只属于你们的墙</b>去过的地方，拍过的照片。"><b>A wall that’s only yours</b>Places you’ve been and photos you’ve taken.</div>
+      </div>
+    </section>
 
-        <div class="divider" style="opacity:1;"></div>
-        <section class="cs reveal">
-            <p class="brief-block-label" data-zh="原型 — 高保真">Prototype — High fidelity</p>
-            <h2 class="section-heading" data-zh="高保真原型。">High-fidelity prototype.</h2>
-            <p class="brief-block-text cs-body" data-zh="真机可交互原型（借助 AI 搭建）。用于用户测试：注册、绑定、首页、AI 朋友与语音的完整流程都可以在手机上真实点击。">A working, tappable prototype on a real phone (built with AI). Used for user testing: sign-up, pairing, Home, AI friends and voice messages can all be tried end to end.</p>
-        </section>
+    <section id="fix3" class="wide">
+      <span class="eyebrow ok" data-zh="方案 3 · 沟通断裂与安全感">Fix 3 · Broken communication &amp; security</span>
+      <h2 data-zh="一眼看到彼此。">See each other at a glance.</h2>
+      <p data-zh="首页回答大家最常问的三个问题：对方在哪？还好吗？什么时候见面？">Home answers the three questions people asked most: where are they, are they okay, and when do we meet?</p>
+      <div class="fix">
+        <div class="device" id="fix3Phone"></div>
+        <div class="pins" data-phone="fix3Phone">
+          <button class="pin" data-shot="lovelink-link"><em>1</em><div data-zh="<b>绑定一次</b>输入对方的 LoveLink ID，两个空间就连起来了。"><b>Pair once</b>Enter your partner’s LoveLink ID and your spaces connect.</div></button>
+          <button class="pin" data-shot="lovelink-home"><em>2</em><div data-zh="<b>状态一目了然</b>见面倒计时、对方当地时间、两人的待办和 24 小时状态。"><b>Status at a glance</b>Reunion countdown, their local time, both to-do lists and a 24-hour status.</div></button>
+          <button class="pin" data-shot="lovelink-phono"><em>3</em><div data-zh="<b>错过电话的留声机</b>留一段语音，对方醒来就能听。"><b>A phonograph for missed calls</b>Leave a voice message they can play when they wake up.</div></button>
+        </div>
+      </div>
+    </section>
 
-        <section class="see-next-section reveal" style="padding-bottom:80px;">
-            <p class="see-next-label" data-zh="下一个项目">See next</p>
-            <div class="next-cards">
-                <a href="viva-toy.html" class="next-card">
-                    <div class="next-card-img cs-next-img"><img class="" src="images/home/viva-card.webp" alt="VIVA TOY app screens held in hand" data-zh-alt="手持的 VIVA TOY App 界面" loading="lazy" decoding="async"></div>
-                    <div class="next-card-body">
-                        <p class="next-card-direction" data-zh="下一个 →">Next →</p>
-                        <h3 class="next-card-title" data-zh="VIVA TOY · 让旧玩具，重新被爱">VIVA TOY — Let old toys be loved again</h3>
-                        <p class="next-card-desc" data-zh="一个让电子玩具被修好、被继续使用的维修与循环服务。">A repair-and-reuse service that keeps electronic toys in play.</p>
-                    </div>
-                </a>
-            </div>
-        </section>
-    </div>
-    <!-- /main -->
+    <section id="system" class="wide">
+      <span class="eyebrow" data-zh="视觉规范">Visual system</span>
+      <h2 data-zh="浪漫的紫，温暖的粉。">Romantic purple, warm pink.</h2>
+      <div class="brandrow"><img src="images/lovelink/lovelink-appicon.webp" alt="LoveLink app icon" loading="lazy"><div><b style="font-family:var(--f-display);font-size:18px" data-zh="爱心 + 定位 = 相隔两地的爱。">A heart + a location pin = love across two places.</b><p style="font-size:16px;color:var(--dim)" data-zh="再加上 Link，就是 LoveLink。字体是苹方 HK（Semibold、Medium、Regular）。">Add “Link” and you get LoveLink. Type is PingFang HK (Semibold, Medium, Regular).</p></div></div>
+      <div class="swatches">
+        <div class="sw"><i style="background:#8177E0"></i><span><b>#8177E0</b><br>Primary · romantic purple</span></div>
+        <div class="sw"><i style="background:#D2AFE8"></i><span><b>#D2AFE8</b><br>Secondary · lilac</span></div>
+        <div class="sw"><i style="background:#FF95C3"></i><span><b>#FF95C3</b><br>Accent · sakura pink</span></div>
+        <div class="sw"><i style="background:#FEEF8C"></i><span><b>#FEEF8C</b><br>Highlight · warm yellow</span></div>
+        <div class="sw"><i style="background:#DFDCF7"></i><span><b>#DFDCF7</b><br>Background · mist purple</span></div>
+      </div>
+      <img class="kit" src="images/lovelink/lovelink-ui-kit.webp" alt="UI kit: tab bar states, toggle interactions and the purple icon set" loading="lazy">
+    </section>
 
-    <!-- ── VIBE FOOTER ── -->
-    <div class="main" style="padding:0;max-width:100%;margin-left:var(--sidebar-w);">
-        <footer class="vibe-footer reveal">
-            <p class="vibe-pretext" data-zh="关于设计师">About the designer</p>
-            <h2 class="vibe-headline" data-zh="懂时尚，<br><em>有同理心</em>——<br>做有生命力的 UX。">
-                Fashion-forward,<br>
-                <em>empathy-driven</em> —<br> UX that feels alive.
-            </h2>
-            <div class="vibe-tags">
-                <span class="vibe-tag">Fashion + Design</span>
-                <span class="vibe-tag">Empathy Coder</span>
-                <span class="vibe-tag">Fast Learner</span>
-                <span class="vibe-tag">Micro-interactions</span>
-                <span class="vibe-tag">Brand Systems</span>
-                <span class="vibe-tag">Motion & Prototyping</span>
-                <span class="vibe-tag">Human Psychology</span>
-                <span class="vibe-tag">Visual Storytelling</span>
-            </div>
-            <div class="vibe-bottom">
-                <span class="vibe-copy">© Amanda · 玥妍 · 2025</span>
-                <div class="vibe-links">
-                    <a href="#" class="vibe-link">Resume</a>
-                    <a href="#" class="vibe-link">LinkedIn</a>
-                    <a href="#" class="vibe-link">Instagram</a>
-                    <a href="index.html" class="vibe-link"><span data-zh="↑ 回到顶部">↑ Back to top</span></a>
-                </div>
-            </div>
-        </footer>
-    </div>
+    <!-- TODO(Amanda): Trade-offs and Reflection are drafts based on the project; keep only what you believe -->
+    <section id="tradeoffs">
+      <span class="eyebrow" data-zh="取舍">Trade-offs</span>
+      <h2 data-zh="AI 在中间能帮忙，<span class=&quot;hl-o&quot;>但替代不了对方。</span>">An AI in the middle helps. <span class="hl-o">It can’t replace the partner.</span></h2>
+      <div class="ledger">
+        <div><b data-zh="得到的">What it gives</b><ul><li data-zh="凌晨三点有人说话">Someone to talk to at 3 a.m.</li><li data-zh="吵架前有个缓冲">A pause before a fight.</li><li data-zh="一个一起打开 App 的理由">A reason to open the app together.</li></ul></div>
+        <div><b data-zh="要注意的">What to watch</b><ul><li data-zh="情侣依赖 AI 而不是彼此">Couples leaning on the AI instead of each other.</li><li data-zh="聊天记录很私密：默认要保密">Chat history is intimate data: keep it private by default.</li><li data-zh="游戏和积分可能变成负担">Games and credits can turn into chores.</li></ul></div>
+      </div>
+    </section>
 
-    <script>
-        // Reading progress
-        const progress = document.getElementById('progress');
-        window.addEventListener('scroll', () => {
-            const h = document.documentElement.scrollHeight - window.innerHeight;
-            const pct = (window.scrollY / h) * 100;
-            progress.style.width = Math.min(pct, 100) + '%';
-        });
+    <section id="reflection" class="wide">
+      <span class="eyebrow" data-zh="反思">Reflection</span>
+      <h2 data-zh="为消息之间的空白而设计。">Design for the gaps between messages.</h2>
+      <div class="refl">
+        <div data-zh="<b>调研改变了题目</b>我本来想改进聊天，数据告诉我真正的问题是等待。"><b>Research changed the brief</b>I set out to improve messaging. The data said waiting was the real problem.</div>
+        <div data-zh="<b>两个声音好过一个</b>只会附和的 AI 会让吵架更糟。吵架模式需要两边。"><b>Two voices beat one</b>An AI that only agrees with you makes fights worse. Argue mode needs both sides.</div>
+        <div data-zh="<b>共同的日常，而不是更多聊天</b>待办和房间让情侣有事可做，而不只是说话。"><b>Shared routine, not more chat</b>To-dos and the room gave couples something to do, not just say.</div>
+      </div>
+      <div class="hmw" style="background:var(--honest)">
+        <span class="mono" data-zh="下一步 · 测试">What’s next · testing it</span>
+        <p data-zh="把可交互原型交给异地情侣，看他们最先打开哪个功能。">Put the tappable prototype in front of couples who live apart, and see which feature they open first.</p>
+        <span style="font-size:16px;line-height:1.5" data-zh="记录对方离线时他们打开的频率、吵架模式是平息还是激化矛盾，以及分享聊天记录时有多安心。">Measure how often they open it when the partner is offline, whether Argue mode calms or escalates, and how safe they feel sharing chat history.</span>
+      </div>
+      <a class="next" href="viva-toy.html"><span><span class="mono" style="color:var(--dim)" data-zh="下一个项目">Next project</span><br><b>VIVA TOY</b></span><span class="mono">→</span></a>
+    </section>
 
-        // Scroll reveal
-        const reveals = document.querySelectorAll('.reveal');
-        const obs = new IntersectionObserver((entries) => {
-            entries.forEach(e => {
-                if (e.isIntersecting) {
-                    e.target.classList.add('visible');
-                    obs.unobserve(e.target);
-                }
-            });
-        }, {
-            threshold: 0.08,
-            rootMargin: '0px 0px -40px 0px'
-        });
+    <footer>LOVELINK · AMANDA (YUEYAN) ZHANG · 2024</footer>
+  </main>
+</div>
 
-        reveals.forEach(el => obs.observe(el));
-    </script>
+<dialog class="zoom" id="zoom" aria-label="Wireframe, full size"><button type="button" id="zoomClose" data-zh="关闭 ✕">Close ✕</button><img src="images/lovelink/lovelink-wireframe.webp" alt="Wireframe map, full size"></dialog>
 
-    <dialog class="zoom-box" aria-label="Image"><button type="button" class="zoom-close" data-zh="关闭 ✕">Close ✕</button><div></div></dialog>
-    <script>
-        // Click any [data-zoom] image to see it full size
-        const zoomBox = document.querySelector('.zoom-box');
-        const openZoom = img => { zoomBox.querySelector('div').innerHTML = `<img src="${img.currentSrc || img.src}" alt="">`; zoomBox.showModal(); };
-        document.addEventListener('click', e => {
-            if (e.target.matches('[data-zoom]')) openZoom(e.target);
-            else if (e.target === zoomBox || e.target.closest('.zoom-close')) zoomBox.close();
-        });
-        document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('[data-zoom]')) openZoom(e.target); });
-    </script>
-    <script src="assets/i18n.js" defer></script>
+<script src="assets/i18n.js"></script>
+<script>
+const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const $=id=>document.getElementById(id);
+const src=n=>`images/lovelink/${n}.webp`;
+
+// ---------- Story-bar phone loop (same pattern as my other case studies) ----------
+function player(el,frames,onFrame){
+  el.innerHTML=`<div class="stories">${frames.map(()=>"<i><b></b></i>").join("")}</div><div class="host"></div>`;
+  const bars=[...el.querySelectorAll(".stories i")],host=el.querySelector(".host");
+  let i=0,timer,paused=false,seen=true;
+  function show(n){
+    i=(n+frames.length)%frames.length;const f=frames[i];
+    host.innerHTML=`<img src="${src(f.n)}" alt="${f.alt||""}">`;
+    el.style.setProperty("--d",(f.ms||2400)+"ms");
+    bars.forEach((b,k)=>b.className=k<i?"done":k===i?"now":"");
+    onFrame&&onFrame(f,i);clearTimeout(timer);
+    if(!paused&&seen&&!RM)timer=setTimeout(()=>show(i+1),f.ms||2400);
+  }
+  bars.forEach((b,k)=>b.onclick=()=>show(k));
+  host.onclick=()=>show(i+1);
+  new IntersectionObserver(([e])=>{seen=e.isIntersecting;seen?show(i):clearTimeout(timer)}).observe(el);
+  return {show,goto(name){const k=frames.findIndex(f=>f.n===name);if(k>=0)show(k)},pause(){paused=true;el.classList.add("paused");clearTimeout(timer)},play(){paused=false;el.classList.remove("paused");show(i)}};
+}
+
+// Context: the whole app, looping
+const APP=[
+  {n:"lovelink-splash",tab:"—",feat:null,alt:"Splash screen"},
+  {n:"lovelink-link",tab:"Me",feat:"Pair with your partner",alt:"Pairing screen"},
+  {n:"lovelink-home",tab:"Home",feat:"Countdown + their local time",alt:"Home"},
+  {n:"lovelink-chat",tab:"Chat",feat:"SOS when emotions run high",alt:"Chat with SOS menu"},
+  {n:"lovelink-ai",tab:"Chat",feat:"An AI friend who listens",alt:"AI friend"},
+  {n:"lovelink-aipk",tab:"Chat",feat:"Argue mode: both sides",alt:"Argue mode"},
+  {n:"lovelink-room",tab:"Room",feat:"Decorate a room together",alt:"Design room"},
+  {n:"lovelink-store",tab:"Room",feat:"Credits → mystery boxes",alt:"Store"},
+  {n:"lovelink-phono",tab:"Home",feat:"A voice message for later",alt:"Phonograph"}];
+player($("loopApp"),APP,(f,i)=>{
+  $("mScr").textContent=(i+1)+"/"+APP.length;$("mTab").textContent=f.tab;
+  const c=$("mFeat");c.textContent=f.feat||"Opening the app";c.classList.toggle("none",!f.feat);
+});
+
+// Fix phones: pins jump the phone to that screen and pause; leaving resumes
+document.querySelectorAll(".pins").forEach(box=>{
+  const pins=[...box.querySelectorAll(".pin")];
+  const ph=player($(box.dataset.phone),pins.map(p=>({n:p.dataset.shot,ms:2800,alt:p.querySelector("b").textContent})),(f,i)=>pins.forEach((p,k)=>p.classList.toggle("on",k===i)));
+  pins.forEach(p=>{const go=()=>{ph.pause();ph.goto(p.dataset.shot)};p.addEventListener("mouseenter",go);p.addEventListener("focus",go);p.addEventListener("click",go)});
+  box.addEventListener("mouseleave",()=>ph.play());
+});
+
+// Argue mode chat plays in when it scrolls into view
+new IntersectionObserver(([e],o)=>{if(!e.isIntersecting)return;o.disconnect();[...$("chat").children].forEach((b,k)=>setTimeout(()=>b.classList.add("in"),RM?0:k*900))},{threshold:.4}).observe($("chat"));
+
+// Wireframe zoom
+$("wire").onclick=()=>$("zoom").showModal();
+$("zoomClose").onclick=()=>$("zoom").close();
+$("zoom").addEventListener("click",e=>{if(e.target===$("zoom"))$("zoom").close()});
+
+$("pareBtn").onclick=()=>{const on=$("dump").classList.toggle("pared");const z=document.documentElement.lang==="zh-CN";$("pareBtn").textContent=on?(z?"显示全部六个":"Show all six"):(z?"收敛 →":"Pare it down →")};
+const links=[...document.querySelectorAll("#toc a")];
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)links.forEach(a=>a.classList.toggle("on",a.getAttribute("href")==="#"+e.target.id))}),{rootMargin:"-40% 0px -55% 0px"});
+links.forEach(a=>{const s=document.querySelector(a.getAttribute("href"));if(s)io.observe(s)});
+</script>
 </body>
-
 </html>

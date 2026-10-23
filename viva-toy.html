@@ -1,1198 +1,334 @@
 <!DOCTYPE html>
-<html lang="zh">
-
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-zh="VIVA TOY — 张玥妍">VIVA TOY — Amanda Zhang</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
-
-    <style>
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
-         :root {
-            --apricot: #FAF5EF;
-            --apricot-mid: #F3EAE0;
-            --apricot-warm: #E8D9C8;
-            --apricot-deep: #D4C0A8;
-            --ink: #2C2118;
-            --ink-mid: #6B5A4A;
-            --ink-light: #9E8E7E;
-            --accent: #C4785A;
-            --accent-light: #E8A882;
-            --white: #FEFCFA;
-            --card-bg: rgba(255, 255, 255, 0.72);
-            --sidebar-w: 160px;
-            --content-max: 900px;
-        }
-        
-        html {
-            scroll-behavior: smooth;
-        }
-        
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--apricot);
-            color: var(--ink);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-            background-size: 200px;
-            pointer-events: none;
-            z-index: 0;
-        }
-        /* ─── SIDEBAR ─── */
-        
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: var(--sidebar-w);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 0 0 0 36px;
-            z-index: 100;
-            gap: 10px;
-        }
-        
-        .sidebar-logo {
-            position: absolute;
-            top: 32px;
-            left: 36px;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 15px;
-            font-weight: 300;
-            color: var(--ink);
-            letter-spacing: 0.02em;
-            text-decoration: none;
-            opacity: 0.7;
-            transition: opacity 0.25s;
-        }
-        
-        .sidebar-logo:hover {
-            opacity: 1;
-        }
-        
-        .sidebar-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        .nav-item {
-            font-size: 13px;
-            font-weight: 400;
-            color: var(--ink-light);
-            cursor: pointer;
-            letter-spacing: 0.01em;
-            transition: color 0.25s ease, transform 0.25s ease;
-            padding: 2px 0;
-            text-decoration: none;
-            width: fit-content;
-            position: relative;
-        }
-        
-        .nav-item::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 0;
-            height: 0.5px;
-            background: var(--accent);
-            transition: width 0.3s ease;
-        }
-        
-        .nav-item:hover {
-            color: var(--ink);
-            transform: translateX(4px);
-        }
-        
-        .nav-item:hover::after {
-            width: 100%;
-        }
-        /* ─── BACK BUTTON ─── */
-        
-        .back-btn {
-            position: fixed;
-            top: 32px;
-            left: calc(var(--sidebar-w) + 40px);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            color: var(--ink-light);
-            text-decoration: none;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            z-index: 50;
-            transition: color 0.25s, transform 0.25s;
-            opacity: 0;
-            animation: fadeIn 0.6s ease 0.3s forwards;
-        }
-        
-        .back-btn:hover {
-            color: var(--accent);
-            transform: translateX(-3px);
-        }
-        
-        .back-btn svg {
-            width: 14px;
-            height: 14px;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 1.5;
-        }
-        /* ─── MAIN ─── */
-        
-        .main {
-            margin-left: var(--sidebar-w);
-            padding: 0 80px 0 60px;
-            position: relative;
-            z-index: 1;
-            max-width: calc(var(--sidebar-w) + var(--content-max) + 80px);
-        }
-        /* ─── HERO SECTION ─── */
-        
-        .project-hero {
-            padding: 100px 0 60px;
-            opacity: 0;
-            animation: fadeUp 0.9s ease 0.15s forwards;
-        }
-        
-        .project-tag {
-            font-size: 11px;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            color: var(--accent);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .project-tag::before {
-            content: '';
-            width: 24px;
-            height: 0.5px;
-            background: var(--accent);
-        }
-        
-        .project-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(40px, 5vw, 64px);
-            font-weight: 300;
-            line-height: 1.05;
-            letter-spacing: -0.02em;
-            color: var(--ink);
-            margin-bottom: 28px;
-        }
-        
-        .project-title em {
-            font-style: italic;
-            color: var(--accent);
-        }
-        
-        .project-meta {
-            display: flex;
-            gap: 36px;
-            flex-wrap: wrap;
-        }
-        
-        .meta-item {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-        }
-        
-        .meta-label {
-            font-size: 10px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--ink-light);
-        }
-        
-        .meta-value {
-            font-size: 13px;
-            color: var(--ink-mid);
-            font-weight: 300;
-        }
-        /* ─── DIVIDER ─── */
-        
-        .divider {
-            height: 0.5px;
-            background: linear-gradient(90deg, var(--apricot-warm), transparent);
-            margin: 48px 0;
-            opacity: 0;
-            animation: fadeIn 0.8s ease 0.5s forwards;
-        }
-        /* ─── HERO IMAGE GRID ─── */
-        
-        .hero-image-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            grid-template-rows: auto auto;
-            gap: 12px;
-            margin-bottom: 80px;
-            opacity: 0;
-            animation: fadeUp 0.9s ease 0.35s forwards;
-        }
-        
-        .img-placeholder {
-            border-radius: 14px;
-            background: var(--apricot-mid);
-            border: 0.5px solid var(--apricot-warm);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .img-placeholder.tall {
-            grid-row: span 2;
-        }
-        
-        .img-placeholder.wide {
-            grid-column: span 2;
-        }
-        
-        .img-placeholder img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            border-radius: 14px;
-        }
-        
-        .img-inner-label {
-            position: absolute;
-            bottom: 14px;
-            left: 16px;
-            font-size: 11px;
-            color: rgba(44, 33, 24, 0.4);
-            letter-spacing: 0.05em;
-            background: var(--card-bg);
-            padding: 3px 10px;
-            border-radius: 100px;
-        }
-        /* Placeholder visuals */
-        
-        .ph-olive-1 {
-            background: linear-gradient(160deg, #F0E8D4 0%, #C8BA90 100%);
-            min-height: 340px;
-        }
-        
-        .ph-olive-2 {
-            background: #4A6741;
-            min-height: 160px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .ph-olive-3 {
-            background: #8B2E1A;
-            min-height: 160px;
-        }
-        
-        .ph-olive-4 {
-            background: linear-gradient(160deg, #8B9E45 0%, #6B7A35 100%);
-            min-height: 160px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .ph-olive-5 {
-            background: linear-gradient(160deg, #E8DEC8 0%, #D4C89A 100%);
-            min-height: 160px;
-        }
-        
-        .stat-text {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 18px;
-            font-weight: 400;
-            color: #E8D89A;
-            text-align: center;
-            line-height: 1.4;
-            padding: 24px;
-        }
-        
-        .cta-pill {
-            background: #E8D89A;
-            color: #4A6741;
-            font-size: 13px;
-            font-weight: 500;
-            padding: 10px 24px;
-            border-radius: 100px;
-            letter-spacing: 0.02em;
-        }
-        /* ─── BRIEF SECTION ─── */
-        
-        .brief-section {
-            display: grid;
-            grid-template-columns: 1fr 1.4fr;
-            gap: 60px;
-            margin-bottom: 80px;
-            opacity: 0;
-            animation: fadeUp 0.8s ease 0.55s forwards;
-        }
-        
-        .brief-left {
-            display: flex;
-            flex-direction: column;
-            gap: 36px;
-        }
-        
-        .brief-block {}
-        
-        .brief-block-label {
-            font-size: 11px;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--ink-light);
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 0.5px solid var(--apricot-warm);
-        }
-        
-        .brief-block-text {
-            font-size: 13.5px;
-            color: var(--ink-mid);
-            line-height: 1.75;
-            font-weight: 300;
-        }
-        
-        .brief-right {}
-        
-        .challenge-label {
-            font-size: 11px;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--ink-light);
-            margin-bottom: 20px;
-        }
-        
-        .challenge-text {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(28px, 3.5vw, 44px);
-            font-weight: 300;
-            line-height: 1.2;
-            color: var(--ink);
-            letter-spacing: -0.01em;
-        }
-        /* ─── APPROACH SECTION ─── */
-        
-        .approach-section {
-            margin-bottom: 80px;
-            opacity: 0;
-        }
-        
-        .section-heading {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 32px;
-            font-weight: 300;
-            color: var(--ink);
-            margin-bottom: 32px;
-            letter-spacing: -0.01em;
-        }
-        
-        .two-col-text {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            margin-bottom: 36px;
-        }
-        
-        .col-block-title {
-            font-size: 12px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--ink-mid);
-            margin-bottom: 12px;
-            font-weight: 500;
-        }
-        
-        .col-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        
-        .col-list li {
-            font-size: 13.5px;
-            color: var(--ink-mid);
-            font-weight: 300;
-            padding-left: 16px;
-            position: relative;
-            line-height: 1.6;
-        }
-        
-        .col-list li::before {
-            content: '—';
-            position: absolute;
-            left: 0;
-            color: var(--apricot-deep);
-            font-size: 11px;
-        }
-        /* ─── IMAGE PLACEHOLDER FULL ─── */
-        
-        .img-full {
-            width: 100%;
-            border-radius: 16px;
-            background: var(--apricot-mid);
-            border: 0.5px solid var(--apricot-warm);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .img-full-label {
-            position: absolute;
-            bottom: 16px;
-            left: 20px;
-            font-size: 11px;
-            color: var(--ink-light);
-            letter-spacing: 0.05em;
-        }
-        
-        .ph-screens {
-            background: linear-gradient(160deg, #8B9E45 0%, #4A6741 100%);
-            min-height: 360px;
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
-            padding: 24px;
-            align-items: center;
-        }
-        
-        .screen-mini {
-            background: #E8DEC8;
-            border-radius: 6px;
-            aspect-ratio: 9/19;
-            display: flex;
-            flex-direction: column;
-            padding: 6px 4px;
-            gap: 3px;
-        }
-        
-        .screen-mini-bar {
-            height: 3px;
-            background: rgba(74, 103, 65, 0.3);
-            border-radius: 2px;
-        }
-        
-        .screen-mini-bar.accent-bar {
-            background: rgba(74, 103, 65, 0.6);
-            width: 60%;
-        }
-        /* ─── MEDIA SECTION ─── */
-        
-        .media-section {
-            margin-bottom: 80px;
-            opacity: 0;
-        }
-        
-        .media-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-        
-        .video-placeholder {
-            width: 100%;
-            border-radius: 14px;
-            background: var(--ink);
-            aspect-ratio: 16/9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: opacity 0.25s;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .video-placeholder:hover {
-            opacity: 0.88;
-        }
-        
-        .play-icon {
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .play-icon svg {
-            width: 18px;
-            height: 18px;
-            fill: white;
-            margin-left: 3px;
-        }
-        
-        .video-label {
-            position: absolute;
-            bottom: 14px;
-            left: 16px;
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.5);
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-        }
-        
-        .link-row {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-        
-        .ext-link {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            color: var(--ink-light);
-            text-decoration: none;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            padding: 10px 18px;
-            border-radius: 100px;
-            border: 0.5px solid var(--apricot-warm);
-            background: var(--card-bg);
-            transition: color 0.25s, border-color 0.25s, transform 0.25s;
-        }
-        
-        .ext-link:hover {
-            color: var(--accent);
-            border-color: var(--accent-light);
-            transform: translateY(-2px);
-        }
-        
-        .ext-link svg {
-            width: 11px;
-            height: 11px;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 1.5;
-        }
-        /* ─── CONCLUSION ─── */
-        
-        .conclusion-section {
-            margin-bottom: 80px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            opacity: 0;
-        }
-        
-        .concl-block {}
-        
-        .concl-label {
-            font-size: 11px;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--ink-light);
-            margin-bottom: 14px;
-            padding-bottom: 10px;
-            border-bottom: 0.5px solid var(--apricot-warm);
-        }
-        
-        .concl-text {
-            font-size: 13.5px;
-            color: var(--ink-mid);
-            font-weight: 300;
-            line-height: 1.75;
-        }
-        /* ─── SEE NEXT ─── */
-        
-        .see-next-section {
-            padding: 60px 0 0;
-            border-top: 0.5px solid var(--apricot-warm);
-            opacity: 0;
-        }
-        
-        .see-next-label {
-            font-size: 10px;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            color: var(--ink-light);
-            margin-bottom: 28px;
-        }
-        
-        .next-cards {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 60px;
-        }
-        
-        .next-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            overflow: hidden;
-            border: 0.5px solid var(--apricot-warm);
-            cursor: pointer;
-            text-decoration: none;
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.4s;
-            display: block;
-        }
-        
-        .next-card:hover {
-            transform: translateY(-4px) scale(1.01);
-            border-color: var(--accent-light);
-        }
-        
-        .next-card-img {
-            width: 100%;
-            aspect-ratio: 16/9;
-            background: var(--apricot-mid);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-        
-        .next-card-body {
-            padding: 16px 20px 20px;
-        }
-        
-        .next-card-direction {
-            font-size: 10px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--ink-light);
-            margin-bottom: 6px;
-        }
-        
-        .next-card-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 18px;
-            font-weight: 400;
-            color: var(--ink);
-            line-height: 1.25;
-            margin-bottom: 6px;
-        }
-        
-        .next-card-desc {
-            font-size: 12px;
-            color: var(--ink-light);
-            font-weight: 300;
-            line-height: 1.5;
-        }
-        /* Placeholder visuals for next cards */
-        
-        .ph-next-1 {
-            background: linear-gradient(135deg, #2C2118 0%, #4A3828 100%);
-        }
-        
-        .ph-next-2 {
-            background: linear-gradient(135deg, #E8DEC8 0%, #D4C89A 100%);
-        }
-        /* ─── VIBE FOOTER ─── */
-        
-        .vibe-footer {
-            background: var(--ink);
-            margin: 0 -80px 0 -60px;
-            padding: 80px 80px 64px 60px;
-            position: relative;
-            overflow: hidden;
-            opacity: 0;
-        }
-        
-        .vibe-footer::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(ellipse at 80% 50%, rgba(196, 120, 90, 0.08) 0%, transparent 60%);
-        }
-        
-        .vibe-pretext {
-            font-size: 11px;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.3);
-            margin-bottom: 28px;
-        }
-        
-        .vibe-headline {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(36px, 4.5vw, 60px);
-            font-weight: 300;
-            color: rgba(255, 255, 255, 0.95);
-            line-height: 1.1;
-            letter-spacing: -0.02em;
-            margin-bottom: 40px;
-        }
-        
-        .vibe-headline em {
-            font-style: italic;
-            color: var(--accent-light);
-        }
-        
-        .vibe-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 52px;
-        }
-        
-        .vibe-tag {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.5);
-            border: 0.5px solid rgba(255, 255, 255, 0.15);
-            padding: 6px 16px;
-            border-radius: 100px;
-            letter-spacing: 0.04em;
-            transition: color 0.25s, border-color 0.25s;
-        }
-        
-        .vibe-tag:hover {
-            color: var(--accent-light);
-            border-color: rgba(232, 168, 130, 0.4);
-        }
-        
-        .vibe-bottom {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            border-top: 0.5px solid rgba(255, 255, 255, 0.08);
-            padding-top: 28px;
-        }
-        
-        .vibe-copy {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.25);
-            letter-spacing: 0.04em;
-        }
-        
-        .vibe-links {
-            display: flex;
-            gap: 20px;
-        }
-        
-        .vibe-link {
-            font-size: 11px;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.35);
-            text-decoration: none;
-            transition: color 0.25s;
-        }
-        
-        .vibe-link:hover {
-            color: var(--accent-light);
-        }
-        /* ─── ANIMATIONS ─── */
-        
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-        
-        .reveal {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.7s ease, transform 0.7s ease;
-        }
-        
-        .reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        /* Progress bar */
-        
-        .reading-progress {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 1.5px;
-            background: var(--accent);
-            z-index: 200;
-            transition: width 0.1s linear;
-            width: 0%;
-        }
-        /* Mobile */
-        
-        @media (max-width: 768px) {
-             :root {
-                --sidebar-w: 0px;
-            }
-            .sidebar {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                top: auto;
-                width: 100%;
-                height: 56px;
-                flex-direction: row;
-                justify-content: center;
-                padding: 0 24px;
-                background: var(--apricot);
-                border-top: 0.5px solid var(--apricot-warm);
-            }
-            .sidebar-logo {
-                display: none;
-            }
-            .sidebar-nav {
-                flex-direction: row;
-                gap: 28px;
-            }
-            .main {
-                margin-left: 0;
-                padding: 0 24px 80px;
-            }
-            .hero-image-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-            .img-placeholder.tall {
-                grid-row: auto;
-            }
-            .brief-section {
-                grid-template-columns: 1fr;
-                gap: 32px;
-            }
-            .two-col-text {
-                grid-template-columns: 1fr;
-                gap: 24px;
-            }
-            .media-grid {
-                grid-template-columns: 1fr;
-            }
-            .conclusion-section {
-                grid-template-columns: 1fr;
-            }
-            .next-cards {
-                grid-template-columns: 1fr;
-            }
-            .vibe-footer {
-                margin: 0 -24px;
-                padding: 60px 24px 48px;
-            }
-            .vibe-bottom {
-                flex-direction: column;
-                gap: 16px;
-                align-items: flex-start;
-            }
-        }
-    
-        /* ─── ADDED: bilingual switch + case-study blocks (same tokens as above) ─── */
-        .lang-toggle { margin-top: 24px; width: fit-content; font: inherit; font-size: 12px; letter-spacing: 0.04em; color: var(--ink-light); background: none; border: 0.5px solid var(--apricot-warm); border-radius: 100px; padding: 4px 12px; cursor: pointer; }
-        .lang-toggle b { color: var(--ink); font-weight: 500; }
-        html:lang(zh-CN) body { font-family: 'DM Sans', 'PingFang SC', 'Noto Sans SC', sans-serif; }
-        .cs-hero { padding: 40px; margin-bottom: 64px; background: linear-gradient(160deg, var(--apricot-mid) 0%, var(--apricot-warm) 100%); }
-        .cs-hero img { max-height: 520px; width: auto; max-width: 100%; }
-        .cs { margin-bottom: 80px; }
-        .cs > * + * { margin-top: 28px; }
-        .cs > .brief-block-label + * { margin-top: 0; }
-        .cs .section-heading { margin-bottom: 0; max-width: 22ch; }
-        .cs-body { max-width: 640px; }
-        .cs-lead { max-width: 34ch; font-size: clamp(22px, 2.4vw, 28px); line-height: 1.35; }
-        .cs-note { font-size: 12px; color: var(--ink-light); font-style: italic; }
-        .cs-callout { border-left: 2px solid var(--accent); padding: 4px 0 4px 20px; max-width: 640px; }
-        .cs-callout p { font-family: 'Cormorant Garamond', serif; font-size: 22px; line-height: 1.4; color: var(--ink); }
-        .cs-grid, .stats { display: grid; gap: 14px; }
-        .g2 { grid-template-columns: repeat(2, 1fr); } .g3 { grid-template-columns: repeat(3, 1fr); } .g4 { grid-template-columns: repeat(4, 1fr); } .g5 { grid-template-columns: repeat(5, 1fr); }
-        .cs-card, .cs-quote { margin: 0; background: var(--card-bg); border: 0.5px solid var(--apricot-warm); border-radius: 14px; padding: 20px 22px; }
-        .cs-card h4 { font-family: 'Cormorant Garamond', serif; font-size: 21px; font-weight: 400; color: var(--ink); margin-bottom: 6px; }
-        .cs-card p { font-size: 13.5px; line-height: 1.7; color: var(--ink-mid); font-weight: 300; }
-        .stats div { border-top: 1px solid var(--apricot-warm); padding-top: 12px; }
-        .stats b { display: block; font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: 38px; line-height: 1.1; color: var(--accent); }
-        .stats span { font-size: 12.5px; color: var(--ink-mid); font-weight: 300; }
-        .cs-quote { display: flex; flex-direction: column; justify-content: space-between; gap: 18px; }
-        .cs-quote blockquote { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-style: italic; line-height: 1.4; color: var(--ink); }
-        .cs-quote figcaption { font-size: 11px; letter-spacing: 0.06em; color: var(--ink-light); }
-        .cs-chips { display: flex; flex-wrap: wrap; gap: 10px; }
-        .cs-chips .tag { font-size: 12px; letter-spacing: 0.02em; text-transform: none; color: var(--ink-mid); border: 0.5px solid var(--apricot-deep); padding: 7px 16px; border-radius: 100px; background: var(--card-bg); }
-        .cs-timeline { list-style: none; display: flex; overflow-x: auto; padding-bottom: 6px; }
-        .cs-timeline li { flex: 1 0 120px; position: relative; padding: 26px 12px 0 0; }
-        .cs-timeline li::before { content: ''; position: absolute; top: 6px; left: 0; right: 0; border-top: 1px dashed var(--apricot-deep); }
-        .cs-timeline li::after { content: ''; position: absolute; top: 2px; left: 0; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); }
-        .cs-timeline span { display: block; font-size: 10px; letter-spacing: 0.1em; color: var(--ink-light); }
-        .cs-timeline b { font-size: 13px; font-weight: 400; color: var(--ink-mid); }
-        .cs-donut { display: flex; align-items: center; gap: 28px; max-width: 640px; }
-        .cs-donut svg { width: 128px; flex: none; }
-        .cs-donut .track { fill: none; stroke: var(--apricot-warm); stroke-width: 10; }
-        .cs-donut .val { fill: none; stroke: var(--accent); stroke-width: 10; stroke-linecap: round; }
-        .cs-donut text { font-family: 'Cormorant Garamond', serif; font-size: 26px; fill: var(--ink); }
-        .cs-donut p { font-size: 14px; line-height: 1.7; color: var(--ink-mid); font-weight: 300; }
-        .cs-num { list-style: none; display: grid; gap: 0 40px; }
-        .cs-num li { display: flex; gap: 14px; padding: 14px 0; border-top: 0.5px solid var(--apricot-warm); font-size: 13.5px; line-height: 1.7; color: var(--ink-mid); font-weight: 300; }
-        .cs-num li > span { flex: none; min-width: 2ch; font-family: 'Cormorant Garamond', serif; font-size: 18px; line-height: 1.3; color: var(--accent); }
-        .cs-num strong { font-weight: 500; color: var(--ink); }
-        .cs-pairs { display: grid; }
-        .cs-pair { display: grid; grid-template-columns: 36px 1fr 28px 1.7fr; gap: 16px; align-items: baseline; padding: 16px 0; border-top: 0.5px solid var(--apricot-warm); }
-        .cs-pair .n { font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--accent); }
-        .cs-pair .from { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--ink); }
-        .cs-pair .arrow { color: var(--accent-light); }
-        .cs-pair .to { font-size: 13.5px; line-height: 1.7; color: var(--ink-mid); font-weight: 300; }
-        .cs-pair strong, .cs-body strong { font-weight: 500; color: var(--ink); }
-        .cs-table { overflow-x: auto; }
-        .cs-table table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-        .cs-table th { text-align: left; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 400; color: var(--ink-light); padding: 0 16px 10px 0; border-bottom: 0.5px solid var(--apricot-deep); }
-        .cs-table td { padding: 14px 16px 14px 0; border-bottom: 0.5px solid var(--apricot-warm); color: var(--ink-mid); font-weight: 300; line-height: 1.6; vertical-align: top; }
-        .cs-table td:first-child { font-family: 'Cormorant Garamond', serif; font-size: 19px; color: var(--ink); white-space: nowrap; }
-        .cs-phones { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 190px)); justify-content: center; gap: 28px; padding: 36px 24px; border-radius: 16px; background: var(--apricot-mid); border: 0.5px solid var(--apricot-warm); }
-        .cs-phones figure { text-align: center; }
-        .cs-phones img { width: 100%; }
-        .cs-phones figcaption, .cs-gallery figcaption { margin-top: 10px; font-size: 11px; letter-spacing: 0.05em; color: var(--ink-light); }
-        .cs-figure { padding: 0; background: #fff; }
-        .cs-figure img { width: 100%; display: block; }
-        .cs-gallery { display: flex; flex-wrap: wrap; gap: 14px; }
-        .cs-gallery figure { min-width: 140px; display: flex; align-items: center; justify-content: center; padding: 24px; border-radius: 14px; background: var(--apricot-mid); border: 0.5px solid var(--apricot-warm); }
-        .cs-gallery img { max-height: 260px; width: auto; max-width: 100%; }
-        .cs-chat { display: flex; flex-direction: column; gap: 10px; max-width: 560px; }
-        .bubble { max-width: 85%; padding: 12px 16px; border-radius: 16px; background: var(--card-bg); border: 0.5px solid var(--apricot-warm); font-size: 13.5px; line-height: 1.6; color: var(--ink-mid); }
-        .bubble b { display: block; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; color: var(--ink); margin-bottom: 2px; }
-        .bubble.right { align-self: flex-end; background: var(--accent); border-color: var(--accent); color: var(--white); }
-        .bubble.right b { color: inherit; }
-        .cs-swatches { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 14px; }
-        .cs-swatches i { display: block; height: 72px; border-radius: 10px; margin-bottom: 10px; border: 0.5px solid rgba(0,0,0,0.06); }
-        .cs-swatches b { display: block; font-size: 12px; font-weight: 500; letter-spacing: 0.04em; color: var(--ink); }
-        .cs-swatches span { font-size: 12px; color: var(--ink-light); }
-        .cs-kv { display: grid; max-width: 640px; }
-        .cs-kv div { display: grid; grid-template-columns: 110px 1fr; gap: 16px; padding: 12px 0; border-top: 0.5px solid var(--apricot-warm); }
-        .cs-kv dt { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-light); padding-top: 3px; }
-        .cs-kv dd { font-size: 13.5px; line-height: 1.7; color: var(--ink-mid); font-weight: 300; }
-        .cs-next-img { background: linear-gradient(135deg, #F0E6D8 0%, #E2CDB8 100%); padding: 16px; }
-        .cs-next-img img { max-height: 100%; width: auto; max-width: 100%; }
-        [data-zoom] { cursor: zoom-in; }
-        .zoom-box { border: 0; padding: 0; width: 96vw; height: 94vh; max-width: 96vw; max-height: 94vh; border-radius: 16px; background: var(--apricot); overflow: hidden; }
-        .zoom-box::backdrop { background: rgba(44, 33, 24, 0.7); }
-        .zoom-box > div { width: 100%; height: 100%; overflow: auto; display: flex; }
-        .zoom-box img { margin: auto; max-width: none; }
-        .zoom-close { position: absolute; top: 12px; right: 12px; z-index: 1; font: inherit; font-size: 12px; border: 0.5px solid var(--apricot-warm); border-radius: 100px; padding: 6px 14px; background: var(--white); cursor: pointer; }
-        @media (max-width: 900px) { .g4, .g5 { grid-template-columns: repeat(2, 1fr); } .g3 { grid-template-columns: 1fr 1fr; } }
-        @media (max-width: 768px) {
-            .lang-toggle { margin: 0 0 0 24px; align-self: center; }
-            .g2, .g3, .g4, .g5 { grid-template-columns: 1fr; }
-            .stats.g4 { grid-template-columns: 1fr 1fr; }
-            .cs-hero { padding: 20px; }
-            .cs-pair { grid-template-columns: 32px 1fr; } .cs-pair .arrow { display: none; } .cs-pair .to { grid-column: 2; }
-            .cs-donut { flex-direction: column; align-items: flex-start; }
-            .cs-phones { grid-template-columns: repeat(2, 1fr); padding: 20px; gap: 20px; }
-            .cs-table thead { display: none; }
-            .cs-table table, .cs-table tbody, .cs-table tr, .cs-table td { display: block; }
-            .cs-table tr { padding: 12px 0; border-bottom: 0.5px solid var(--apricot-warm); }
-            .cs-table td { border: 0; padding: 2px 0; white-space: normal; }
-            .cs-kv div { grid-template-columns: 1fr; gap: 2px; }
-        }
-        @media (max-width: 768px) { .vibe-footer { margin: 0; } }
-        /* hi-fi wall: tilted plane drifting up-left; one step = one column + one row (seamless) */
-        .cs-wall { position: relative; height: clamp(380px, 46vw, 600px); overflow: hidden; margin-left: -20px; margin-right: -20px;
-            -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent), linear-gradient(transparent, #000 14%, #000 86%, transparent);
-            -webkit-mask-composite: source-in; mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent), linear-gradient(transparent, #000 14%, #000 86%, transparent); mask-composite: intersect; }
-        .cs-wall-plane { position: absolute; left: 50%; top: 50%; transform: rotate(-24deg); }
-        .cs-wall-drift { position: absolute; animation: wall-drift 36s linear infinite; }
-        .cs-wall img { position: absolute; width: 150px; filter: drop-shadow(0 12px 18px rgba(44, 33, 24, 0.14)); }
-        @keyframes wall-drift { to { transform: translate(-174px, -400px); } }
-        @media (max-width: 768px) { .cs-wall-plane { transform: rotate(-24deg) scale(0.62); } }
-        @media (prefers-reduced-motion: reduce) { .cs-wall-drift { animation: none; } }
-        /* story layout (mockup → challenge / problem / goal → intro → process → key features) */
-        .cs-mock { margin-top: 56px; margin-bottom: 0; padding: clamp(24px, 4vw, 56px); animation: fadeUp 0.9s ease 0.1s both; }
-        .cs-mock img { max-height: 560px; }
-        .cs-title { padding: 48px 0 8px; }
-        .cs-k { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 10px; }
-        .cs-serif { font-family: 'Cormorant Garamond', serif; font-size: clamp(19px, 1.7vw, 23px); line-height: 1.45; color: var(--ink); }
-        .cs-story { display: grid; grid-template-columns: 1fr 1fr; gap: 40px 56px; padding: 40px 0 96px; border-top: 0.5px solid var(--apricot-warm); margin-top: 32px; }
-        .cs-goals { list-style: none; display: flex; flex-direction: column; gap: 8px; align-self: end; }
-        .cs-goals li { display: flex; gap: 14px; align-items: baseline; padding-bottom: 8px; border-bottom: 0.5px solid var(--apricot-warm); }
-        .cs-goals span { font-family: 'Cormorant Garamond', serif; color: var(--accent); }
-        .cs-goals b { font-size: 13.5px; font-weight: 400; color: var(--ink-mid); }
-        .cs-process { display: flex; flex-direction: column; gap: 28px; }
-        .cs-pill { display: flex; justify-content: center; align-items: center; padding: 14px; border: 1px solid var(--ink-mid); border-radius: 999px; position: relative; }
-        .cs-pill::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; border-top: 1px dashed var(--apricot-deep); z-index: -1; }
-        .cs-pill span { flex: 0 1 170px; aspect-ratio: 1; border-radius: 50%; background: rgba(196, 120, 90, 0.16); display: grid; place-items: center; margin-left: -26px; font-family: 'Cormorant Garamond', serif; font-size: clamp(16px, 1.8vw, 24px); color: var(--ink); }
-        .cs-pill span:first-child { margin-left: 0; }
-        .cs-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-        .cs-steps p { font-size: 13px; line-height: 1.7; color: var(--ink-mid); font-weight: 300; }
-        .cs-steps .cs-step-n { font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--accent); margin-bottom: 4px; }
-        .cs-feat-head { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: end; }
-        .cs-feat-head .section-heading { font-size: clamp(32px, 3.6vw, 44px); }
-        .cs-sub { font-size: 14px; color: var(--ink-mid); font-weight: 300; margin-top: 10px; }
-        .cs-checks { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-        .cs-checks li { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--ink); }
-        .cs-checks svg { width: 15px; height: 15px; flex: none; margin-top: 3px; color: var(--accent); }
-        .cs-phones.dense { grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 18px; padding: 28px; }
-        .cs-phones.dense img { max-width: 230px; margin: 0 auto; }
-        .cs-feature .cs-chat { margin-left: auto; }
-        @media (max-width: 768px) {
-            .cs-story, .cs-feat-head { grid-template-columns: 1fr; gap: 28px; }
-            .cs-steps { grid-template-columns: 1fr 1fr; }
-            .cs-pill span { margin-left: -14px; }
-            .cs-phones.dense { grid-template-columns: repeat(2, 1fr); padding: 16px; }
-        }
-
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VIVA TOY — Amanda Zhang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;600&family=Luckiest+Guy&display=swap">
+<link rel="stylesheet" href="assets/case.css">
+<style>
+/* VIVA's own colours: sky blue stage (dark text), vivid red as the brand accent */
+:root{--brand:#73DFFA;--brand-soft:#D9F6FE}
+:root[data-theme="dark"]{--brand-soft:#123A44}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--brand-soft:#123A44}}
+.stage .stage-title,.stage .counter{color:#13232A}
+.stage-title{font-family:"Luckiest Guy",var(--f-display);font-weight:400;letter-spacing:.01em}
+.hero-mock{position:absolute;right:-20px;bottom:-30px;width:min(420px,60%);transition:transform .45s cubic-bezier(.3,1.4,.5,1);transform:rotate(-4deg)}
+.stage:hover .hero-mock{transform:rotate(2deg) translateY(-14px) scale(1.03)}
+.stage .counter{right:auto;left:28px;top:auto;bottom:22px;align-items:flex-start}
+.bub.me{color:#13232A}.bub.me b{color:#13232A}
+@media (max-width:640px){.hero-mock{width:78%}.stage .counter{display:none}}
+</style>
 </head>
-
 <body>
-
-    <!-- Progress bar -->
-    <div class="reading-progress" id="progress"></div>
-
-    <!-- Sidebar -->
-    <nav class="sidebar">
-        <a href="index.html" class="sidebar-logo">玥妍</a>
-        <div class="sidebar-nav">
-            <a href="index.html#projects" class="nav-item" data-zh="作品">Projects</a>
-            <a href="index.html#playground" class="nav-item" data-zh="实验">Playground</a>
-            <a href="index.html#connect" class="nav-item" data-zh="联系">Connect</a>
-        </div>
-        <button class="lang-toggle" type="button"><b>EN</b> / 中文</button>
+<div class="shell">
+  <aside class="toc">
+    <a class="home" href="index.html#work" data-zh="← 全部作品">← All work</a>
+    <button class="lang-toggle" type="button"><b>EN</b> / 中文</button>
+    <span class="meta" data-zh="目录">CONTENTS</span>
+    <nav id="toc">
+      <a href="#context" data-zh="三类用户">Context</a>
+      <a href="#question" data-zh="核心问题">Key question</a>
+      <a href="#brands" data-zh="品牌售后">What brands offer</a>
+      <a href="#market" data-zh="市场">Market</a>
+      <a href="#strategy" data-zh="商业策略">Strategy</a>
+      <a href="#canvas" data-zh="商业模式画布">Business model</a>
+      <a href="#system" data-zh="系统">System</a>
+      <a href="#blueprints" data-zh="服务蓝图">Blueprints</a>
+      <a href="#visual" data-zh="视觉规范">Visual system</a>
+      <a href="#reflection" data-zh="反思">Reflection</a>
     </nav>
+  </aside>
 
-    <!-- Back button -->
-    <a href="index.html" class="back-btn">
-        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span data-zh="返回">Back</span>
-    </a>
+  <main>
+    <div class="toc-m"><a href="index.html#work" data-zh="← 全部作品">← All work</a><button class="lang-toggle" type="button"><b>EN</b> / 中文</button></div>
 
-    <!-- Main content -->
-    <div class="main">
-        <!-- ── HERO ── -->
-        <section class="project-hero">
-            <p class="project-tag" data-zh="服务设计">SERVICE DESIGN</p>
-            <h1 class="project-title" data-zh="VIVA TOY · &lt;br&gt;&lt;em&gt;让旧玩具，重新被爱&lt;/em&gt;">VIVA TOY — <br><em>Let old toys be loved again.</em></h1>
-            <div class="project-meta"><div class="meta-item"><span class="meta-label" data-zh="类型">Type</span><span class="meta-value" data-zh="个人项目">Personal project</span></div><div class="meta-item"><span class="meta-label" data-zh="时间">Timeline</span><span class="meta-value" data-zh="2024.11 – 2025.01">Nov 2024 – Jan 2025</span></div><div class="meta-item"><span class="meta-label" data-zh="产出">Deliverable</span><span class="meta-value" data-zh="服务系统 + App">Service system + App</span></div></div>
-        </section>
-        <div class="divider"></div>
-        <div class="img-full cs-hero"><img class="" src="images/home/viva-card.webp" alt="VIVA TOY app screens: welcome, Revive Me plan, and a toy recycling page held in hand" data-zh-alt="VIVA TOY App 界面：欢迎页、Revive Me 计划，以及手持的玩具回收页" decoding="async"></div>
-        <section class="brief-section">
-            <div class="brief-left">
-                <div class="brief-block"><p class="brief-block-label" data-zh="简介">Brief</p><p class="brief-block-text" data-zh="VIVA TOY 是一个电子玩具维修与循环平台。用户可以把旧玩具回收、送修或转给需要的孩子；会员订阅和 VIVA TOY CARE 玩具保障计划，让高价的电子玩具坏了也能修、用旧了也有去处。">VIVA TOY is a repair and circular platform for electronic toys. Families can recycle old toys, send them in for repair, or pass them on to kids who need them. A membership and VIVA TOY CARE, an AppleCare-style protection plan, mean expensive electronic toys can be fixed when they break and find a new home when they’re outgrown.</p></div>
-                <div class="brief-block"><p class="brief-block-label" data-zh="方向">Focus</p><p class="brief-block-text" data-zh="服务设计 · 商业模式 · UX 研究 · App 设计">Service Design · Business Model · UX Research · App Design</p></div>
-            </div>
-            <div class="brief-right">
-                <p class="challenge-label" data-zh="一句话">In one line</p>
-                <h2 class="challenge-text" data-zh="让每一件玩具都被好好修复、继续被爱，减少浪费，也留住童年的回忆。">Every toy deserves to be repaired and loved again — less waste, and the memories stay.</h2>
-            </div>
-        </section>
+    <section class="hero" id="top">
+      <div class="stage" aria-label="VIVA TOY app screens">
+        <div class="stage-title"><span data-zh="让旧玩具，<br>重新被爱。">Let old toys<br>be loved again.</span><small data-zh="VIVA TOY · 电子玩具维修与循环服务">VIVA TOY · repair &amp; reuse service for electronic toys</small></div>
+        <div class="counter"><span data-zh="7 个品牌">7 BRANDS</span><strong data-zh="0 家">0 repair</strong><span data-zh="修使用造成的损坏">damage from use</span></div>
+        <img class="hero-mock" src="images/home/viva-card.webp" alt="VIVA TOY app screens held in hand" data-zh-alt="手持的 VIVA TOY App 界面">
+      </div>
+      <div class="tags"><span class="tag" data-zh="服务设计">Service design</span><span class="tag" data-zh="商业模式">Business model</span><span class="tag" data-zh="UX 研究">UX research</span><span class="tag" data-zh="App 设计">App design</span></div>
+      <h1><span class="star">✳</span><span data-zh="VIVA TOY：坏了能修，旧了有去处">VIVA TOY: fix it when it breaks, pass it on when it’s outgrown</span></h1>
+      <p class="lead" data-zh="电子玩具越来越贵、越来越难修，品牌又不管使用损坏。我设计了一个维修与循环平台：会员订阅 + VIVA TOY CARE，一个像 AppleCare 一样的玩具保障计划。">Electronic toys keep getting pricier and harder to fix, and brands won’t touch damage from use. I designed a repair-and-reuse platform: a membership plus VIVA TOY CARE, an AppleCare-style protection plan for toys.</p>
+      <div class="info">
+        <div><span class="mono" data-zh="角色">Role</span><span data-zh="独立完成 · 研究、商业模式、服务与 App 设计">Solo · research, business model, service &amp; app design</span></div>
+        <div><span class="mono" data-zh="类型">Context</span><span data-zh="个人项目">Personal project</span></div>
+        <div><span class="mono" data-zh="时间">Timeline</span><span data-zh="2024.11 – 2025.01">Nov 2024 – Jan 2025</span></div>
+        <div><span class="mono" data-zh="交付">Output</span><span data-zh="服务系统、2 张服务蓝图、App">Service system, 2 blueprints, app</span></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><strong>3</strong><span data-zh="类用户访谈">user groups</span></div>
+        <div class="stat"><strong>7</strong><span data-zh="个品牌保修对比">brands’ warranties</span></div>
+        <div class="stat t"><strong>0/7</strong><span data-zh="修使用损坏">repair use damage</span></div>
+        <div class="stat h"><strong>2</strong><span data-zh="张服务蓝图">service blueprints</span></div>
+      </div>
+    </section>
 
-        <section class="see-next-section reveal" style="padding-bottom:80px;">
-            <p class="see-next-label" data-zh="下一个项目">See next</p>
-            <div class="next-cards">
-                <a href="temu.html" class="next-card">
-                    <div class="next-card-img cs-next-img"><img class="" src="images/home/temu-card.webp" alt="Redesigned Temu coupon pop-up and check-in screens" data-zh-alt="重新设计的 Temu 优惠弹窗和签到页" loading="lazy" decoding="async"></div>
-                    <div class="next-card-body">
-                        <p class="next-card-direction" data-zh="下一个 →">Next →</p>
-                        <h3 class="next-card-title" data-zh="Temu 优惠弹窗重设计 · 修好它，而不是删掉它">Temu Redesign — Fix it, don’t kill it</h3>
-                        <p class="next-card-desc" data-zh="把 Temu 的优惠券弹窗，从一个陷阱改成一次诚实的邀请。">Redesigning Temu’s coupon pop-up from a trap into an honest invitation.</p>
-                    </div>
-                </a>
-            </div>
-        </section>
-    </div>
-    <!-- /main -->
+    <section id="context" class="wide">
+      <span class="eyebrow" data-zh="背景 · 基础调研">Context · ground understanding</span>
+      <h2 data-zh="一件旧玩具，三种感情。">One old toy, three kinds of attachment.</h2>
+      <p data-zh="我访谈了国内三类人，问他们怎么看自己的旧电子玩具。悬停卡片，听他们自己说。">I talked to three kinds of people in China about their old electronic toys. Hover a card to hear it in their words.</p>
+      <div class="people">
+        <div class="pcard" tabindex="0"><img src="images/viva-toy/viva-user-kid-1.webp" alt="Illustration of a child with toys" data-zh-alt="小孩和玩具的插画" loading="lazy">
+          <div class="in"><h3 data-zh="小孩子：想要更多玩具">Young kids: want more toys</h3><div class="kw"><span data-zh="缺少父母陪伴">absent parents</span><span data-zh="玩具是朋友">toys as friends</span><span data-zh="二手玩具">second-hand</span></div></div>
+          <div class="back"><span class="mono" data-zh="杨智，11 岁">Zhi Yang, 11</span><span data-zh="「我很想玩会说话的机器人和 VR，但家里不能一直买新的。所以我很珍惜玩具，它们就像我的朋友。」">“I really want talking robots and VR, but my family can’t keep buying new ones. So I treasure my toys. They’re like my friends.”</span></div></div>
+        <div class="pcard" tabindex="0"><img src="images/viva-toy/viva-user-adult-1.webp" alt="Illustration of an adult with a toy collection" data-zh-alt="成年人和收藏玩具的插画" loading="lazy">
+          <div class="in"><h3 data-zh="成年人：玩具是回忆">Grown-ups: toys are memories</h3><div class="kw"><span data-zh="纪念意义">sentimental</span><span data-zh="维修需求">needs repair</span><span data-zh="绝版收藏">out-of-print</span></div></div>
+          <div class="back"><span class="mono" data-zh="Jeff Li，27 岁">Jeff Li, 27</span><span data-zh="「很多老玩具其实还能用。现在我把它们摆出来，或者试着修好，就像一个小小的博物馆。」">“Many old toys still work. Now I display them or try to fix them, like a little museum of my own.”</span></div></div>
+        <div class="pcard" tabindex="0"><img src="images/viva-toy/viva-user-parent-1.webp" alt="Illustration of a parent sorting toys" data-zh-alt="家长整理玩具的插画" loading="lazy">
+          <div class="in"><h3 data-zh="家长：不断断舍离">Parents: decluttering as kids grow</h3><div class="kw"><span data-zh="品质优先">quality first</span><span data-zh="旧玩具没处去">nowhere to go</span></div></div>
+          <div class="back"><span class="mono" data-zh="Emily Zhang，45 岁">Emily Zhang, 45</span><span data-zh="「孩子长大后，大部分玩具就扔掉了。我试过卖掉保存好的，不管花多少精力，都只能低价出售。」">“When my child outgrows them, most get thrown away. I tried selling the good ones, but no matter the effort, they sold for very little.”</span></div></div>
+      </div>
+      <p data-zh="<span class='emph'>低收入家庭的孩子玩具选择很少，有人专门收藏绝版玩具，而大量还能用的玩具闲置在家，或者被低价卖给回收站。</span>"><span class="emph">Kids from low-income families have few toy options and some adults collect out-of-print toys, while plenty of usable toys sit idle or get sold to recyclers for almost nothing.</span></p>
+    </section>
 
-    <!-- ── VIBE FOOTER ── -->
-    <div class="main" style="padding:0;max-width:100%;margin-left:var(--sidebar-w);">
-        <footer class="vibe-footer reveal">
-            <p class="vibe-pretext" data-zh="关于设计师">About the designer</p>
-            <h2 class="vibe-headline" data-zh="懂时尚，<br><em>有同理心</em>——<br>做有生命力的 UX。">
-                Fashion-forward,<br>
-                <em>empathy-driven</em> —<br> UX that feels alive.
-            </h2>
-            <div class="vibe-tags">
-                <span class="vibe-tag">Fashion + Design</span>
-                <span class="vibe-tag">Empathy Coder</span>
-                <span class="vibe-tag">Fast Learner</span>
-                <span class="vibe-tag">Micro-interactions</span>
-                <span class="vibe-tag">Brand Systems</span>
-                <span class="vibe-tag">Motion & Prototyping</span>
-                <span class="vibe-tag">Human Psychology</span>
-                <span class="vibe-tag">Visual Storytelling</span>
-            </div>
-            <div class="vibe-bottom">
-                <span class="vibe-copy">© Amanda · 玥妍 · 2025</span>
-                <div class="vibe-links">
-                    <a href="#" class="vibe-link">Resume</a>
-                    <a href="#" class="vibe-link">LinkedIn</a>
-                    <a href="#" class="vibe-link">Instagram</a>
-                    <a href="index.html" class="vibe-link"><span data-zh="↑ 回到顶部">↑ Back to top</span></a>
-                </div>
-            </div>
-        </footer>
-    </div>
+    <section id="question" class="wide">
+      <span class="eyebrow" data-zh="核心问题">Key question</span>
+      <h2 data-zh="三个问题，一个缺口。">Three questions, one gap.</h2>
+      <p data-zh="点一下每个问题。">Tap each question.</p>
+      <div class="chain" id="chain">
+        <button type="button" data-a="Yes." data-zh-a="是。"><span data-zh="需求量大吗？">Is there big demand?</span><strong>?</strong></button>
+        <button type="button" data-a="No." data-zh-a="否。"><span data-zh="玩具被充分利用了吗？">Are toys fully used?</span><strong>?</strong></button>
+        <button type="button" data-a="Yes." data-zh-a="是。"><span data-zh="很难修吗？">Are they hard to repair?</span><strong>?</strong></button>
+        <div class="so" id="so" data-zh="→ 人们对陪伴自己长大的玩具有感情，但大多数人不知道坏掉的玩具该去哪里修。">→ People are attached to the toys they grew up with, but most don’t know where to get a broken one fixed.</div>
+      </div>
+      <div class="duo">
+        <figure><img src="images/viva-toy/viva-repair-trad.webp" alt="Traditional toy repair: plush toy hospitals and restorers" data-zh-alt="传统玩具维修：毛绒玩具医院和修复师" loading="lazy">
+          <figcaption><b data-zh="传统玩具维修">Traditional repair</b><span data-zh="大多只修毛绒和简单电路，小规模经营，人越来越少，价格越来越高。">Mostly plush and simple circuits. Small specialists, fewer every year, prices keep rising.</span></figcaption></figure>
+        <figure><img src="images/viva-toy/viva-repair-new.webp" alt="A modern electronic toy's circuit board" data-zh-alt="新型电子玩具的电路板" loading="lazy">
+          <figcaption><b data-zh="新型电子玩具维修">New electronic toys</b><span data-zh="工厂定制的高精度电路板，个人手艺人很难修；就算能修，单件成本也很高。没有专业机构。">Custom high-precision boards that craftspeople can’t easily fix, and very costly when they can. No professional institutions.</span></figcaption></figure>
+      </div>
+    </section>
 
-    <script>
-        // Reading progress
-        const progress = document.getElementById('progress');
-        window.addEventListener('scroll', () => {
-            const h = document.documentElement.scrollHeight - window.innerHeight;
-            const pct = (window.scrollY / h) * 100;
-            progress.style.width = Math.min(pct, 100) + '%';
-        });
+    <section id="brands" class="wide">
+      <span class="eyebrow" data-zh="市场调研">Market research</span>
+      <h2 data-zh="我去问了品牌。">So I asked the brands.</h2>
+      <div class="split">
+        <div class="chat" id="chat" aria-label="Email exchange with a toy brand">
+          <div class="bub me"><b data-zh="我">Me</b><span data-zh="如果电子玩具在使用中坏了，可以去哪里修？">If my electronic toy breaks during use, where can I get it repaired?</span></div>
+          <div class="bub"><b data-zh="玩具品牌">Toy brand</b><span data-zh="我们无法处理额外零件的需求……请访问厂商网站订购。">We are unable to process requests for additional parts… Please visit the manufacturer’s website.</span></div>
+          <div class="bub me"><b data-zh="我">Me</b><span data-zh="好的，那我怎么找到厂商的网站？">Okay. How can I find the manufacturer’s website?</span></div>
+          <div class="bub"><b data-zh="部分品牌">Some brands</b><i data-zh="未回复">No response</i></div>
+        </div>
+        <div class="txt">
+          <p data-zh="既然非官方维修这么贵，为什么不找厂商？我给几家知名品牌发了邮件，也查了官网。">If unofficial repairs cost so much, why not ask the makers? I emailed several well-known brands and checked their websites.</p>
+          <img class="chart" src="images/viva-toy/viva-email.webp" alt="Screenshot of the brand's email reply" data-zh-alt="品牌回复邮件的截图" loading="lazy">
+        </div>
+      </div>
+      <!-- TODO(Amanda): the full returns / exchange / warranty grid needs the ticks from the Figma table (335:10512); only the last row is certain -->
+      <div class="brands">
+        <div><img src="images/viva-toy/brands/viva-brand-1.webp" alt="LEGO"><span>$0–850</span><em>✕</em></div>
+        <div><img src="images/viva-toy/brands/viva-brand-2.webp" alt="Fisher-Price"><span>$0–150</span><em>✕</em></div>
+        <div><img src="images/viva-toy/brands/viva-brand-3.webp" alt="Hasbro"><span>$0–100</span><em>✕</em></div>
+        <div><img src="images/viva-toy/brands/viva-brand-4.webp" alt="VTech"><span>$10–160</span><em>✕</em></div>
+        <div><img src="images/viva-toy/brands/viva-brand-5.webp" alt="Sphero"><span>$10–5000</span><em>✕</em></div>
+        <div><img src="images/viva-toy/brands/viva-brand-6.webp" alt="Bandai Namco"><span>$10–100</span><em>✕</em></div>
+        <div><img src="images/viva-toy/brands/viva-brand-7.webp" alt="Toys“R”Us"><span>$10–200</span><em>✕</em></div>
+      </div>
+      <p class="cap" data-zh="价格区间 · ✕ = 不维修使用造成的损坏。7 个品牌都不修。">Price range · ✕ = won’t repair damage from use. None of the 7 do.</p>
+      <div class="split">
+        <img class="chart" src="images/viva-toy/en/viva-expense-en.webp" data-zh-src="images/viva-toy/zh/viva-expense-zh.webp" alt="Donut chart of toy makers' costs: parts, labor and handling losses top 50%" data-zh-alt="玩具厂商支出环形图：零件、人工和损耗超过 50%" loading="lazy">
+        <div class="txt">
+          <h3 data-zh="为什么品牌不修？">Why brands don’t repair</h3>
+          <p data-zh="零件、人工和处理损耗已经占了 <span class='num'>50%+</span> 的成本，运输和出厂问题的损坏也是厂商在扛。">Parts, labor and handling losses already make up <span class="num">50%+</span> of costs, and makers already absorb shipping and factory damage.</p>
+          <div class="trio" style="grid-template-columns:minmax(0,1fr)">
+            <div><b data-zh="成本高">High cost</b><span data-zh="零件、人工、库存、运输都会再增加。">Parts, labor, inventory and shipping all go up.</span></div>
+            <div><b data-zh="损害品牌形象">Brand image</b><span data-zh="提供维修像在承认产品质量不好。">Offering repairs feels like admitting poor quality.</span></div>
+            <div><b data-zh="购买欲下降">Fewer new sales</b><span data-zh="品牌靠新品赚钱，不是维护旧玩具。">Brands earn from new toys, not from keeping old ones alive.</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-        // Scroll reveal
-        const reveals = document.querySelectorAll('.reveal');
-        const obs = new IntersectionObserver((entries) => {
-            entries.forEach(e => {
-                if (e.isIntersecting) {
-                    e.target.classList.add('visible');
-                    obs.unobserve(e.target);
-                }
-            });
-        }, {
-            threshold: 0.08,
-            rootMargin: '0px 0px -40px 0px'
-        });
+    <section id="market" class="wide">
+      <span class="eyebrow" data-zh="研究与分析">Research &amp; analysis</span>
+      <h2 data-zh="市场在变大，玩具在变难修。">The market grows. Toys get harder to fix.</h2>
+      <div class="split">
+        <img class="chart" src="images/viva-toy/en/viva-market-en.webp" data-zh-src="images/viva-toy/zh/viva-market-zh.webp" alt="Bar chart: China's toy market, 2017–2023" data-zh-alt="柱状图：中国玩具市场规模 2017–2023" loading="lazy">
+        <div class="txt">
+          <p data-zh="中国玩具市场从 2017 年的 <span class='num'>646 亿元</span> 增长到 2023 年的 <span class='num'>907 亿元</span>，增速高于其他母婴品类。智能、机器人、VR 玩具研发投入大，上市价格也高。">China’s toy market grew from <span class="num">RMB 64.6B</span> in 2017 to <span class="num">RMB 90.7B</span> in 2023, faster than other baby and kids categories. Smart, robot and VR toys take heavy R&amp;D, so they launch at high prices.</p>
+          <div class="meters" style="max-width:none">
+            <div class="meter"><span data-zh="家长搜具体玩具">search a toy type</span><strong>64%</strong></div>
+            <div class="meter"><span data-zh="孩子影响购买">kids sway the buy</span><strong>87%</strong></div>
+            <div class="meter"><span data-zh="在玩具店买">buy at toy stores</span><strong>35%</strong></div>
+            <div class="meter"><span data-zh="有店员帮助">get staff help</span><strong>21%</strong></div>
+          </div>
+          <!-- TODO(Amanda): add source links for the 2017–2023 market figures and Kids Corp 2023 -->
+          <p class="cap" data-zh="来源：《2023 玩具行业报告》；Kids Corp，2023">Sources: 2023 Toy Industry Report; Kids Corp, 2023</p>
+        </div>
+      </div>
+      <div class="split">
+        <div class="txt">
+          <h3 data-zh="原材料也在涨价">Raw materials cost more too</h3>
+          <p data-zh="塑料、金属涨价会推高玩具价格。家长越来越谨慎，更喜欢在线下门店买：能上手试，能看孩子喜欢什么。">Plastic and metal prices push toy prices up. Parents are getting more careful and prefer physical stores, where they can try a toy and watch what their kid likes.</p>
+          <img data-lang-only="zh" src="images/viva-toy/viva-attitude.webp" alt="Illustration: parents shopping carefully in a store" data-zh-alt="插画：家长在门店谨慎购物" style="width:100%;max-width:360px" loading="lazy">
+        </div>
+        <img class="chart" src="images/viva-toy/en/viva-material-en.webp" data-zh-src="images/viva-toy/zh/viva-material-zh.webp" alt="Chart of rising raw-material prices" data-zh-alt="原材料价格上涨图" loading="lazy">
+      </div>
+      <div class="pgrid">
+        <div class="pcard frame" tabindex="0"><span class="mono" style="opacity:.6" data-zh="推论">What this adds up to</span>
+          <h3 data-zh="更多芯片、更多传感器、更贵的材料。未来会有大量还能修的玩具被扔掉。">More chips, more sensors, pricier materials. A lot of fixable toys are headed for the bin.</h3>
+          <div class="back"><span class="mono" data-zh="机会">The opening</span><span data-zh="家长要耐用、要线下、要优惠。一个能修、能转手的服务正好接住这三点。">Parents want durable, in-store and good deals. A service that repairs and passes toys on meets all three.</span></div></div>
+      </div>
+      <div class="duo" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+        <figure><img src="images/viva-toy/viva-neg-income.webp" alt="Photo: a child from a low-income family" data-zh-alt="照片：低收入家庭的孩子" loading="lazy"><figcaption><b data-zh="低收入家庭">Low-income families</b><span data-zh="孩子没有机会体验新科技玩具。">Kids miss the chance to try new-tech toys.</span></figcaption></figure>
+        <figure><img src="images/viva-toy/viva-neg-growth.webp" alt="Photo: a child watching others play" data-zh-alt="照片：看别人玩的孩子" loading="lazy"><figcaption><b data-zh="影响孩子成长">Children’s growth</b><span data-zh="看到别人有潮流玩具会嫉妒。">Jealousy when others have trendy toys.</span></figcaption></figure>
+        <figure><img src="images/viva-toy/viva-neg-waste.webp" alt="Photo: a pile of discarded toys" data-zh-alt="照片：被丢弃的玩具" loading="lazy"><figcaption><b data-zh="潜在的浪费">Potential waste</b><span data-zh="孩子长大后大多闲置，处理不当就是垃圾。">Most sit idle once kids grow, then become waste.</span></figcaption></figure>
+      </div>
+    </section>
 
-        reveals.forEach(el => obs.observe(el));
-    </script>
+    <section>
+      <div class="hmw">
+        <span class="mono" data-zh="我们可以怎样">How might we</span>
+        <p data-zh="怎样让坏掉的电子玩具修得起，让旧玩具找到下一个孩子，同时让这门生意自己养得活？">How might we make broken electronic toys affordable to fix, send outgrown ones to the next kid, and keep the business paying for itself?</p>
+      </div>
+    </section>
 
-    <dialog class="zoom-box" aria-label="Image"><button type="button" class="zoom-close" data-zh="关闭 ✕">Close ✕</button><div></div></dialog>
-    <script>
-        // Click any [data-zoom] image to see it full size
-        const zoomBox = document.querySelector('.zoom-box');
-        const openZoom = img => { zoomBox.querySelector('div').innerHTML = `<img src="${img.currentSrc || img.src}" alt="">`; zoomBox.showModal(); };
-        document.addEventListener('click', e => {
-            if (e.target.matches('[data-zoom]')) openZoom(e.target);
-            else if (e.target === zoomBox || e.target.closest('.zoom-close')) zoomBox.close();
-        });
-        document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('[data-zoom]')) openZoom(e.target); });
-    </script>
-    <script src="assets/i18n.js" defer></script>
+    <section id="strategy" class="wide">
+      <span class="eyebrow ok" data-zh="商业策略">Strategy</span>
+      <h2 data-zh="借 AppleCare 的模式，用在玩具上。">Borrow AppleCare’s model, for toys.</h2>
+      <p data-zh="行业不同，但模式值得借：像保险一样保护用户，同时让品牌有稳定的资金，甚至盈利。">Different industry, same idea: an insurance-like plan protects users and gives the brand steady funding, even profit.</p>
+      <div class="duo">
+        <figure><img src="images/viva-toy/viva-applecare.webp" alt="AppleCare+" loading="lazy"><figcaption><b>AppleCare+</b><span data-zh="保障期延长到 2 年，不限次意外损坏保护，价格约为设备价的 <span class='num'>10–20%</span>。几乎零成本、高收益。">Two years of cover with unlimited accidental-damage incidents, for about <span class="num">10–20%</span> of the device price. Near-zero cost, big revenue.</span></figcaption></figure>
+        <figure><img src="images/viva-toy/viva-djicare.webp" alt="DJI Care Refresh" loading="lazy"><figcaption><b>DJI Care</b><span data-zh="检测、清洁、换零件，约为设备价的 <span class='num'>10–15%</span>。2022 年 175 名用户中，<span class='num'>57.14%</span> 买了 2 年计划，<span class='num'>25.71%</span> 买了 1 年计划。">Inspection, cleaning and part swaps for about <span class="num">10–15%</span> of the price. Of 175 owners surveyed in 2022, <span class="num">57.14%</span> bought 2 years and <span class="num">25.71%</span> bought 1.</span></figcaption></figure>
+      </div>
+      <!-- TODO(Amanda): the DJI Mavic 3 savings table doesn't add up ($1,581 vs ~$1,471), check the source before adding it back -->
+      <div class="trio ok">
+        <div><b data-zh="对用户：稳赚不赔">For users: a safe bet</b><span data-zh="几乎消除了损坏带来的经济风险。">Damage stops being a financial risk.</span></div>
+        <div><b data-zh="对企业：稳定收入">For the company: steady revenue</b><span data-zh="维修风险由全体用户分担，盈余归品牌。">Repair risk is pooled across all members; the surplus funds the brand.</span></div>
+        <div><b data-zh="对玩具：多活几年">For the toy: a longer life</b><span data-zh="修好了就能继续玩，或者转给下一个孩子。">Fixed toys stay in play, or move on to the next kid.</span></div>
+      </div>
+      <img class="chart" data-lang-only="zh" src="images/viva-toy/zh/viva-profit-zh.webp" alt="VIVA TOY 的盈利方式图" loading="lazy">
+      <!-- TODO(Amanda): export viva-profit-en.webp (inside frame 335:9936) so the English page has this diagram too -->
+    </section>
+
+    <section id="canvas" class="wide">
+      <span class="eyebrow ok" data-zh="商业模式画布">Business model canvas</span>
+      <h2 data-zh="九格，一页看完这门生意。">Nine boxes, the whole business on one page.</h2>
+      <div class="bmc">
+        <div class="kp"><span class="mono" data-zh="01 重要伙伴">01 Key partners</span><span data-zh="玩具回收中心 · 玩具零售店 · 物流 · 装修公司 · 营销机构">Toy recycling centers · toy retail stores · logistics · store fit-out · marketing agency</span></div>
+        <div><span class="mono" data-zh="02 关键业务">02 Key activities</span><span data-zh="客户支持 · 卖二手玩具和 VIVA TOY CARE · 回收 · 维修">Customer support · selling second-hand toys and VIVA TOY CARE · recycling · repair</span></div>
+        <div class="vp"><span class="mono" data-zh="04 价值主张">04 Value propositions</span><span data-zh="用实惠的价格提供优质玩具，帮助低收入家庭的孩子成长。<br>回收旧玩具，减少浪费，为下一代节约资源。">Quality toys at fair prices, so kids from low-income families grow up with them.<br>Recycle used toys to cut waste and save resources for the next generation.</span></div>
+        <div><span class="mono" data-zh="05 客户关系">05 Customer relationships</span><span data-zh="社交媒体 · 门店店员 · 邮件简报 · 短信 · 优惠券网站">Social media · in-store staff · email newsletter · texts · coupon sites</span></div>
+        <div class="cs"><span class="mono" data-zh="07 客户细分">07 Customer segments</span><span data-zh="<b>大孩子</b> 18–50 岁，城市，中高收入<br><b>家长</b> 30–50 岁，城市，预算有限<br><b>儿童</b> 10–18 岁，城市，预算有限"><b>Kidults</b> 18–50, urban, mid-high income<br><b>Parents</b> 30–50, urban, budget-conscious<br><b>Children</b> 10–18, urban, budget-conscious</span></div>
+        <div><span class="mono" data-zh="03 核心资源">03 Key resources</span><span data-zh="维修专家 · 回收的玩具 · 维修技术 · 视觉设计">Repair specialists · recycled toys · repair tech · visual design</span></div>
+        <div><span class="mono" data-zh="06 渠道">06 Channels</span><span data-zh="线上：网站与 App<br>线下：授权合作门店（如玩具反斗城）">Online: website &amp; app<br>Offline: partner stores such as Toys“R”Us</span></div>
+        <!-- TODO(Amanda): confirm the variable / fixed split, the original only lists the items -->
+        <div class="cost"><span class="mono" data-zh="08 成本结构">08 Cost structure</span><span data-zh="可变：物流 · 回收 · 维修 · 保险赔付<br>固定：人工 · 网站运营 · 营销 · 零售合作">Variable: logistics · recycling · repair · insurance payouts<br>Fixed: labor · website · marketing · retail partners</span></div>
+        <div class="rev"><span class="mono" data-zh="09 收入来源">09 Revenue streams</span><span data-zh="订阅费 · 玩具销售 · 维修费 · 保费 · 投资收益">Subscriptions · toy sales · repair fees · insurance premiums · investment returns</span></div>
+      </div>
+    </section>
+
+    <section id="system" class="wide">
+      <span class="eyebrow ok" data-zh="系统">System</span>
+      <h2 data-zh="一个自己转得动的循环。">A loop that keeps itself running.</h2>
+      <p data-zh="循环经济 + 类 AppleCare 的保险机制 + 整合分散的维修师傅。点击放大。">Circular economy + an AppleCare-like insurance plan + a network of independent repair workers. Click to zoom.</p>
+      <div class="scrollbox zoomable"><img src="images/viva-toy/en/viva-system-en.webp" data-zh-src="images/viva-toy/zh/viva-system-zh.webp" alt="System map linking members, VIVA TOY CARE, repair workers and partner stores" data-zh-alt="系统图：会员、VIVA TOY CARE、维修师傅和合作门店" loading="lazy"></div>
+      <div class="rules">
+        <div class="rule" data-zh="为回收的玩具找到新家">Find new homes for recycled toys</div>
+        <div class="rule" data-zh="让坏掉的玩具重获新生">Bring broken toys back to life</div>
+        <div class="rule" data-zh="与本地玩具店共赢">Win-win with local toy stores</div>
+      </div>
+      <p class="cap" data-zh="未来：建立收藏级玩具爱好者社区，交流心得、交换藏品。">Next: a community where collectors share tips and trade on a dedicated exchange.</p>
+    </section>
+
+    <section id="blueprints" class="wide">
+      <span class="eyebrow ok" data-zh="服务蓝图">Service blueprints</span>
+      <h2 data-zh="从第一次打开，到玩具修好回家。">From first tap to a fixed toy back home.</h2>
+      <p data-zh="核心用户（有玩具的消费者）的两条路径：前台触点到后台支持。可以横向滚动，点击放大。">Two journeys for the core user, someone who owns toys, from front-stage touchpoints to back-stage support. Scroll sideways, click to zoom.</p>
+      <h3 data-zh="1 · 会员订阅">1 · VIVA TOY membership</h3>
+      <div class="kw"><span data-zh="筹备">Preparation</span><span data-zh="浏览首页">Explore home</span><span data-zh="注册与购买">Sign up &amp; buy</span><span data-zh="玩具偏好">Toy preferences</span><span data-zh="领取商品">Pick up</span></div>
+      <div class="scrollbox zoomable"><img src="images/viva-toy/en/viva-blueprint-1-en.webp" data-zh-src="images/viva-toy/zh/viva-blueprint-1-zh.webp" alt="Service blueprint for the membership journey" data-zh-alt="会员订阅服务蓝图" loading="lazy"></div>
+      <h3 data-zh="2 · VIVA TOY CARE + 维修">2 · VIVA TOY CARE + repair</h3>
+      <div class="kw"><span data-zh="选择保障">Choose a plan</span><span data-zh="购买">Purchase</span><span data-zh="选择玩具">Pick a toy</span><span data-zh="维修评估">Repair quote</span><span data-zh="寄送">Delivery</span><span data-zh="支付或回收">Pay or recycle</span><span data-zh="服务记录">Service record</span></div>
+      <div class="scrollbox zoomable"><img src="images/viva-toy/en/viva-blueprint-2-en.webp" data-zh-src="images/viva-toy/zh/viva-blueprint-2-zh.webp" alt="Service blueprint for protection plan and repair" data-zh-alt="保障与维修服务蓝图" loading="lazy"></div>
+    </section>
+
+    <section id="visual" class="wide">
+      <span class="eyebrow" data-zh="视觉规范">Visual system</span>
+      <h2 data-zh="天空蓝，一点红，像一盒新玩具。">Sky blue, a pop of red, like a new toy box.</h2>
+      <img src="images/viva-toy/viva-screens.webp" alt="Two phone mockups: subscribe screen and curated toy shop" data-zh-alt="两部手机样机：订阅页和精选玩具页" style="width:100%;display:block;border-radius:16px" loading="lazy">
+      <div class="trio ok">
+        <div><b data-zh="订阅">Subscribe</b><span data-zh="年费会员 · 每月挑 1 件精选玩具 · 低价维修 · 每月盲盒">Annual membership · 1 curated toy a month · low-cost repairs · monthly mystery box</span></div>
+        <div><b data-zh="选购">Shop</b><span data-zh="每天按偏好推 10 件玩具，点开看背后的故事。每月免费一件，选了不能反悔！">10 curated toys a day; tap one for its story. One free toy a month, no take-backs!</span></div>
+        <div><b data-zh="下单">Order placed</b><span data-zh="「你的玩具正在路上！」">“Your toy is on its way!”</span></div>
+      </div>
+      <div class="split">
+        <div class="swatches" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+          <div class="sw"><i style="background:#73DFFA"></i><span><b>#73DFFA</b><br><span data-zh="主色 · 天空蓝">Primary · sky blue</span></span></div>
+          <div class="sw"><i style="background:#FF4F4F"></i><span><b>#FF4F4F</b><br><span data-zh="强调 · 活力红">Accent · vivid red</span></span></div>
+          <div class="sw"><i style="background:#FFFFFF"></i><span><b>#FFFFFF</b><br><span data-zh="背景 · 纯白">Background · white</span></span></div>
+        </div>
+        <div class="typo">
+          <div><span style="font-family:'Luckiest Guy';font-size:30px">Heading</span><span class="mono">Luckiest Guy · 48</span></div>
+          <div><span style="font-family:'Luckiest Guy';font-size:22px">Button</span><span class="mono">Luckiest Guy · 24</span></div>
+          <div><span style="font-family:Inter,system-ui,sans-serif;font-size:16px">Title · Body</span><span class="mono">Inter · 20 / 14</span></div>
+        </div>
+      </div>
+      <div class="aud">
+        <div><img src="images/viva-toy/viva-aud-1.webp" alt=""><span data-zh="有玩具但不知道怎么处理的人">Anyone with toys and nowhere to put them</span></div>
+        <div><img src="images/viva-toy/viva-aud-2.webp" alt=""><span data-zh="需要修玩具的人">People who need a toy repaired</span></div>
+        <div><img src="images/viva-toy/viva-aud-3.webp" alt=""><span data-zh="总想要新玩具的孩子">Kids who always want new toys</span></div>
+      </div>
+    </section>
+
+    <!-- TODO(Amanda): Trade-offs and Reflection are drafts; the copy doc has none. Keep only what you believe. -->
+    <section id="tradeoffs">
+      <span class="eyebrow" data-zh="取舍">Trade-offs</span>
+      <h2 data-zh="保险模式养得活生意，<span class='hl-o'>前提是够多人加入。</span>">Insurance pays for the service, <span class="hl-o">once enough people join.</span></h2>
+      <div class="ledger">
+        <div><b data-zh="得到的">What it gives</b><ul><li data-zh="维修费可以预期">Repair costs you can plan for</li><li data-zh="玩具有了下一个主人">A next owner for outgrown toys</li><li data-zh="本地门店多了客流">Foot traffic for local stores</li></ul></div>
+        <div><b data-zh="要注意的">What to watch</b><ul><li data-zh="会员太少，风险池撑不住">Too few members and the risk pool fails</li><li data-zh="维修质量依赖分散的师傅">Repair quality depends on scattered workers</li><li data-zh="「选了不能反悔」可能让孩子失望">“No take-backs” can disappoint a kid</li></ul></div>
+      </div>
+    </section>
+
+    <section id="reflection" class="wide">
+      <span class="eyebrow" data-zh="反思">Reflection</span>
+      <h2 data-zh="先算清楚账，再画界面。">Make the numbers work before the screens.</h2>
+      <div class="refl">
+        <div><b data-zh="问品牌是最快的研究">Asking brands was the fastest research</b><span data-zh="一封没有回复的邮件，比任何报告都更说明问题。">One unanswered email said more than any report.</span></div>
+        <div><b data-zh="跨行业借模式">Borrow from other industries</b><span data-zh="AppleCare 和 DJI Care 给了我玩具行业没有的答案。">AppleCare and DJI Care answered what the toy industry hadn’t.</span></div>
+        <div><b data-zh="服务设计 = 设计整条链">Service design is the whole chain</b><span data-zh="App 只是前台，后台的物流和维修才决定体验。">The app is the front stage. Logistics and repair decide the experience.</span></div>
+      </div>
+      <div class="hmw" style="background:var(--honest)">
+        <span class="mono" data-zh="下一步 · 验证">What’s next · test it</span>
+        <p data-zh="找家长和收藏玩家，验证他们愿意为玩具保障付多少钱。">Ask parents and collectors how much they’d pay for toy protection.</p>
+        <span style="font-size:16px;line-height:1.5" data-zh="和一家本地玩具店试点：收旧玩具、试一个月的维修。">Pilot with one local toy store: collect old toys and run repairs for a month.</span>
+      </div>
+      <a class="next" href="temu.html"><span><span class="mono" style="color:var(--dim)" data-zh="下一个项目">Next project</span><br><b>Temu</b></span><span class="mono">→</span></a>
+    </section>
+
+    <footer>VIVA TOY · AMANDA (YUEYAN) ZHANG · 2024–2025</footer>
+  </main>
+</div>
+
+<dialog class="zoom" id="zoom" aria-label="Full size"><button type="button" id="zoomClose" data-zh="关闭 ✕">Close ✕</button><img id="zoomImg" alt=""></dialog>
+
+<script src="assets/i18n.js"></script>
+<script>
+const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const $=id=>document.getElementById(id);
+const zh=()=>document.documentElement.lang==="zh-CN";
+
+// Key question: each tap reveals an answer; all three unlock the conclusion
+const qs=[...$("chain").querySelectorAll("button")];
+qs.forEach(b=>b.onclick=()=>{b.classList.add("on");b.querySelector("strong").textContent=zh()?b.dataset.zhA:b.dataset.a;if(qs.every(q=>q.classList.contains("on")))$("so").classList.add("on")});
+document.addEventListener("click",e=>{if(e.target.closest(".lang-toggle"))qs.forEach(b=>{if(b.classList.contains("on"))b.querySelector("strong").textContent=zh()?b.dataset.zhA:b.dataset.a})});
+
+// Email exchange plays in when it scrolls into view
+new IntersectionObserver(([e],o)=>{if(!e.isIntersecting)return;o.disconnect();[...$("chat").children].forEach((b,k)=>setTimeout(()=>b.classList.add("in"),RM?0:k*900))},{threshold:.4}).observe($("chat"));
+
+// Wide diagrams open full size
+document.querySelectorAll(".zoomable img").forEach(img=>img.onclick=()=>{$("zoomImg").src=img.currentSrc||img.src;$("zoomImg").alt=img.alt;$("zoom").showModal()});
+$("zoomClose").onclick=()=>$("zoom").close();
+$("zoom").addEventListener("click",e=>{if(e.target===$("zoom"))$("zoom").close()});
+
+const links=[...document.querySelectorAll("#toc a")];
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)links.forEach(a=>a.classList.toggle("on",a.getAttribute("href")==="#"+e.target.id))}),{rootMargin:"-40% 0px -55% 0px"});
+links.forEach(a=>{const s=document.querySelector(a.getAttribute("href"));if(s)io.observe(s)});
+</script>
 </body>
-
 </html>
