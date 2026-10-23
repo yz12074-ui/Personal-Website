@@ -9,7 +9,7 @@ body{margin:0;font-size:14px;font-family:system-ui,-apple-system,sans-serif;-web
 img{max-width:100%}
 [hidden]{display:none!important}
 </style>
-<title>Cookie Thief</title>
+<title>Signal Trap</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Instrument+Sans:wght@400;500;600;700&display=swap">
 <style>
@@ -63,6 +63,14 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .offline .try{margin:0;color:var(--pg-sub);font-size:14px}
 .offline ul{margin:6px 0 16px;padding-left:36px;color:var(--pg-sub);font-size:14px;line-height:1.75}
 .offline .code{font-size:11.5px;color:var(--pg-sub);letter-spacing:.01em}
+.charge-wrap{position:absolute;left:50%;top:412px;width:120px;height:120px;margin-left:-60px}
+.ring{position:absolute;inset:0;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:8}
+.ring .track{stroke:#e3e3e3}
+.ring .fill{stroke:#535353;stroke-linecap:round;stroke-dasharray:339.3;stroke-dashoffset:339.3}
+.ring .fill.low{stroke:#c2410c}
+.charge{position:absolute;left:14px;top:14px;width:92px;height:92px;border-radius:50%;border:0;background:#535353;color:#fff;font:700 15px/1 var(--pixel);letter-spacing:.06em;touch-action:none;-webkit-tap-highlight-color:transparent;box-shadow:0 5px 0 #2f2f2f;transition:transform .05s,box-shadow .05s}
+.charge.pressed{transform:translateY(4px);box-shadow:0 1px 0 #2f2f2f}
 
 .site{position:absolute;inset:0;background:#fff;color:#111}
 .site header{height:58px;background:var(--accent);display:flex;align-items:center;gap:14px;padding:0 18px;color:#fff}
@@ -83,10 +91,11 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .trap .card{position:absolute;left:12px;right:12px;background:#fff;border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.28),0 0 0 1px rgba(0,0,0,.05);padding:18px 18px}
 .trap h3{margin:0 0 6px;font:700 16px/1.25 var(--ui);color:#111}
 .trap p{margin:0;font:400 12px/1.5 var(--ui);color:#555}
+.trap .reject{margin-top:12px;height:36px;padding:0 16px;border-radius:18px;border:1.5px solid #c9ccca;background:#fff;color:#333;font:600 13px var(--ui)}
 .trap .accept{position:absolute;width:220px;height:54px;margin:-27px 0 0 -110px;border:0;border-radius:27px;background:var(--accent);color:#fff;font:700 16px var(--ui)}
 
 /* ---- honest version ---- */
-.toast{position:absolute;left:12px;right:12px;bottom:76px;z-index:20;background:#202124;color:#fff;border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;font:500 14px var(--sys)}
+.toast{position:absolute;left:12px;right:12px;top:112px;z-index:20;background:#202124;color:#fff;border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;font:500 14px var(--sys)}
 .toast button{border:0;background:none;color:#8ab4f8;font-weight:700;font-size:14px;padding:6px 4px}
 .sheet{position:absolute;left:0;right:0;bottom:64px;z-index:20;background:#fff;border-top:1px solid #ddd;box-shadow:0 -8px 30px rgba(0,0,0,.12);padding:16px 16px 18px}
 .sheet h3{margin:0 0 6px;font:700 15px var(--ui)}
@@ -139,6 +148,12 @@ th{font-weight:600;color:var(--muted);font-size:11px}
 tr:last-child td{border-bottom:0}
 td.bad{color:var(--warn);font-weight:600} td.good{color:var(--ok);font-weight:600}
 .empty td{color:var(--muted);white-space:normal}
+.sums{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:22px}
+.sums div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.sums span{font-size:11px;color:var(--muted);line-height:1.3}
+.sums strong{font-size:16px;font-variant-numeric:tabular-nums}
+@media (max-width:420px){.sums{grid-template-columns:1fr}}
+.reveal .after{margin:10px 0 0;color:#f2c94c;font-size:13px}
 .note{margin:12px 0 0;font-size:12px;color:var(--muted)}
 </style>
 </head>
@@ -167,10 +182,14 @@ td.bad{color:var(--warn);font-weight:600} td.good{color:var(--ok);font-weight:60
         <div class="content" id="content">
           <div class="offline" id="offline" hidden>
             <canvas id="game" aria-label="Offline game: a pixel rat jumping over hydrants and cones"></canvas>
-            <h2>Tap the rat to play</h2>
+            <h2>Tap the button to run</h2>
             <p class="try">Try:</p>
             <ul><li>Turning off airplane mode</li><li>Turning on mobile data or Wi-Fi</li><li>Checking the signal in your area</li></ul>
             <div class="code">ERR_INTERNET_DISCONNECTED</div>
+            <div class="charge-wrap">
+              <svg class="ring" viewBox="0 0 120 120" aria-hidden="true"><circle class="track" cx="60" cy="60" r="54"/><circle class="fill" id="ringFill" cx="60" cy="60" r="54"/></svg>
+              <button class="charge" id="charge" aria-label="Charge">TAP</button>
+            </div>
           </div>
           <div class="site" id="site">
             <header><span class="burger"></span><b>Course Hub</b></header>
@@ -188,7 +207,8 @@ td.bad{color:var(--warn);font-weight:600} td.good{color:var(--ok);font-weight:60
           <div class="card" id="card">
             <div id="cardText">
               <h3>Cookies on Course Hub</h3>
-              <p id="trapText">We and our 214 partners use cookies and your precise location to personalize ads and measure what you do across sites and apps. Tap Accept to continue to your page.</p>
+              <p id="trapText">We and 214 partners use cookies and your precise location to personalize ads across sites and apps.</p>
+              <button class="reject" id="reject">Reject all</button>
             </div>
           </div>
           <button class="accept" id="accept">Accept</button>
@@ -218,7 +238,7 @@ td.bad{color:var(--warn);font-weight:600} td.good{color:var(--ok);font-weight:60
   <aside class="panel">
     <p class="eyebrow">DARK PATTERNS · PROTOTYPE</p>
     <h1>Signal Trap</h1>
-    <p>The signal drops between stations and the browser shows its offline game. While the player taps, a thin blue bar quietly reloads the page. The moment signal returns, the page swaps in with a cookie card whose only button sits under the player's thumb.</p>
+    <p>The signal drops between stations and the browser shows its offline game. While the player taps, a thin blue bar quietly reloads the page. The moment signal returns, the page swaps in with a cookie card. Reject is on it, but Accept sits under the player's thumb. Afterwards the player sees what Accept means and chooses again.</p>
 
     <div class="field">
       <span class="label">Version</span>
@@ -237,14 +257,20 @@ td.bad{color:var(--warn);font-weight:600} td.good{color:var(--ok);font-weight:60
       <button id="now">End outage now</button>
     </div>
 
+    <h2>WOULD THEY STILL CHOOSE IT?</h2>
+    <div class="sums">
+      <div><span>Trap: tapped Accept</span><strong id="sumTrap">–</strong></div>
+      <div><span>Changed to Reject after reading</span><strong id="sumFlip">–</strong></div>
+      <div><span>Honest: chose Accept</span><strong id="sumHonest">–</strong></div>
+    </div>
     <h2>TEST LOG</h2>
     <div class="logwrap">
       <table>
-        <thead><tr><th>#</th><th>Version</th><th>Outage</th><th>Choice</th><th>Tap after</th><th>Saw the bar?</th></tr></thead>
-        <tbody id="log"><tr class="empty"><td colspan="6">Hand the phone to a tester and press New run. Each result lands here.</td></tr></tbody>
+        <thead><tr><th>#</th><th>Version</th><th>Outage</th><th>First tap</th><th>Tap after</th><th>After reading</th><th>Saw the bar?</th></tr></thead>
+        <tbody id="log"><tr class="empty"><td colspan="7">Hand the phone to a tester and press New run. Each result lands here.</td></tr></tbody>
       </table>
     </div>
-    <p class="note">A tap under about 250 ms is faster than a person can see and react, so it was already on its way before the card appeared.</p>
+    <p class="note">The gap between "tapped Accept" and "changed after reading" is the answer to your question: how much of the consent came from the thumb, not the person. A tap under about 250 ms is faster than a person can see and react, so it was already on its way before the card appeared.</p>
   </aside>
 </div>
 
@@ -292,7 +318,7 @@ let unsent = null;
 function save(){
   if (!unsent) return;
   const r = unsent; unsent = null;
-  navigator.sendBeacon(SHEET_URL, JSON.stringify({ mode: r.mode, outage: +r.outage.toFixed(1), choice: r.choice, dt: r.dt, saw: r.saw ?? '' }));
+  navigator.sendBeacon(SHEET_URL, JSON.stringify({ mode: r.mode, outage: +r.outage.toFixed(1), choice: r.first, dt: r.dt, saw: r.saw ?? '', final: r.final ?? '' }));
 }
 window.addEventListener('pagehide', save); // tester closed the page without answering
 
@@ -340,26 +366,31 @@ function netTick(){
   if (S.state === 'armed' && performance.now() - S.armedAt > 1500) showTrap(); // tester paused
 }
 
-/* ---------- input: taps anywhere on the page play the game ---------- */
+/* ---------- input: the round charge button plays the game ---------- */
 function toLocal(e){
   const r = screenEl.getBoundingClientRect();
   return { x: (e.clientX - r.left) / scale, y: (e.clientY - r.top) / scale };
 }
-$('#content').addEventListener('pointerdown', e => {
+function chargeTap(pos){
   if (!['offline','loading','armed','online'].includes(S.state)) return;
-  e.preventDefault();
-  S.lastTap = toLocal(e);
+  S.lastTap = pos;
   S.taps.push(performance.now());
   game.tap();
+  const b = $('#charge'); b.classList.add('pressed'); setTimeout(() => b.classList.remove('pressed'), 60);
   if (S.state === 'armed') { S.state = 'pending'; later(showTrap, 70); } // drop the card between two taps
-});
+}
+function buttonCenter(){
+  const r = $('#charge').getBoundingClientRect(), s = screenEl.getBoundingClientRect();
+  return { x: (r.left + r.width / 2 - s.left) / scale, y: (r.top + r.height / 2 - s.top) / scale };
+}
+$('#charge').addEventListener('pointerdown', e => { e.preventDefault(); chargeTap(toLocal(e)); });
+$('#charge').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); chargeTap(buttonCenter()); } });
 document.addEventListener('keydown', e => {
   if (e.code !== 'Space') return;
   e.preventDefault();
   if (!$('#trap').hidden) return finish('Accept'); // on desktop the space bar is the thumb
   if (['offline','loading','armed','online'].includes(S.state)) {
-    S.taps.push(performance.now()); game.tap();
-    if (S.state === 'armed') { S.state = 'pending'; later(showTrap, 70); }
+    chargeTap(buttonCenter());
   }
 });
 
@@ -375,8 +406,8 @@ function showTrap(){
   const by = Math.min(640, Math.max(150, S.lastTap.y));
   const acc = $('#accept'), card = $('#card'), txt = $('#cardText');
   acc.style.left = bx + 'px'; acc.style.top = by + 'px';
-  if (by >= 300) { // text above the button
-    card.style.top = Math.max(110, by - 190) + 'px'; card.style.height = (by + 45 - Math.max(110, by - 190)) + 'px';
+  if (by >= 360) { // text above the button
+    card.style.top = Math.max(110, by - 220) + 'px'; card.style.height = (by + 45 - Math.max(110, by - 220)) + 'px';
     txt.style.marginTop = '0';
   } else {        // text below the button
     card.style.top = (by - 45) + 'px'; card.style.height = '240px';
@@ -386,6 +417,8 @@ function showTrap(){
 }
 $('#accept').addEventListener('pointerdown', e => { e.preventDefault(); finish('Accept'); });
 $('#accept').addEventListener('keydown', e => { if (e.key === 'Enter') finish('Accept'); });
+$('#reject').addEventListener('pointerdown', e => { e.preventDefault(); finish('Reject'); });
+$('#reject').addEventListener('keydown', e => { if (e.key === 'Enter') finish('Reject'); });
 
 /* ---------- honest ---------- */
 $('#reload').addEventListener('click', () => {
@@ -411,51 +444,86 @@ function finish(choice){
   const dt = Math.round(performance.now() - S.popupAt);
   const recent = S.taps.filter(t => S.popupAt - t < 3000 && t <= S.popupAt).length;
   const loadFor = Math.max(0, S.outage - S.loadStart);
-  const run = { mode, choice, dt, outage: S.outage, saw: null };
+  // first = what the thumb chose; final = what they choose after reading what it means
+  const run = { mode, first: choice, dt, outage: S.outage, final: choice === 'Reject' ? 'Reject' : null, saw: null };
+  if (mode === 'honest') run.final = choice;
   runs.push(run); renderLog(); unsent = run;
   $('#trap').hidden = true; $('#sheet').hidden = true;
   later(() => showReveal(run, recent, loadFor), mode === 'trap' ? 1100 : 500);
 }
 function showReveal(run, recent, loadFor){
   const r = $('#reveal');
-  const ask = `<h4>ASK THE TESTER</h4><p style="margin-bottom:10px">Did you notice the blue loading bar at the top before the card appeared?</p>
-    <div class="ask"><button data-saw="Yes">Yes, I saw it</button><button data-saw="No">No</button></div>`;
-  if (run.mode === 'trap') {
+  const ask = `<h4>DID YOU SEE IT COMING?</h4><p style="margin-bottom:10px">Did you notice the blue loading bar at the top before the card appeared?</p>
+    <div class="ask" data-q="saw"><button data-v="Yes">Yes, I saw it</button><button data-v="No">No</button></div>`;
+  const agreed = `<ul><li><b>214 partners</b> storing cookies on your phone</li><li><b>Precise location</b> on your daily commute</li><li><b>Tracking across sites and apps</b> for ads</li></ul>`;
+  if (run.mode === 'trap' && run.first === 'Accept') {
     const reflex = run.dt < 600;
     r.innerHTML = `
-      <div class="tag">COOKIES ACCEPTED</div>
+      <div class="tag">YOU TAPPED ACCEPT</div>
       <h2>Accepted in <em>${secs(run.dt)}</em></h2>
       <p>${reflex
-        ? `The card appeared between two of your taps. You had tapped ${recent} times in the 3 seconds before it, and your next tap landed on Accept.`
-        : `Accept was the only button on the card, so agreeing was the only way back to your page.`}
-       The page had been reloading for ${loadFor.toFixed(1)} s in a 2-pixel bar at the top.</p>
+        ? `The card appeared between two of your taps. You had tapped ${recent} times in the 3 seconds before it, and your next tap landed on Accept. Reject all was on the card too.`
+        : `Reject all was on the card, but Accept sat where your thumb already was.`}</p>
+      <h4>WHAT ACCEPT MEANS</h4>
+      ${agreed}
+      <h4>NOW THAT YOU'VE READ IT</h4>
+      <p style="margin-bottom:10px">Would you still choose Accept?</p>
+      <div class="ask" data-q="final"><button data-v="Accept">Keep Accept</button><button data-v="Reject">Change to Reject</button></div>
+      <p class="after" id="after" hidden></p>
       ${ask}
-      <h4>WHAT YOU AGREED TO</h4>
-      <ul><li><b>214 partners</b> storing cookies on your phone</li><li><b>Precise location</b> on your daily commute</li><li><b>Tracking across sites and apps</b> for ads</li></ul>
       <h4>HOW THE TRAP WORKS</h4>
-      <ul><li><b>Quiet reload</b>: a thin bar no one watches while playing</li><li><b>Button under the thumb</b>: placed at your last tap (Interface Interference)</li><li><b>No Reject</b>: Forced Action</li><li><b>Random outage</b>: you can't learn when it's coming</li></ul>
+      <ul><li><b>Quiet reload</b>: a 2-pixel bar loaded for ${loadFor.toFixed(1)} s while you played</li><li><b>Button under the thumb</b>: Accept was placed at your last tap (Interface Interference)</li><li><b>Choice on paper</b>: Reject exists, but off to the side, smaller and grey</li><li><b>Charge bar</b>: it drains faster as the reload finishes, so your tapping peaks right when the card drops on the same spot</li><li><b>Random outage</b>: you can't learn when it's coming</li></ul>
+      <div class="again"><button class="primary" id="rAgain">New run</button><button id="rSwitch">Try the honest version</button></div>`;
+  } else if (run.mode === 'trap') {
+    r.innerHTML = `
+      <div class="tag ok">YOU FOUND REJECT</div>
+      <h2>Rejected in <em>${secs(run.dt)}</em></h2>
+      <p>The card dropped Accept right under your thumb, and you still stopped and picked Reject all. Most of the trap depends on people not stopping.</p>
+      <h4>WHAT YOU AVOIDED</h4>
+      ${agreed}
+      ${ask}
       <div class="again"><button class="primary" id="rAgain">New run</button><button id="rSwitch">Try the honest version</button></div>`;
   } else {
     r.innerHTML = `
-      <div class="tag ok">YOU CHOSE: ${run.choice.toUpperCase()}</div>
+      <div class="tag ok">YOU CHOSE: ${run.first.toUpperCase()}</div>
       <h2>Decided in <em>${secs(run.dt)}</em></h2>
       <p>The game kept running when signal came back. A message told you that you were online, and the page only reloaded when you tapped Reload. The cookie card opened at the bottom, away from the game, with Accept and Reject the same size.</p>
       ${ask}
       <div class="again"><button class="primary" id="rAgain">New run</button><button id="rSwitch">Back to the trap version</button></div>`;
   }
-  r.hidden = false;
-  r.querySelectorAll('[data-saw]').forEach(b => b.onclick = () => {
-    run.saw = b.dataset.saw; renderLog(); save();
-    r.querySelectorAll('[data-saw]').forEach(x => x.setAttribute('aria-pressed', x === b));
-  });
+  r.hidden = false; r.scrollTop = 0;
+  r.querySelectorAll('.ask').forEach(group => group.querySelectorAll('button').forEach(b => b.onclick = () => {
+    const v = b.dataset.v;
+    if (group.dataset.q === 'saw') run.saw = v;
+    else {
+      run.final = v;
+      const a = $('#after'); a.hidden = false;
+      a.textContent = v === 'Reject'
+        ? 'Changed. Your thumb said yes and you said no. In a real app the first tap would already count.'
+        : 'Kept. You agreed both times, the second time knowing what it means.';
+    }
+    group.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
+    renderLog();
+    if (run.saw && run.final) save();
+  }));
   $('#rAgain').onclick = newRun;
   $('#rSwitch').onclick = () => setMode(mode === 'trap' ? 'honest' : 'trap');
 }
 function renderLog(){
+  if (!runs.length) return;
   $('#log').innerHTML = runs.map((r, i) => {
-    const cls = r.mode === 'trap' && r.dt < 600 ? 'bad' : r.choice === 'Reject' ? 'good' : '';
-    return `<tr><td>${i+1}</td><td>${r.mode === 'trap' ? 'Trap' : 'Honest'}</td><td>${r.outage.toFixed(1)} s</td><td>${r.choice}</td><td class="${cls}">${secs(r.dt)}</td><td>${r.saw ?? '–'}</td></tr>`;
+    const cls = r.mode === 'trap' && r.first === 'Accept' && r.dt < 600 ? 'bad' : r.first === 'Reject' ? 'good' : '';
+    const fin = r.final ?? '–';
+    const fcls = r.first === 'Accept' && r.final === 'Reject' ? 'good' : '';
+    return `<tr><td>${i+1}</td><td>${r.mode === 'trap' ? 'Trap' : 'Honest'}</td><td>${r.outage.toFixed(1)} s</td><td>${r.first}</td><td class="${cls}">${secs(r.dt)}</td><td class="${fcls}">${fin}</td><td>${r.saw ?? '–'}</td></tr>`;
   }).reverse().join('');
+  const t = runs.filter(r => r.mode === 'trap'), h = runs.filter(r => r.mode === 'honest');
+  const tAcc = t.filter(r => r.first === 'Accept');
+  const flipped = tAcc.filter(r => r.final === 'Reject').length, decided = tAcc.filter(r => r.final).length;
+  const pct = (a, b) => b ? Math.round(a / b * 100) + '%' : '–';
+  $('#sumTrap').textContent = t.length ? `${pct(tAcc.length, t.length)} (${tAcc.length}/${t.length})` : '–';
+  $('#sumFlip').textContent = decided ? `${pct(flipped, decided)} (${flipped}/${decided})` : '–';
+  $('#sumHonest').textContent = h.length ? `${pct(h.filter(r => r.first === 'Accept').length, h.length)} (${h.filter(r => r.first === 'Accept').length}/${h.length})` : '–';
 }
 
 /* ---------- panel ---------- */
@@ -471,38 +539,59 @@ $('#restart').onclick = newRun;
 $('#now').onclick = () => { if (S.state === 'offline' || S.state === 'loading') endOutage(); };
 $('#showOut').onclick = () => { showOut = !showOut; renderOut(); };
 
-/* ---------- the offline game (original pixel rat) ---------- */
+/* ---------- the offline game (original pixel rat) ----------
+   No game over. Tapping the round button fills a charge bar that keeps draining.
+   While the bar is above the line, the rat jumps every obstacle by itself.
+   Below the line it trips: it slows down and loses points, then keeps running.
+   The drain speeds up as the signal gets closer, so the tap rate has to climb. */
 const game = (() => {
   const cv = $('#game'), ctx = cv.getContext('2d');
   const W = 316, H = 170, GY = 138, DPR = Math.min(2, window.devicePixelRatio || 1);
   cv.width = W * DPR; cv.height = H * DPR; ctx.scale(DPR, DPR);
-  const INK = '#535353';
-  let g, hi = 0;
-  function reset(){ g = { st:'idle', y:0, vy:0, obs:[], spawn:1, speed:230, score:0, legs:0, ground:0, specks: Array.from({length:22}, () => [Math.random()*W, 4 + Math.random()*8, 1 + Math.random()*4]) }; }
+  const INK = '#535353', LINE = 0.25;
+  let g, k = 0;
+  const lerp = (a, b) => a + (b - a) * k;
+  function reset(){ g = { st:'idle', y:0, vy:0, obs:[], spawn:1.2, speed:200, score:0, legs:0, ground:0, charge:0, trip:0, pulse:0,
+    specks: Array.from({length:22}, () => [Math.random()*W, 4 + Math.random()*8, 1 + Math.random()*4]) }; }
   function tap(){
-    if (g.st === 'idle') { g.st = 'run'; g.vy = 520; return; }
-    if (g.st === 'over') { const keep = g.score; reset(); g.st = 'run'; return; }
-    if (g.y <= 0.5) g.vy = 520;
+    if (g.st === 'idle') g.st = 'run';
+    g.charge = Math.min(1, g.charge + 0.11);
+    g.pulse = 1;
   }
-  function update(dt){
+  function update(dt, intensity = 0){
+    k = Math.max(0, Math.min(1, intensity));
+    g.pulse = Math.max(0, g.pulse - dt * 6);
     if (g.st !== 'run') return;
-    g.speed = Math.min(420, g.speed + dt * 6);
-    g.score += dt * 10; g.legs += dt * 12; g.ground += g.speed * dt;
-    g.vy -= 1650 * dt; g.y = Math.max(0, g.y + g.vy * dt); if (g.y === 0) g.vy = 0;
+    // Drain: about 1 tap/s holds the bar at the start, about 4 taps/s by the time the signal is back.
+    g.charge = Math.max(0, g.charge - dt * lerp(0.11, 0.44));
+    const charged = g.charge >= LINE;
+    const target = lerp(190, 440) * (charged ? 1 : 0.6);
+    g.speed += (target - g.speed) * Math.min(1, dt * 3);
+    g.trip = Math.max(0, g.trip - dt);
+    g.score += dt * lerp(10, 22) * (charged ? 1 + g.charge : 0.4); g.legs += dt * lerp(12, 24); g.ground += g.speed * dt;
+    const grav = lerp(1650, 3700), jumpV = lerp(520, 760);
+    g.vy -= grav * dt; g.y = Math.max(0, g.y + g.vy * dt); if (g.y === 0) g.vy = 0;
     g.spawn -= dt;
     if (g.spawn <= 0) {
-      const k = Math.random() < .55 ? 'hydrant' : 'cone';
-      g.obs.push({ k, x: W + 10, w: k === 'hydrant' ? 18 : 16, h: k === 'hydrant' ? 30 : 24 });
-      if (Math.random() < .25) g.obs.push({ k:'cone', x: W + 30, w:16, h:24 });
-      g.spawn = 0.9 + Math.random() * 1.0;
+      const kind = Math.random() < .55 ? 'hydrant' : 'cone';
+      g.obs.push({ k: kind, x: W + 10, w: kind === 'hydrant' ? 18 : 16, h: kind === 'hydrant' ? 30 : 24, hit:false });
+      g.spawn = lerp(1.15, 0.5) + Math.random() * lerp(0.9, 0.25);
     }
     g.obs.forEach(o => o.x -= g.speed * dt);
     g.obs = g.obs.filter(o => o.x > -30);
-    const rx = 18, rb = GY - g.y;
-    for (const o of g.obs) if (rx + 34 > o.x + 3 && rx + 4 < o.x + o.w - 3 && rb > GY - o.h + 4) { g.st = 'over'; hi = Math.max(hi, Math.floor(g.score)); }
+    const front = 18 + 34;
+    // auto-jump when charged
+    const next = g.obs.find(o => !o.hit && o.x + o.w > 18);
+    if (next && charged && g.y === 0 && next.x - front < g.speed * lerp(0.08, 0.055) + 6) g.vy = jumpV;
+    // trip instead of game over
+    const rb = GY - g.y;
+    for (const o of g.obs) if (!o.hit && front > o.x + 3 && 22 < o.x + o.w - 3 && rb > GY - o.h + 4) {
+      o.hit = true; g.trip = 0.5; g.speed *= 0.55; g.score = Math.max(0, g.score - 15);
+    }
   }
   const px = (x, y, w, h) => ctx.fillRect(Math.round(x), Math.round(y), w, h);
   function rat(x, b){
+    if (g.trip > 0 && Math.floor(g.trip * 16) % 2) return; // blink while tripping
     ctx.fillStyle = INK;
     [[-15,-21],[-12,-18],[-9,-15],[-6,-15],[-3,-12]].forEach(([dx,dy]) => px(x+dx, b+dy, 3, 3)); // tail
     px(x+3, b-21, 15, 3); px(x, b-18, 24, 12);         // body
@@ -513,10 +602,9 @@ const game = (() => {
     else if (f) { px(x+3, b-6, 3, 6); px(x+15, b-6, 3, 4); }
     else { px(x+6, b-6, 3, 4); px(x+18, b-6, 3, 6); }
     ctx.fillStyle = '#fff'; px(x+26, b-15, 3, 3);       // eye
-    if (g.st === 'over') { ctx.fillStyle = INK; px(x+26, b-15, 1, 1); px(x+28, b-13, 1, 1); }
   }
   function obstacle(o){
-    ctx.fillStyle = INK;
+    ctx.fillStyle = o.hit ? '#b8b8b8' : INK;
     if (o.k === 'hydrant') { px(o.x, GY-5, 18, 5); px(o.x+3, GY-26, 12, 21); px(o.x+5, GY-30, 8, 4); px(o.x, GY-21, 18, 5); }
     else { px(o.x, GY-3, 16, 3); px(o.x+3, GY-11, 10, 8); px(o.x+5, GY-19, 6, 8); px(o.x+7, GY-24, 2, 5); ctx.fillStyle = '#fff'; px(o.x+4, GY-9, 8, 2); }
   }
@@ -524,37 +612,49 @@ const game = (() => {
     ctx.clearRect(0, 0, W, H);
     ctx.fillStyle = INK;
     if (g.st !== 'idle') {
-      // ground line with scrolling specks
       px(0, GY - 1, W, 1);
       g.specks.forEach(s => { const x = ((s[0] - g.ground) % W + W) % W; px(x, GY + s[1], s[2], 1); });
       ctx.font = '700 13px Silkscreen, monospace'; ctx.textAlign = 'right';
-      const sc = String(Math.floor(g.score)).padStart(5, '0');
-      ctx.fillStyle = '#757575'; ctx.fillText((hi ? 'HI ' + String(hi).padStart(5,'0') + '  ' : '') , W - 62, 24);
-      ctx.fillStyle = INK; ctx.fillText(sc, W - 4, 24);
+      ctx.fillStyle = INK; ctx.fillText(String(Math.floor(g.score)).padStart(5, '0'), W - 4, 24);
+      // pixel charge bar
+      ctx.textAlign = 'left'; ctx.font = '700 10px Silkscreen, monospace';
+      ctx.fillText('CHARGE', 4, 23);
+      const bx = 60, bw = 120;
+      ctx.fillStyle = '#d6d6d6'; px(bx, 15, bw, 9);
+      ctx.fillStyle = g.charge < LINE ? '#c2410c' : INK; px(bx, 15, bw * g.charge, 9);
+      ctx.fillStyle = '#fff'; px(bx + bw * LINE, 15, 2, 9);
+      if (g.charge < LINE && Math.floor(performance.now() / 250) % 2) {
+        ctx.fillStyle = '#c2410c'; ctx.textAlign = 'center'; ctx.font = '700 13px Silkscreen, monospace';
+        ctx.fillText('TAP FASTER', W / 2, 62);
+      }
       g.obs.forEach(obstacle);
     } else {
-      px(4, GY - 1, 46, 1); px(10, GY + 5, 4, 1); px(30, GY + 8, 3, 1);
+      ctx.fillStyle = INK; px(4, GY - 1, 46, 1); px(10, GY + 5, 4, 1); px(30, GY + 8, 3, 1);
     }
     rat(18, GY - g.y);
-    if (g.st === 'over') {
-      ctx.fillStyle = INK; ctx.textAlign = 'center'; ctx.font = '700 16px Silkscreen, monospace';
-      ctx.fillText('G A M E   O V E R', W/2 + 10, 58);
-      // restart icon
-      const cx = W/2 + 10, cy = 88;
-      ctx.fillRect(cx - 18, cy - 16, 36, 32);
-      ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(cx, cy, 8, Math.PI * .2, Math.PI * 1.75); ctx.stroke();
-      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(cx + 3, cy - 12); ctx.lineTo(cx + 10, cy - 6); ctx.lineTo(cx + 2, cy - 3); ctx.fill();
-    }
   }
   reset();
-  return { reset, tap, update, draw };
+  return { reset, tap, update, draw, get charge(){ return g.charge; }, get pulse(){ return g.pulse; }, LINE };
 })();
 
+// 0 when the outage starts, 1 when the signal comes back; stays at full speed after that.
+function intensity(){
+  if (S.state === 'offline' || S.state === 'loading') {
+    const t = (performance.now() - S.offAt) / 1000 / S.outage;
+    return Math.pow(Math.min(1, t), 1.6);   // slow start, steep finish
+  }
+  return ['armed','pending'].includes(S.state) ? 1 : (S.state === 'online' ? 0.6 : 0);
+}
 let last = performance.now();
 function loop(now){
   const dt = Math.min(.05, (now - last) / 1000); last = now;
-  if (['offline','loading','armed','pending','online'].includes(S.state)) game.update(dt);
-  if (!$('#offline').hidden) game.draw();
+  if (['offline','loading','armed','pending','online'].includes(S.state)) game.update(dt, intensity());
+  if (!$('#offline').hidden) {
+    game.draw();
+    const f = $('#ringFill');
+    f.style.strokeDashoffset = 339.3 * (1 - game.charge);
+    f.classList.toggle('low', game.charge < game.LINE);
+  }
   netTick();
   requestAnimationFrame(loop);
 }
