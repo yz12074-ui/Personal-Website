@@ -9,7 +9,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
-/* Layout: the whole homepage is a design canvas (dot grid, rulers, live cursor coordinates).
+/* Layout: the whole homepage is a design canvas laid on pattern paper, with a tailor's tape measure
+   across the top (a pin follows the cursor and reads out cm). I design and I sew, so the "ruler" is a tape.
    Every block is a "frame" that shows a selection box on hover. Visitors sign in at the door and
    their signature hangs in the Visitors frame. Same tokens as the case studies: orange = the problem,
    teal = the redesign, yellow = highlighter. */
@@ -20,7 +21,7 @@
   --f-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
   --f-body: "Source Serif 4", "Noto Serif SC", Georgia, serif;
   --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
-  --ruler: 22px;
+  --tape: 26px;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #171614; --surface: #211F1C; --sunk: #2A2825; --ink: #EEEAE2; --dim: #A39D93; --line: #3A3733; --dot: #3A3733;
@@ -35,8 +36,11 @@
 [hidden] { display: none !important; }
 html { scroll-behavior: smooth; }
 body { margin: 0; background-color: var(--bg); color: var(--ink); font: 400 18px/1.6 var(--f-body);
-  background-image: radial-gradient(circle, var(--dot) 1.1px, transparent 1.5px); background-size: 24px 24px; background-attachment: fixed;
-  padding: calc(var(--ruler) + 64px) max(16px, 4vw) 0 calc(var(--ruler) + max(16px, 4vw)); overflow-x: hidden; }
+  /* pattern paper: fine 1 cm grid, a stronger line every 5 cm */
+  background-image: linear-gradient(90deg, color-mix(in srgb, var(--dot) 70%, transparent) 1px, transparent 1px), linear-gradient(color-mix(in srgb, var(--dot) 70%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--dot) 35%, transparent) 1px, transparent 1px), linear-gradient(color-mix(in srgb, var(--dot) 35%, transparent) 1px, transparent 1px);
+  background-size: 5cm 5cm, 5cm 5cm, 1cm 1cm, 1cm 1cm; background-attachment: fixed;
+  padding: calc(var(--tape) + 64px) max(16px, 4vw) 0; overflow-x: hidden; }
 html:lang(zh-CN) body { font-family: var(--f-body), "PingFang SC", "Noto Sans SC", sans-serif; }
 h1, h2, h3 { font-family: var(--f-display); margin: 0; line-height: 1.05; text-wrap: balance; }
 p { margin: 0; }
@@ -47,24 +51,22 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .canvas { max-width: 1240px; margin: 0 auto; display: flex; flex-direction: column; gap: 104px; padding-bottom: 40px; }
 
-/* ---------- rulers + cursor readout (decorative, desktop only) ---------- */
-.ruler { position: fixed; z-index: 30; background: color-mix(in srgb, var(--bg) 92%, transparent); color: var(--dim); font: 9px/1 var(--f-mono); pointer-events: none; overflow: hidden; }
-.ruler.top { top: 0; left: var(--ruler); right: 0; height: var(--ruler); border-bottom: 1px solid var(--line);
-  background-image: repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 10px); background-size: 100% 5px; background-repeat: no-repeat; background-position: 0 100%; }
-.ruler.left { top: var(--ruler); left: 0; bottom: 0; width: var(--ruler); border-right: 1px solid var(--line);
-  background-image: repeating-linear-gradient(180deg, var(--line) 0 1px, transparent 1px 10px); background-size: 5px 100%; background-repeat: no-repeat; background-position: 100% 0; }
-.ruler.corner { top: 0; left: 0; width: var(--ruler); height: var(--ruler); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-.ruler span { position: absolute; }
-.ruler.top span { top: 4px; }
-.ruler.left span { left: 4px; writing-mode: vertical-rl; rotate: 180deg; }
-.ruler .mark { background: var(--sel); }
-.ruler.top .mark { top: 0; bottom: 0; width: 1px; }
-.ruler.left .mark { left: 0; right: 0; height: 1px; }
-.xy { position: fixed; left: calc(var(--ruler) + 10px); bottom: 10px; z-index: 30; font: 11px var(--f-mono); color: var(--dim); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; pointer-events: none; font-variant-numeric: tabular-nums; }
-@media (max-width: 760px), (hover: none) { :root { --ruler: 0px; } .ruler, .xy { display: none; } }
+/* ---------- tape measure (decorative): mm / half-cm / cm ticks in real CSS units ---------- */
+.tape { position: fixed; z-index: 30; top: 0; left: 0; right: 0; height: var(--tape); pointer-events: none; overflow: hidden; color: #3B3100; font: 600 9px/1 var(--f-mono);
+  background-color: #F6D84A; box-shadow: 0 1px 0 #C9A91E, 0 3px 6px rgba(0,0,0,.08);
+  background-image: repeating-linear-gradient(90deg, #3B3100 0 1px, transparent 1px 1cm), repeating-linear-gradient(90deg, #3B3100 0 1px, transparent 1px .5cm), repeating-linear-gradient(90deg, rgba(59,49,0,.7) 0 1px, transparent 1px 1mm);
+  background-size: 100% 11px, 100% 7px, 100% 4px; background-repeat: no-repeat; background-position: 14px 0, 14px 0, 14px 0; }
+.tape::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 14px; background: linear-gradient(90deg, #8E8A80, #D9D5CC 60%, #A9A499); }
+.tape span { position: absolute; top: 13px; translate: -50% 0; }
+.pin { position: fixed; z-index: 32; top: 0; left: 0; width: 0; height: 0; opacity: 0; transition: opacity .2s; pointer-events: none; }
+.pin::before { content: ""; position: absolute; left: -.5px; top: 0; width: 1.5px; height: var(--tape); background: #6B6B6B; }
+.pin::after { content: ""; position: absolute; left: -5px; top: calc(var(--tape) - 6px); width: 10px; height: 10px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #FF8A8A, #D7263D 60%); }
+.pin-tag { position: fixed; z-index: 32; top: calc(var(--tape) + 10px); left: 0; font: 600 10.5px var(--f-mono); background: #D7263D; color: #fff; padding: 2px 6px; border-radius: 4px; pointer-events: none; opacity: 0; transition: opacity .2s; font-variant-numeric: tabular-nums; white-space: nowrap; }
+body.measuring .pin, body.measuring .pin-tag { opacity: 1; }
+@media (hover: none) { .pin, .pin-tag { display: none; } }
 
 /* ---------- top bar ---------- */
-.bar { position: fixed; z-index: 31; top: var(--ruler); left: var(--ruler); right: 0; height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 max(16px, 4vw);
+.bar { position: fixed; z-index: 31; top: var(--tape); left: 0; right: 0; height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 max(16px, 4vw);
   background: color-mix(in srgb, var(--bg) 90%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-family: var(--f-display); font-weight: 800; font-size: 17px; white-space: nowrap; }
 .brand i { font-style: normal; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; background: var(--ink); color: var(--bg); font-size: 14px; }
@@ -186,7 +188,7 @@ html:lang(zh-CN) .who h1 { font-size: clamp(40px, 5.4vw, 78px); line-height: 1.1
 
 /* ---------- signature door ---------- */
 .door { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 16px;
-  background-color: var(--bg); background-image: radial-gradient(circle, var(--dot) 1.1px, transparent 1.5px); background-size: 24px 24px; transition: opacity .5s ease; }
+  background-color: var(--bg); background-image: inherit; background-size: 5cm 5cm, 5cm 5cm, 1cm 1cm, 1cm 1cm; transition: opacity .5s ease; }
 .door.out { opacity: 0; pointer-events: none; }
 .door-card { width: min(640px, 100%); display: flex; flex-direction: column; gap: 16px; animation: rise .6s cubic-bezier(.22, 1, .36, 1); }
 @keyframes rise { from { opacity: 0; translate: 0 16px; } }
@@ -217,10 +219,9 @@ html:lang(zh-CN) .who h1 { font-size: clamp(40px, 5.4vw, 78px); line-height: 1.1
 </style>
 </head>
 <body>
-<div class="ruler corner" aria-hidden="true"></div>
-<div class="ruler top" id="rulerTop" aria-hidden="true"><span class="mark"></span></div>
-<div class="ruler left" id="rulerLeft" aria-hidden="true"><span class="mark"></span></div>
-<div class="xy" id="xy" aria-hidden="true">X 0 · Y 0</div>
+<div class="tape" id="tape" aria-hidden="true"></div>
+<i class="pin" id="pin" aria-hidden="true"></i>
+<div class="pin-tag" id="pinTag" aria-hidden="true">0.0 cm</div>
 
 <header class="bar">
   <a class="brand" href="#top"><i>玥</i><span>Amanda Zhang</span></a>
@@ -363,27 +364,24 @@ html:lang(zh-CN) .who h1 { font-size: clamp(40px, 5.4vw, 78px); line-height: 1.1
   const ENDPOINT = window.WALL_ENDPOINT || '';
   const TAPE = ['#FFE15A', '#FFC29A', '#9FE0CF', '#F9B9C9', '#B9CCFF'];
 
-  /* ---------- rulers + live cursor coordinates ---------- */
-  const R = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--ruler')) || 0;
-  function rulers() {
-    const top = $('#rulerTop'), left = $('#rulerLeft');
-    top.querySelectorAll('span:not(.mark)').forEach(n => n.remove());
-    left.querySelectorAll('span:not(.mark)').forEach(n => n.remove());
-    for (let x = 0; x < innerWidth; x += 100) { const s = document.createElement('span'); s.style.left = x + 3 + 'px'; s.textContent = x; top.append(s); }
-    for (let y = 100; y < innerHeight; y += 100) { const s = document.createElement('span'); s.style.top = y + 3 + 'px'; s.textContent = y; left.append(s); }
+  /* ---------- tape measure: cm numbers, and a pin that follows the cursor ---------- */
+  const CM = 96 / 2.54, TIP = 14; // CSS px per cm; the metal tip is 14px wide
+  function tape() {
+    const t = $('#tape'); t.querySelectorAll('span').forEach(n => n.remove());
+    for (let n = 1; TIP + n * CM < innerWidth; n++) { const s = document.createElement('span'); s.style.left = TIP + n * CM + 'px'; s.textContent = n; t.append(s); }
   }
-  rulers(); addEventListener('resize', rulers);
-  let raf = 0, px = 0, py = 0;
+  tape(); addEventListener('resize', tape);
+  let raf = 0, px = 0;
   addEventListener('pointermove', e => {
-    px = e.clientX; py = e.clientY;
+    px = e.clientX; document.body.classList.add('measuring');
     if (raf) return;
     raf = requestAnimationFrame(() => {
       raf = 0;
-      $('#xy').textContent = `X ${Math.round(px + scrollX)} · Y ${Math.round(py + scrollY)}`;
-      $('#rulerTop .mark').style.left = px - R() + 'px';
-      $('#rulerLeft .mark').style.top = py - R() + 'px';
+      $('#pin').style.left = px + 'px';
+      const tag = $('#pinTag'); tag.textContent = Math.max(0, (px - TIP) / CM).toFixed(1) + ' cm'; tag.style.left = px + 8 + 'px';
     });
   }, { passive: true });
+  document.documentElement.addEventListener('pointerleave', () => document.body.classList.remove('measuring'));
   // Figma-style size readout on hovered frames
   document.querySelectorAll('.frame').forEach(f => f.addEventListener('pointerenter', () => {
     const t = f.querySelector(':scope > .size-tag'); if (!t) return;
