@@ -64,6 +64,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .navpeg:hover span, .navpeg:focus-visible span { opacity: 1; translate: 0 0; }
 @media (hover: none) { .navpeg span { opacity: 1; translate: 0 0; } }
 .pegs .lang-toggle { margin: 32px 0 0 4px; }
+@media (min-width: 900px) and (hover: hover) { .navpeg { display: none; } }
 .lang-toggle { font: 12px var(--f-mono); color: var(--dim); background: var(--surface); border: 1px solid var(--line); border-radius: 99px; padding: 5px 12px; margin-left: 6px; white-space: nowrap; }
 .lang-toggle b { color: var(--ink); font-weight: 600; }
 
@@ -113,6 +114,9 @@ button { font: inherit; color: inherit; cursor: pointer; }
   background: linear-gradient(90deg, #C9A06A, #E6C391 45%, #B98C55); box-shadow: 0 1px 2px rgba(0, 0, 0, .2); }
 .peg::after { content: ""; position: absolute; left: -2px; right: -2px; top: 11px; height: 3px; border-radius: 2px; background: #9A9A9A; }
 .clip.landing { outline: 2px dashed var(--sel); outline-offset: 3px; }
+.clip.sec { width: auto; min-width: 128px; padding: 20px 18px 10px; background: var(--surface); color: var(--ink); text-decoration: none; text-align: center; font: 800 24px/1 var(--f-display); letter-spacing: -.02em; border-top: 4px solid var(--pc); }
+.clip.sec small { display: block; margin: 0 0 4px; font: 600 10px var(--f-mono); color: var(--pc); letter-spacing: .08em; }
+.clip.sec .peg { width: 12px; margin-left: -6px; top: -16px; height: 36px; background: linear-gradient(90deg, color-mix(in srgb, var(--pc) 75%, #000), var(--pc) 45%, color-mix(in srgb, var(--pc) 80%, #000)); }
 .clip.add { font: 11px/1.4 var(--f-mono); color: var(--dim); background: var(--surface); border: 1.5px dashed var(--line); box-shadow: none; cursor: pointer; text-align: center; padding: 18px 8px 12px; }
 .clip.add b { display: block; font: 600 15px var(--f-display); color: var(--ink); }
 @keyframes sway { 50% { rotate: calc(var(--r, 0deg) + 2deg); } }
@@ -429,14 +433,32 @@ button { font: inherit; color: inherit; cursor: pointer; }
     hangLine();
   }
   // spread the cards along the whole page; the rope sags a little between pegs
+  // Section name cards (desktop only) ride the rope, so each one slides in from the right with its section. Signature cards share the line and keep clear of them.
+  const SECTIONS = [['work', 'Work', '作品', '#E8590C'], ['playground', 'Playground', '实验', '#0B7A66'], ['about', 'About', '关于', '#2F6BFF']];
   function hangLine() {
-    const box = $('#lineIn'), clips = [...box.querySelectorAll('.clip')], n = clips.length;
+    const box = $('#lineIn');
+    box.querySelectorAll('.sec').forEach(n => n.remove());
+    const sigs = [...box.querySelectorAll('.clip')], n = sigs.length;
     const W = wide.matches ? track.offsetWidth : Math.max($('#line').clientWidth, n * 150 + 80);
     box.style.width = W + 'px';
+    const secXs = wide.matches ? SECTIONS.map(([id, en, z, c], i) => {
+      // Work waits at the right edge of the first screen; the others hang above their own heading
+      const x = i === 0 ? innerWidth - 300 : document.getElementById(id).offsetLeft + 80;
+      const a = document.createElement('a'); a.className = 'clip sec'; a.href = '#' + id;
+      a.style.setProperty('--pc', c); a.style.setProperty('--r', [-3, 2, -2][i] + 'deg'); a.style.setProperty('--d', -i + 's');
+      a.style.left = x + 'px'; a.style.top = ROPE_Y - 4 + 'px';
+      a.innerHTML = `<i class="peg"></i><small>0${i + 1}</small>${tr(en, z)}`;
+      box.append(a); return x;
+    }) : [];
     const first = wide.matches ? 120 : 80, step = n > 1 ? Math.max(150, (W - first - 200) / (n - 1)) : 0;
-    const xs = clips.map((c, i) => { const x = first + i * step; c.style.left = x + 'px'; c.style.top = ROPE_Y - 4 + 'px'; return x; });
+    const xs = sigs.map((c, i) => {
+      let x = first + i * step;
+      // ponytail: one nudge past a nearby section card; with very many signatures two cards can still touch
+      secXs.forEach(sx => { if (Math.abs(x - sx) < 170) x = sx + 170; });
+      c.style.left = x + 'px'; c.style.top = ROPE_Y - 4 + 'px'; return x;
+    });
     let d = `M0 ${ROPE_Y}`, px = 0;
-    [...xs, W].forEach(x => { const sag = Math.min(22, (x - px) * .04); d += ` Q${(px + x) / 2} ${ROPE_Y + sag * 2} ${x} ${ROPE_Y}`; px = x; });
+    [...xs, ...secXs].sort((a, b) => a - b).concat(W).forEach(x => { const sag = Math.min(22, (x - px) * .04); d += ` Q${(px + x) / 2} ${ROPE_Y + sag * 2} ${x} ${ROPE_Y}`; px = x; });
     $('#rope').setAttribute('d', d);
   }
 
