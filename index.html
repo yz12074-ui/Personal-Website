@@ -9,8 +9,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
-/* Layout: the whole homepage is a design canvas laid on pattern paper, with a tailor's tape measure
-   across the top (a pin follows the cursor and reads out cm). I design and I sew, so the "ruler" is a tape.
+/* Layout: the homepage is a canvas on pattern paper that you read left to right: on desktop, scrolling
+   down slides the whole page sideways. Visitors' signature cards hang on a clothesline along the top,
+   so new names drift past as you scroll. Mobile keeps a normal vertical page.
    Every block is a "frame" that shows a selection box on hover. Visitors sign in at the door and
    their signature hangs in the Visitors frame. Same tokens as the case studies: orange = the problem,
    teal = the redesign, yellow = highlighter. */
@@ -21,7 +22,6 @@
   --f-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
   --f-body: "Source Serif 4", "Noto Serif SC", Georgia, serif;
   --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
-  --tape: 26px;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #171614; --surface: #211F1C; --sunk: #2A2825; --ink: #EEEAE2; --dim: #A39D93; --line: #3A3733; --dot: #3A3733;
@@ -40,7 +40,7 @@ body { margin: 0; background-color: var(--bg); color: var(--ink); font: 400 18px
   background-image: linear-gradient(90deg, color-mix(in srgb, var(--dot) 70%, transparent) 1px, transparent 1px), linear-gradient(color-mix(in srgb, var(--dot) 70%, transparent) 1px, transparent 1px),
     linear-gradient(90deg, color-mix(in srgb, var(--dot) 35%, transparent) 1px, transparent 1px), linear-gradient(color-mix(in srgb, var(--dot) 35%, transparent) 1px, transparent 1px);
   background-size: 5cm 5cm, 5cm 5cm, 1cm 1cm, 1cm 1cm; background-attachment: fixed;
-  padding: calc(var(--tape) + 64px) max(16px, 4vw) 0; overflow-x: hidden; }
+  padding: 64px max(16px, 4vw) 0; overflow-x: hidden; }
 html:lang(zh-CN) body { font-family: var(--f-body), "PingFang SC", "Noto Sans SC", sans-serif; }
 h1, h2, h3 { font-family: var(--f-display); margin: 0; line-height: 1.05; text-wrap: balance; }
 p { margin: 0; }
@@ -51,22 +51,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .canvas { max-width: 1240px; margin: 0 auto; display: flex; flex-direction: column; gap: 104px; padding-bottom: 40px; }
 
-/* ---------- tape measure (decorative): mm / half-cm / cm ticks in real CSS units ---------- */
-.tape { position: fixed; z-index: 30; top: 0; left: 0; right: 0; height: var(--tape); pointer-events: none; overflow: hidden; color: #3B3100; font: 600 9px/1 var(--f-mono);
-  background-color: #F6D84A; box-shadow: 0 1px 0 #C9A91E, 0 3px 6px rgba(0,0,0,.08);
-  background-image: repeating-linear-gradient(90deg, #3B3100 0 1px, transparent 1px 1cm), repeating-linear-gradient(90deg, #3B3100 0 1px, transparent 1px .5cm), repeating-linear-gradient(90deg, rgba(59,49,0,.7) 0 1px, transparent 1px 1mm);
-  background-size: 100% 11px, 100% 7px, 100% 4px; background-repeat: no-repeat; background-position: 14px 0, 14px 0, 14px 0; }
-.tape::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 14px; background: linear-gradient(90deg, #8E8A80, #D9D5CC 60%, #A9A499); }
-.tape span { position: absolute; top: 13px; translate: -50% 0; }
-.pin { position: fixed; z-index: 32; top: 0; left: 0; width: 0; height: 0; opacity: 0; transition: opacity .2s; pointer-events: none; }
-.pin::before { content: ""; position: absolute; left: -.5px; top: 0; width: 1.5px; height: var(--tape); background: #6B6B6B; }
-.pin::after { content: ""; position: absolute; left: -5px; top: calc(var(--tape) - 6px); width: 10px; height: 10px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #FF8A8A, #D7263D 60%); }
-.pin-tag { position: fixed; z-index: 32; top: calc(var(--tape) + 10px); left: 0; font: 600 10.5px var(--f-mono); background: #D7263D; color: #fff; padding: 2px 6px; border-radius: 4px; pointer-events: none; opacity: 0; transition: opacity .2s; font-variant-numeric: tabular-nums; white-space: nowrap; }
-body.measuring .pin, body.measuring .pin-tag { opacity: 1; }
-@media (hover: none) { .pin, .pin-tag { display: none; } }
-
 /* ---------- top bar ---------- */
-.bar { position: fixed; z-index: 31; top: var(--tape); left: 0; right: 0; height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 max(16px, 4vw);
+.bar { position: fixed; z-index: 31; top: 0; left: 0; right: 0; height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 max(16px, 4vw);
   background: color-mix(in srgb, var(--bg) 90%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-family: var(--f-display); font-weight: 800; font-size: 17px; white-space: nowrap; }
 .brand i { font-style: normal; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; background: var(--ink); color: var(--bg); font-size: 14px; }
@@ -118,23 +104,26 @@ html:lang(zh-CN) .who h1 { font-size: clamp(40px, 5.4vw, 78px); line-height: 1.1
 .focus p { font-size: 15px; color: var(--dim); line-height: 1.45; }
 @media (max-width: 960px) { .hero { grid-template-columns: minmax(0, 1fr); } .focus { grid-template-columns: minmax(0, 1fr); } }
 
-/* visitors frame: signatures hang here */
-.visitors { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
-.visitors header { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
-.visitors h2 { font-size: 20px; font-weight: 800; }
-.visitors header span { font: 11px var(--f-mono); color: var(--dim); }
-.sigs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 12px; min-height: 196px; align-content: start; padding-top: 6px; }
-.sig { position: relative; margin: 0; background: var(--bg); border-radius: 10px; padding: 12px 10px 8px; rotate: var(--r, 0deg); box-shadow: 0 2px 0 var(--line); }
-.sig::before { content: ""; position: absolute; top: -8px; left: 50%; width: 46px; height: 14px; margin-left: -23px; background: var(--c, var(--hi)); opacity: .85; rotate: -3deg; border-radius: 2px; }
-.sig img { display: block; width: 100%; aspect-ratio: 12 / 5; object-fit: contain; }
-:root[data-theme="dark"] .sig img { filter: invert(1); }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .sig img { filter: invert(1); } }
-.sig small { display: block; font: 10.5px var(--f-mono); color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.sig.you small { color: var(--trap); }
-.sig.landing { outline: 2px dashed var(--sel); outline-offset: 3px; }
-.visitors .empty { grid-column: 1 / -1; display: grid; place-items: center; text-align: center; font-size: 15px; color: var(--dim); border: 1.5px dashed var(--line); border-radius: 12px; padding: 20px; }
-.visitors footer { display: flex; justify-content: space-between; gap: 8px; }
-.visitors footer a, .visitors footer button { font: 12px var(--f-mono); color: var(--dim); background: none; border: 0; padding: 0; text-decoration: underline; text-underline-offset: 3px; }
+/* ---------- clothesline: signature cards pinned with wooden pegs ---------- */
+.line { position: relative; height: 150px; overflow-x: auto; overflow-y: hidden; margin: 0 calc(-1 * max(16px, 4vw)) 8px; scrollbar-width: none; }
+.line-in { position: relative; height: 100%; }
+.rope { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.rope path { fill: none; stroke: #B89B72; stroke-width: 2.5; stroke-dasharray: 6 2; stroke-linecap: round; }
+.clip { position: absolute; margin: 0; width: 118px; translate: -50% 0; rotate: var(--r, 0deg); transform-origin: 50% 0; padding: 14px 8px 6px; border-radius: 3px;
+  background: color-mix(in srgb, var(--c, #FFE15A) 45%, #fff); box-shadow: 0 6px 14px rgba(0, 0, 0, .1); transition: rotate .4s cubic-bezier(.3, 1.6, .5, 1); }
+.clip:hover { rotate: calc(var(--r, 0deg) * -1.5); }
+.clip img { display: block; width: 100%; aspect-ratio: 12 / 5; object-fit: contain; }
+.clip small { display: block; margin-top: 2px; font: 9.5px var(--f-mono); color: #4A453E; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; }
+.clip.you small { color: #C2410C; }
+.peg { position: absolute; left: 50%; top: -12px; width: 9px; height: 30px; margin-left: -4.5px; border-radius: 2px; rotate: var(--pr, 4deg);
+  background: linear-gradient(90deg, #C9A06A, #E6C391 45%, #B98C55); box-shadow: 0 1px 2px rgba(0, 0, 0, .2); }
+.peg::after { content: ""; position: absolute; left: -2px; right: -2px; top: 11px; height: 3px; border-radius: 2px; background: #9A9A9A; }
+.clip.landing { outline: 2px dashed var(--sel); outline-offset: 3px; }
+.clip.add { font: 11px/1.4 var(--f-mono); color: var(--dim); background: var(--surface); border: 1.5px dashed var(--line); box-shadow: none; cursor: pointer; text-align: center; padding: 18px 8px 12px; }
+.clip.add b { display: block; font: 600 15px var(--f-display); color: var(--ink); }
+@keyframes sway { 50% { rotate: calc(var(--r, 0deg) + 2deg); } }
+.clip:not(.add) { animation: sway 5s ease-in-out infinite; animation-delay: var(--d, 0s); }
+.clip:hover { animation: none; }
 
 /* ---------- work ---------- */
 .sec-head { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; }
@@ -209,20 +198,43 @@ html:lang(zh-CN) .who h1 { font-size: clamp(40px, 5.4vw, 78px); line-height: 1.1
 .door-actions button { border: 1px solid var(--line); background: var(--surface); border-radius: 99px; padding: 10px 16px; font: 13px var(--f-mono); }
 .door-actions .go { background: var(--ink); color: var(--bg); border-color: var(--ink); }
 .door-actions .go[aria-disabled="true"] { opacity: .45; cursor: not-allowed; }
+.papers { display: flex; align-items: center; gap: 8px; font: 12px var(--f-mono); color: var(--dim); }
+.papers button { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--surface); background: color-mix(in srgb, var(--c) 60%, #fff); box-shadow: 0 0 0 1px var(--line); padding: 0; }
+.papers button[aria-checked="true"] { box-shadow: 0 0 0 2px var(--ink); }
 .door .skip { align-self: center; font: 12px var(--f-mono); color: var(--dim); background: none; border: 0; text-decoration: underline; text-underline-offset: 3px; }
 .flyer { position: fixed; z-index: 101; pointer-events: none; background: #fff; border-radius: 10px; box-shadow: 0 18px 40px rgba(0, 0, 0, .18); transform-origin: 0 0; }
 .flyer img { display: block; width: 100%; height: 100%; object-fit: contain; }
 /* homepage blocks arrive one by one after the door opens */
 .arriving .canvas > * { opacity: 0; translate: 0 14px; }
 .arrived .canvas > * { transition: opacity .5s ease, translate .6s cubic-bezier(.22, 1, .36, 1); transition-delay: calc(var(--i, 0) * 110ms); }
+/* ---------- left-to-right reading (desktop): JS sets #hwrap's height and slides .track ---------- */
+@media (min-width: 900px) and (hover: hover) {
+  body { padding: 0; }
+  .hstick { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+  .track { --H: calc(100vh - 236px); position: relative; display: flex; flex-direction: row; max-width: none; margin: 0; align-items: center; gap: 150px; width: max-content; height: 100vh; padding: 204px 140px 32px 6vw; will-change: transform; }
+  .track > section, .track > footer { flex: none; }
+  .line { position: absolute; left: 0; top: 52px; width: 100%; margin: 0; overflow: visible; }
+  .hero { width: min(1180px, 88vw); grid-template-columns: minmax(0, 1fr) 320px; align-items: center; padding: 0; gap: 48px; }
+  .who h1 { font-size: min(84px, 8.6vh, 6vw); }
+  html:lang(zh-CN) .who h1 { font-size: min(74px, 7.6vh, 5.4vw); }
+  .who { gap: min(22px, 2.2vh); }
+  .focus { grid-column: auto; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .focus a { padding: 14px 16px; }
+  .focus h3 { font-size: 19px; }
+  #work, #playground { display: flex; align-items: center; gap: 64px; }
+  .sec-head { flex-direction: column; align-items: flex-start; width: 280px; flex: none; }
+  .work { display: flex; gap: 48px; margin: 0; }
+  .card { width: calc((var(--H) - 240px) * 16 / 11); min-width: 300px; }
+  .card-body h3 { font-size: 24px; }
+  .card-body p { font-size: 15.5px; }
+  .plays { --t: calc((var(--H) - 150px) / 2); grid-template-columns: repeat(4, var(--t)); grid-template-rows: auto; margin: 0; }
+  .about { width: min(1000px, 80vw); grid-template-columns: min(300px, calc((var(--H) - 20px) * .8)) minmax(0, 1fr); align-items: center; }
+  .foot { flex-direction: column; justify-content: center; align-self: stretch; width: 240px; border-top: 0; border-left: 1px solid var(--line); padding: 0 0 0 36px; }
+}
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 </style>
 </head>
 <body>
-<div class="tape" id="tape" aria-hidden="true"></div>
-<i class="pin" id="pin" aria-hidden="true"></i>
-<div class="pin-tag" id="pinTag" aria-hidden="true">0.0 cm</div>
-
 <header class="bar">
   <a class="brand" href="#top"><i>玥</i><span>Amanda Zhang</span></a>
   <nav aria-label="Main">
@@ -234,7 +246,11 @@ html:lang(zh-CN) .who h1 { font-size: clamp(40px, 5.4vw, 78px); line-height: 1.1
   </nav>
 </header>
 
-<main class="canvas" id="top">
+<div id="hwrap"><div class="hstick">
+<main class="canvas track" id="top">
+  <!-- ===== CLOTHESLINE: every visitor's signature card ===== -->
+  <div class="line" id="line" aria-label="Visitors' signatures"><div class="line-in" id="lineIn"><svg class="rope" aria-hidden="true"><path id="rope"/></svg></div></div>
+
   <!-- ===== HERO ===== -->
   <section class="hero">
     <div class="who frame" data-frame="Frame · Intro">
@@ -248,17 +264,11 @@ html:lang(zh-CN) .who h1 { font-size: clamp(40px, 5.4vw, 78px); line-height: 1.1
         <span data-zh="本科 &lt;b&gt;服装设计&lt;/b&gt;">BA in <b>fashion design</b></span>
       </div>
       <div class="cta">
-        <a class="btn solid" href="#work" data-zh="看作品 ↓">See the work ↓</a>
+        <a class="btn solid" href="#work" data-zh="看作品 →">See the work →</a>
         <a class="btn" href="temu.html" data-zh="从最完整的开始：Temu →">Start with Temu →</a>
       </div>
       <span class="size-tag" aria-hidden="true"></span>
     </div>
-
-    <aside class="visitors frame" data-frame="Frame · Visitors" aria-labelledby="visitors-title">
-      <header><h2 id="visitors-title" data-zh="来过的人">Signed in</h2><span id="visCount"></span></header>
-      <div class="sigs" id="sigs"></div>
-      <footer><a href="wall.html" data-zh="看整面签名墙 →">See the whole wall →</a><button type="button" id="signAgain" data-zh="签个名">Sign</button></footer>
-    </aside>
 
     <div class="focus" aria-label="What I work on">
       <a class="frame" data-frame="Ethical design" href="temu.html"><span class="k" data-zh="伦理设计">Ethical design</span><h3 data-zh="删掉套路，留下优惠">Keep the deal, drop the tricks</h3><p data-zh="Temu 的优惠券迷宫：21 个页面变成 3 个，结算从 $151 降到 $94。">Temu’s coupon maze: 21 screens down to 3, checkout from $151 to $94.</p></a>
@@ -328,6 +338,7 @@ html:lang(zh-CN) .who h1 { font-size: clamp(40px, 5.4vw, 78px); line-height: 1.1
     <span>© 2026</span>
   </footer>
 </main>
+</div></div>
 
 <!-- ===== THE DOOR: sign in to enter ===== -->
 <div class="door" id="door" role="dialog" aria-modal="true" aria-labelledby="door-title" hidden>
@@ -339,6 +350,7 @@ html:lang(zh-CN) .who h1 { font-size: clamp(40px, 5.4vw, 78px); line-height: 1.1
       <span class="pad-x" aria-hidden="true">×</span><span class="pad-line" aria-hidden="true"></span>
       <span class="pad-hint" id="padHint" data-zh="用鼠标或手指在这里签名。签名会挂在我的主页上。">Draw your signature here. It will hang on my homepage.</span>
     </div>
+    <div class="papers" role="radiogroup" aria-label="Card colour" id="papers"><span data-zh="卡片颜色">Card colour</span></div>
     <div class="door-row">
       <input id="signName" type="text" maxlength="20" autocomplete="nickname" placeholder="Your name (optional)" aria-label="Your name (optional)">
       <div class="door-actions">
@@ -364,57 +376,82 @@ html:lang(zh-CN) .who h1 { font-size: clamp(40px, 5.4vw, 78px); line-height: 1.1
   const ENDPOINT = window.WALL_ENDPOINT || '';
   const TAPE = ['#FFE15A', '#FFC29A', '#9FE0CF', '#F9B9C9', '#B9CCFF'];
 
-  /* ---------- tape measure: cm numbers, and a pin that follows the cursor ---------- */
-  const CM = 96 / 2.54, TIP = 14; // CSS px per cm; the metal tip is 14px wide
-  function tape() {
-    const t = $('#tape'); t.querySelectorAll('span').forEach(n => n.remove());
-    for (let n = 1; TIP + n * CM < innerWidth; n++) { const s = document.createElement('span'); s.style.left = TIP + n * CM + 'px'; s.textContent = n; t.append(s); }
+  /* ---------- left-to-right reading: page height = how far the track slides ---------- */
+  const wide = matchMedia('(min-width: 900px) and (hover: hover)');
+  const wrap = $('#hwrap'), track = $('.track');
+  let dist = 0;
+  function slide() { if (wide.matches) track.style.transform = `translate3d(${-Math.min(Math.max(scrollY - wrap.offsetTop, 0), dist)}px, 0, 0)`; }
+  function layout() {
+    if (wide.matches) { dist = Math.max(0, track.offsetWidth - innerWidth); wrap.style.height = innerHeight + dist + 'px'; }
+    else { dist = 0; wrap.style.height = ''; track.style.transform = ''; }
+    hangLine(); slide();
   }
-  tape(); addEventListener('resize', tape);
-  let raf = 0, px = 0;
-  addEventListener('pointermove', e => {
-    px = e.clientX; document.body.classList.add('measuring');
-    if (raf) return;
-    raf = requestAnimationFrame(() => {
-      raf = 0;
-      $('#pin').style.left = px + 'px';
-      const tag = $('#pinTag'); tag.textContent = Math.max(0, (px - TIP) / CM).toFixed(1) + ' cm'; tag.style.left = px + 8 + 'px';
-    });
-  }, { passive: true });
-  document.documentElement.addEventListener('pointerleave', () => document.body.classList.remove('measuring'));
+  addEventListener('scroll', slide, { passive: true });
+  addEventListener('resize', layout);
+  // trackpad sideways swipes move the page too
+  addEventListener('wheel', e => { if (wide.matches && Math.abs(e.deltaX) > Math.abs(e.deltaY)) scrollBy(0, e.deltaX); }, { passive: true });
+  // in-page links (#work, #about…) jump to the section's place on the track
+  const go = id => { const t = id && id !== 'top' && document.getElementById(id); scrollTo({ top: t ? wrap.offsetTop + t.offsetLeft - 60 : 0, behavior: reduced ? 'auto' : 'smooth' }); };
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a[href^="#"]'); if (!a || !wide.matches) return;
+    e.preventDefault(); const id = a.getAttribute('href').slice(1); go(id); history.replaceState(null, '', '#' + id);
+  });
   // Figma-style size readout on hovered frames
   document.querySelectorAll('.frame').forEach(f => f.addEventListener('pointerenter', () => {
     const t = f.querySelector(':scope > .size-tag'); if (!t) return;
     const r = f.getBoundingClientRect(); t.textContent = `${Math.round(r.width)} × ${Math.round(r.height)}`;
   }));
 
-  /* ---------- signatures: the same cards as wall.html ---------- */
+  /* ---------- clothesline: the same signature cards as wall.html ---------- */
   let cards = [];
   async function loadCards() {
     if (!ENDPOINT) return store.get('wall-demo', []);
     try { const r = await fetch(ENDPOINT); return (await r.json()).items || []; } catch { return store.get('wall-demo', []); }
   }
   const mine = new Set(store.get('wall-mine', []));
+  const ROPE_Y = 26;
   function renderSigs(landingId) {
-    const box = $('#sigs'); box.replaceChildren();
-    const list = [...cards].reverse().filter(c => typeof c.sig === 'string' && c.sig.startsWith('data:image/png;base64,')).slice(0, 6);
-    $('#visCount').textContent = tr(`${cards.length} signature${cards.length === 1 ? '' : 's'}`, `${cards.length} 个签名`);
-    if (!list.length) {
-      const e = document.createElement('div'); e.className = 'empty';
-      e.textContent = tr('No signatures yet. Be the first one.', '还没有人签名，来当第一个吧。');
-      box.append(e); return;
-    }
+    const box = $('#lineIn'); box.querySelectorAll('.clip').forEach(n => n.remove());
+    // newest first, so a fresh signature hangs where the page starts
+    const list = [...cards].reverse().filter(c => typeof c.sig === 'string' && c.sig.startsWith('data:image/png;base64,')).slice(0, 40);
     list.forEach((c, i) => {
       const d = document.createElement('figure');
-      d.className = 'sig' + (mine.has(c.id) ? ' you' : '') + (c.id === landingId ? ' landing' : '');
+      d.className = 'clip' + (mine.has(c.id) ? ' you' : '') + (c.id === landingId ? ' landing' : '');
       d.id = 'sig-' + c.id;
-      d.style.setProperty('--r', ((i % 3) - 1) * 1.6 + 'deg');
-      d.style.setProperty('--c', TAPE[i % TAPE.length]);
+      d.style.setProperty('--r', [-4, 3, -2, 5, -3][i % 5] + 'deg');
+      d.style.setProperty('--pr', [5, -4, 3][i % 3] + 'deg');
+      d.style.setProperty('--d', -(i * 0.7) + 's');
+      d.style.setProperty('--c', /^#[0-9a-f]{6}$/i.test(c.color) ? c.color : TAPE[i % TAPE.length]);
       const img = document.createElement('img'); img.src = c.sig; img.alt = tr(`Signature of ${c.name}`, `${c.name} 的签名`);
       const cap = document.createElement('small'); cap.textContent = (mine.has(c.id) ? tr('you · ', '你 · ') : '') + c.name;
-      d.append(img, cap); box.append(d);
+      d.append(Object.assign(document.createElement('i'), { className: 'peg' }), img, cap); box.append(d);
     });
+    // an empty card at the end of the line: sign it to hang your own
+    const add = document.createElement('button'); add.type = 'button'; add.className = 'clip add';
+    add.innerHTML = `<i class="peg"></i><b>${tr('Sign ✎', '签个名 ✎')}</b>${tr(`${cards.length} signature${cards.length === 1 ? '' : 's'}`, `已有 ${cards.length} 个签名`)}`;
+    add.onclick = openDoor; box.append(add);
+    hangLine();
   }
+  // spread the cards along the whole page; the rope sags a little between pegs
+  function hangLine() {
+    const box = $('#lineIn'), clips = [...box.querySelectorAll('.clip')], n = clips.length;
+    const W = wide.matches ? track.offsetWidth : Math.max($('#line').clientWidth, n * 150 + 80);
+    box.style.width = W + 'px';
+    const first = wide.matches ? 120 : 80, step = n > 1 ? Math.max(150, (W - first - 200) / (n - 1)) : 0;
+    const xs = clips.map((c, i) => { const x = first + i * step; c.style.left = x + 'px'; c.style.top = ROPE_Y - 4 + 'px'; return x; });
+    let d = `M0 ${ROPE_Y}`, px = 0;
+    [...xs, W].forEach(x => { const sag = Math.min(22, (x - px) * .04); d += ` Q${(px + x) / 2} ${ROPE_Y + sag * 2} ${x} ${ROPE_Y}`; px = x; });
+    $('#rope').setAttribute('d', d);
+  }
+
+  /* ---------- card colour, picked at the door ---------- */
+  let paper = TAPE[0];
+  TAPE.forEach((c, i) => {
+    const b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'radio'); b.setAttribute('aria-checked', i === 0); b.setAttribute('aria-label', c);
+    b.style.setProperty('--c', c);
+    b.onclick = () => { paper = c; $('#papers').querySelectorAll('button').forEach(x => x.setAttribute('aria-checked', x === b)); };
+    $('#papers').append(b);
+  });
 
   /* ---------- the door ---------- */
   const door = $('#door'), pad = $('#pad'), g = pad.getContext('2d');
@@ -455,13 +492,12 @@ html:lang(zh-CN) .who h1 { font-size: clamp(40px, 5.4vw, 78px); line-height: 1.1
   }
 
   $('#skipDoor').onclick = () => { store.set('door-seen', 1); closeDoor(); arrive(); };
-  $('#signAgain').onclick = openDoor;
   door.addEventListener('keydown', e => { if (e.key === 'Escape') $('#skipDoor').click(); });
 
   $('#enter').onclick = async () => {
     if (!inked) { $('#padHint').style.opacity = 1; $('#padHint').textContent = tr('Draw a signature first ✎', '先签个名吧 ✎'); return; }
     const name = ($('#signName').value.trim() || tr('a visitor', '一位访客')).slice(0, 20);
-    const card = { id: 'local-' + Date.now(), name, note: '', color: '#B9A7F2', sig: sigData(), likes: 0, time: new Date().toISOString().slice(0, 10) };
+    const card = { id: 'local-' + Date.now(), name, note: '', color: paper, sig: sigData(), likes: 0, time: new Date().toISOString().slice(0, 10) };
     const from = pad.getBoundingClientRect();
     cards.push(card); mine.add(card.id); store.set('wall-mine', [...mine]); store.set('door-seen', 1);
     if (!ENDPOINT) store.set('wall-demo', cards); else fetch(ENDPOINT, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'add', ...card }) }).catch(() => {});
@@ -489,8 +525,13 @@ html:lang(zh-CN) .who h1 { font-size: clamp(40px, 5.4vw, 78px); line-height: 1.1
 
   new MutationObserver(() => renderSigs()).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
   loadCards().then(d => { cards = d; renderSigs(); });
-  // First visit opens the door. Returning visitors, deep links (#work…) and ?nodoor go straight in.
-  if (!store.get('door-seen', 0) && !location.hash && !/nodoor/.test(location.search)) openDoor();
+  addEventListener('load', layout);
+  document.fonts?.ready.then(layout);
+  layout();
+  if (location.hash && wide.matches) setTimeout(() => go(location.hash.slice(1)), 50);
+  // First visit opens the door; ?door always does. Returning visitors, deep links (#work…) and ?nodoor go straight in.
+  const q = new URLSearchParams(location.search);
+  if (q.has('door') || (!store.get('door-seen', 0) && !location.hash && !q.has('nodoor'))) openDoor();
 })();
 </script>
 <script src="assets/i18n.js" defer></script>
