@@ -85,33 +85,11 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .scroll-hint { display: none; }
 
 /* ---------- hero ---------- */
-.hero { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr); gap: 52px 56px; align-items: start; padding-top: 28px; }
-.who { display: flex; flex-direction: column; gap: 22px; }
-.who .eyebrow { color: var(--trap); }
-.who .h1 { font-size: clamp(34px, 5vw, 60px); font-weight: 800; letter-spacing: -0.035em; line-height: .98; }
-.who .h1 .serif { font-family: var(--f-body); font-style: italic; font-weight: 400; letter-spacing: -0.02em; }
-.who .h1 .marker { background: linear-gradient(var(--hi), var(--hi)) 0 88% / 100% 34% no-repeat; padding: 0 .04em; }
-.who .h1 .chip-w { font-family: var(--f-mono); font-weight: 600; font-size: .5em; letter-spacing: 0; vertical-align: .32em; background: var(--ink); color: var(--bg); border-radius: 8px; padding: .06em .3em; }
-html:lang(zh-CN) .who .h1 { font-size: clamp(30px, 4.6vw, 54px); line-height: 1.14; }
-.proof { display: flex; flex-wrap: wrap; gap: 8px; }
-.proof span { font: 12px var(--f-mono); padding: 6px 10px; border-radius: 99px; background: var(--surface); border: 1px solid var(--line); color: var(--dim); }
-.proof b { color: var(--ink); font-weight: 600; }
-.lead { font-size: 20px; color: var(--dim); max-width: 56ch; }
 .cta { display: flex; flex-wrap: wrap; gap: 10px; }
 .btn { display: inline-flex; align-items: center; gap: 8px; font: 13px var(--f-mono); text-decoration: none; border: 1px solid var(--line); background: var(--surface); border-radius: 99px; padding: 10px 16px; transition: translate .2s; }
 .btn:hover { translate: 0 -2px; }
 .btn.solid { background: var(--ink); color: var(--bg); border-color: var(--ink); }
 
-/* focus row: three problem areas, each linking to its project */
-.focus { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-.focus a { display: flex; flex-direction: column; gap: 8px; text-decoration: none; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px 18px 16px; transition: translate .2s, border-color .2s; }
-.focus a:hover { translate: 0 -3px; border-color: var(--ink); }
-.focus .k { font: 11px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--trap); }
-.focus a:nth-child(2) .k { color: var(--honest); }
-.focus a:nth-child(3) .k { color: var(--sel); }
-.focus h3 { font-size: 22px; font-weight: 800; letter-spacing: -.01em; }
-.focus p { font-size: 15px; color: var(--dim); line-height: 1.45; }
-@media (max-width: 960px) { .hero { grid-template-columns: minmax(0, 1fr); } .focus { grid-template-columns: minmax(0, 1fr); } }
 
 /* ---------- clothesline: signature cards pinned with wooden pegs ---------- */
 .line { position: relative; height: 150px; overflow-x: auto; overflow-y: hidden; margin: 0 calc(-1 * max(16px, 4vw)) 8px; scrollbar-width: none; }
@@ -135,6 +113,22 @@ html:lang(zh-CN) .who .h1 { font-size: clamp(30px, 4.6vw, 54px); line-height: 1.
 .clip:hover { animation: none; }
 
 /* ---------- work ---------- */
+.work-head { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px 56px; align-items: center; }
+.work-head h2 { font-size: clamp(36px, 4.4vw, 60px); font-weight: 800; letter-spacing: -.035em; line-height: .95; max-width: 5.2em; }
+.statement { margin: 0; font: 800 clamp(24px, 2.8vw, 42px)/1.08 var(--f-display); letter-spacing: -.02em; text-transform: uppercase; max-width: 20em; }
+.statement .serif { font-family: var(--f-body); font-style: italic; font-weight: 600; text-transform: none; }
+.statement .marker { background: linear-gradient(var(--hi), var(--hi)) 0 88% / 100% 34% no-repeat; }
+.statement .chip-w { font: 600 .62em var(--f-mono); vertical-align: .18em; background: var(--ink); color: var(--bg); border-radius: 6px; padding: .04em .3em; }
+@media (max-width: 760px) { .work-head { grid-template-columns: minmax(0, 1fr); } }
+/* card details slide up over the image on hover / keyboard focus (role, course, timeline) */
+.details { position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 3; background: var(--surface); color: var(--ink); border-radius: 12px; padding: 12px 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, .18);
+  translate: 0 calc(100% + 16px); transition: translate .35s cubic-bezier(.22, 1, .36, 1); }
+.card:hover .details, .card:focus-visible .details { translate: 0 0; }
+.details dl { margin: 0; display: grid; gap: 6px; }
+.details dl div { display: grid; grid-template-columns: 96px 1fr; gap: 14px; font-size: 14px; line-height: 1.35; }
+.details dt { font: 10.5px var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--dim); padding-top: 2px; }
+.details dd { margin: 0; }
+
 .sec-head { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; }
 .sec-head h2 { font-size: clamp(32px, 4.4vw, 54px); font-weight: 800; letter-spacing: -.03em; }
 .sec-head p { font-size: 16px; color: var(--dim); max-width: 46ch; }
@@ -226,17 +220,12 @@ html:lang(zh-CN) .who .h1 { font-size: clamp(30px, 4.6vw, 54px); line-height: 1.
   .intro { width: calc(100vw - 6vw - 150px); justify-content: center; align-self: stretch; padding: 0 0 4vh; }
   .scroll-hint { display: block; position: absolute; right: 0; top: 50%; font: italic 400 26px var(--f-body); color: var(--dim); animation: nudge 1.6s ease-in-out infinite; }
   @keyframes nudge { 50% { translate: 10px 0; } }
-  .hero { width: min(1180px, 88vw); grid-template-columns: minmax(0, 1fr) 320px; align-items: center; padding: 0; gap: 48px; }
-  .who .h1 { font-size: min(60px, 6.4vh, 4.4vw); }
-  html:lang(zh-CN) .who .h1 { font-size: min(54px, 5.8vh, 4vw); }
-  .who { gap: min(22px, 2.2vh); }
-  .focus { grid-column: auto; grid-template-columns: minmax(0, 1fr); gap: 12px; }
-  .focus a { padding: 14px 16px; }
-  .focus h3 { font-size: 19px; }
-  #work, #playground { display: flex; align-items: center; gap: 64px; }
+  #playground { display: flex; align-items: center; gap: 64px; }
+  #work { display: flex; flex-direction: column; justify-content: center; gap: 28px; align-self: stretch; }
+  .work-head .statement { font-size: min(40px, 4.4vh); }
   .sec-head { flex-direction: column; align-items: flex-start; width: 280px; flex: none; }
   .work { display: flex; gap: 48px; margin: 0; }
-  .card { width: calc((var(--H) - 240px) * 16 / 11); min-width: 300px; }
+  .card { width: calc((var(--H) - 360px) * 16 / 11); min-width: 340px; }
   .card-body h3 { font-size: 24px; }
   .card-body p { font-size: 15.5px; }
   .plays { --t: calc((var(--H) - 150px) / 2); grid-template-columns: repeat(4, var(--t)); grid-template-rows: auto; margin: 0; }
@@ -276,52 +265,30 @@ html:lang(zh-CN) .who .h1 { font-size: clamp(30px, 4.6vw, 54px); line-height: 1.
     <span class="scroll-hint" aria-hidden="true" data-zh="» 往下滚，看更多">» scroll to see more</span>
   </section>
 
-  <!-- ===== HERO ===== -->
-  <section class="hero">
-    <div class="who frame" data-frame="Frame · Intro">
-      <p class="eyebrow mono" data-zh="张玥妍 Amanda · UX 产品设计师 · 纽约">Amanda (Yueyan) Zhang · UX &amp; Product Designer · NYC</p>
-      <h2 class="h1" data-zh="我设计&lt;span class=&quot;serif&quot;&gt;诚实&lt;/span&gt;的产品：从&lt;span class=&quot;marker&quot;&gt;结算流程&lt;/span&gt;到 &lt;span class=&quot;chip-w&quot;&gt;AI&lt;/span&gt; 陪伴。">I design <span class="serif">honest</span> products, from <span class="marker">checkout flows</span> to <span class="chip-w">AI</span> companions.</h2>
-      <p class="lead" data-zh="我从用户研究出发，尽早做原型、找真人测试。每个案例都有可以点的原型，和背后的数据。">I start from research, prototype early and test with real people. Every case study comes with a clickable prototype and the numbers behind it.</p>
-      <div class="proof" aria-label="Quick facts">
-        <span data-zh="在 &lt;b&gt;NYU&lt;/b&gt; 读书">Studying at <b>NYU</b></span>
-        <span data-zh="&lt;b&gt;4&lt;/b&gt; 个案例"><b>4</b> case studies</span>
-        <span data-zh="做过 &lt;b&gt;A/B&lt;/b&gt; 测试的重设计"><b>A/B</b>-tested redesign</span>
-        <span data-zh="本科 &lt;b&gt;服装设计&lt;/b&gt;">BA in <b>fashion design</b></span>
-      </div>
-      <span class="size-tag" aria-hidden="true"></span>
-    </div>
-
-    <div class="focus" aria-label="What I work on">
-      <a class="frame" data-frame="Ethical design" href="temu.html"><span class="k" data-zh="伦理设计">Ethical design</span><h3 data-zh="删掉套路，留下优惠">Keep the deal, drop the tricks</h3><p data-zh="Temu 的优惠券迷宫：21 个页面变成 3 个，结算从 $151 降到 $94。">Temu’s coupon maze: 21 screens down to 3, checkout from $151 to $94.</p></a>
-      <a class="frame" data-frame="AI interaction" href="lovelink.html"><span class="k" data-zh="AI 交互">AI interaction</span><h3 data-zh="吵架之前，先问 AI">Talk to the AI before you fight</h3><p data-zh="LoveLink：137 份问卷和 3 位访谈，为异地情侣设计 AI 朋友。">LoveLink: 137 survey responses and 3 interviews behind AI friends for long-distance couples.</p></a>
-      <a class="frame" data-frame="Service design" href="viva-toy.html"><span class="k" data-zh="服务设计">Service design</span><h3 data-zh="让旧玩具重新被爱">Let old toys be loved again</h3><p data-zh="VIVA TOY：3 类用户、7 个品牌的保修对比、2 张服务蓝图。">VIVA TOY: 3 user groups, 7 brands’ warranties compared, 2 service blueprints.</p></a>
-    </div>
-  </section>
-
   <!-- ===== WORK ===== -->
   <section id="work">
-    <div class="sec-head">
+    <div class="work-head">
       <h2 data-zh="精选作品">Selected work</h2>
-      <p data-zh="每个项目都从一个真实的问题开始，以原型和数据结束。">Each one starts with a real problem and ends with a prototype and numbers.</p>
+      <p class="statement" data-zh="我设计&lt;span class=&quot;serif&quot;&gt;诚实&lt;/span&gt;的产品：从&lt;span class=&quot;marker&quot;&gt;结算流程&lt;/span&gt;到 &lt;span class=&quot;chip-w&quot;&gt;AI&lt;/span&gt; 陪伴。">I design <span class="serif">honest</span> products, from <span class="marker">checkout flows</span> to <span class="chip-w">AI</span> companions.</p>
     </div>
     <div class="work">
       <a class="card frame" data-frame="01 · The Gift Card Trap" href="temu.html">
-        <div class="shot"><img class="cover" src="images/temu/cover.jpg" alt="Temu's prize wheel next to the Temu app icon" data-zh-alt="Temu 的抽奖转盘和 Temu App 图标"><div class="pills"><span class="hot" data-zh="A/B 测试">A/B tested</span><span data-zh="课程项目">class project</span><span data-zh="独立完成">solo</span></div></div>
+        <div class="shot"><img class="cover" src="images/temu/cover.jpg" alt="Temu's prize wheel next to the Temu app icon" data-zh-alt="Temu 的抽奖转盘和 Temu App 图标"><div class="pills"><span class="hot" data-zh="A/B 测试">A/B tested</span><span data-zh="课程项目">class project</span><span data-zh="独立完成">solo</span></div><div class="details"><div><dl><div><dt data-zh="角色">Role</dt><dd data-zh="独立完成 · 研究与设计">Solo · research &amp; design</dd></div><div><dt data-zh="课程">Course</dt><dd data-zh="黑暗模式">Dark Patterns</dd></div><div><dt data-zh="时间">Timeline</dt><dd data-zh="2026.09 · 1 周">Sep 2026 · 1 week</dd></div></dl></div></div></div>
         <div class="card-body"><h3 data-zh="礼品卡陷阱">The Gift Card Trap</h3><p data-zh="对 Temu 优惠券弹窗迷宫的一次伦理重设计。">An ethical redesign of Temu’s coupon pop-up maze.</p>
           <ul class="metrics"><li><b>21→3</b><span data-zh="页面">screens</span></li><li><b>7</b><span data-zh="种黑暗模式">dark patterns</span></li><li><b>$151→$94</b><span data-zh="结算金额">checkout</span></li></ul></div>
       </a>
       <a class="card frame" data-frame="02 · LoveLink" href="lovelink.html">
-        <div class="shot lavender"><img class="mock" src="images/home/lovelink-card.webp" alt="A hand holding an iPhone with the LoveLink chat screen" data-zh-alt="手持 iPhone，屏幕上是 LoveLink 聊天界面" loading="lazy"><div class="pills"><span>0→1</span><span data-zh="AI 交互">AI interaction</span><span>iOS</span></div></div>
+        <div class="shot lavender"><img class="mock" src="images/home/lovelink-card.webp" alt="A hand holding an iPhone with the LoveLink chat screen" data-zh-alt="手持 iPhone，屏幕上是 LoveLink 聊天界面" loading="lazy"><div class="pills"><span>0→1</span><span data-zh="AI 交互">AI interaction</span><span>iOS</span></div><div class="details"><div><dl><div><dt data-zh="角色">Role</dt><dd data-zh="UX 研究 · UI 设计">UX research · UI design</dd></div><div><dt data-zh="平台">Platform</dt><dd data-zh="iOS App">iOS app</dd></div><div><dt data-zh="时间">Timeline</dt><dd data-zh="2024.10 – 2024.12">Oct – Dec 2024</dd></div></dl></div></div></div>
         <div class="card-body"><h3>LoveLink</h3><p data-zh="用 AI 朋友和共建房间，让异地情侣保持亲近的 iOS App。">An iOS app that keeps long-distance couples close with AI friends and a shared room.</p>
           <ul class="metrics"><li><b>137</b><span data-zh="份问卷">survey responses</span></li><li><b>3</b><span data-zh="位访谈">interviews</span></li><li><b>5</b><span data-zh="个功能模块">app tabs</span></li></ul></div>
       </a>
       <a class="card frame" data-frame="03 · VIVA TOY" href="viva-toy.html">
-        <div class="shot sky"><img class="mock" src="images/home/viva-card.webp" alt="VIVA TOY app screens held in hand" data-zh-alt="手持的 VIVA TOY App 界面" loading="lazy"><div class="pills"><span data-zh="服务设计">service design</span><span data-zh="商业模式">business model</span><span data-zh="个人项目">personal</span></div></div>
+        <div class="shot sky"><img class="mock" src="images/home/viva-card.webp" alt="VIVA TOY app screens held in hand" data-zh-alt="手持的 VIVA TOY App 界面" loading="lazy"><div class="pills"><span data-zh="服务设计">service design</span><span data-zh="商业模式">business model</span><span data-zh="个人项目">personal</span></div><div class="details"><div><dl><div><dt data-zh="角色">Role</dt><dd data-zh="服务设计 · 商业模式">Service design · business model</dd></div><div><dt data-zh="产出">Deliverable</dt><dd data-zh="服务系统 + App">Service system + app</dd></div><div><dt data-zh="时间">Timeline</dt><dd data-zh="2024.11 – 2025.01">Nov 2024 – Jan 2025</dd></div></dl></div></div></div>
         <div class="card-body"><h3>VIVA TOY</h3><p data-zh="让电子玩具被修好、继续被使用的维修与循环服务。">A repair-and-reuse service that keeps electronic toys in play.</p>
           <ul class="metrics"><li><b>3</b><span data-zh="类用户">user groups</span></li><li><b>7</b><span data-zh="个品牌对比">brands compared</span></li><li><b>2</b><span data-zh="张服务蓝图">blueprints</span></li></ul></div>
       </a>
       <a class="card frame" data-frame="04 · Aban" href="aban.html">
-        <div class="shot blue"><img class="mock" src="images/home/aban-card.webp" alt="Aban AI music website on a desktop monitor" data-zh-alt="阿伴 AI 音乐创作网站，显示在台式显示器上" loading="lazy"><div class="pills"><span data-zh="需要密码">password</span><span data-zh="网页">web</span><span data-zh="AI 音乐">AI music</span></div></div>
+        <div class="shot blue"><img class="mock" src="images/home/aban-card.webp" alt="Aban AI music website on a desktop monitor" data-zh-alt="阿伴 AI 音乐创作网站，显示在台式显示器上" loading="lazy"><div class="pills"><span data-zh="需要密码">password</span><span data-zh="网页">web</span><span data-zh="AI 音乐">AI music</span></div><div class="details"><div><dl><div><dt data-zh="查看">Access</dt><dd data-zh="需要密码">Password protected</dd></div><div><dt data-zh="平台">Platform</dt><dd data-zh="网页">Web</dd></div></dl></div></div></div>
         <div class="card-body"><h3><span data-zh="阿伴 Aban">Aban</span><svg viewBox="0 0 24 24" role="img" aria-label="Password protected"><rect x="5" y="11" width="14" height="10" rx="2" fill="currentColor"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></svg></h3><p data-zh="把灵感变成收入的 AI 音乐网站。找我要密码。">An AI music website that turns inspiration into income. Ask me for the password.</p>
           <ul class="metrics"><li><b>AI</b><span data-zh="音乐创作">music creation</span></li><li><b data-zh="网页">Web</b><span data-zh="平台">platform</span></li><li><b data-zh="密码">Locked</b><span data-zh="找我要访问权限">ask for access</span></li></ul></div>
       </a>
@@ -348,7 +315,7 @@ html:lang(zh-CN) .who .h1 { font-size: clamp(30px, 4.6vw, 54px); line-height: 1.
     <div class="txt">
       <h2 data-zh="你好，我是玥妍。">Hi, I’m Amanda.</h2>
       <!-- TODO(Amanda): draft bio, rewrite in your own words -->
-      <p data-zh="我是张玥妍（Amanda），在纽约大学读书，做 UX 和产品设计。我关心一个产品对用户是不是诚实：真实价格是不是一开始就看得到，想离开的时候能不能离开。我习惯先做研究，再用可以点的原型去验证想法。">I’m Amanda (Yueyan) Zhang, a UX &amp; product designer studying at NYU. I care about whether a product is honest with people: can they see the real price up front, and can they leave when they want to? I research first, then test ideas with prototypes people can actually tap.</p>
+      <p>I’m Amanda (Yueyan) Zhang, a UX &amp; product designer studying at NYU. I care about whether a product is honest with people: can they see the real price up front, and can they leave when they want to? I research first, then test ideas with prototypes people can actually tap.</p>
       <p class="offscreen" data-zh="下了屏幕，我是一个会&lt;a class=&quot;sewn&quot; href=&quot;fashion.html&quot;&gt;做衣服&lt;/a&gt;的设计师。&lt;small&gt;本科学的是服装设计。我还攀岩、打羽毛球。&lt;/small&gt;">Off screen, I’m a designer who <a class="sewn" href="fashion.html">makes clothes</a>.<small>I studied fashion design as an undergrad. I also climb and play badminton.</small></p>
     </div>
   </section>
