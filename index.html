@@ -186,11 +186,12 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .about-photo { margin: 0; }
 .about-photo img { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 18px; filter: grayscale(1); transition: filter .4s; }
 .about-photo:hover img { filter: none; }
-.about .txt { display: flex; flex-direction: column; gap: 14px; }
-.about h2 { font-size: clamp(30px, 3.8vw, 44px); font-weight: 800; letter-spacing: -.025em; }
-.about p { max-width: 58ch; color: var(--dim); font-size: 17px; line-height: 1.6; margin: 0; }
+.about .txt { display: flex; flex-direction: column; gap: 12px; }
+.about .closer { font: 600 clamp(20px, 1.8vw, 24px)/1.4 var(--f-display); color: var(--ink); letter-spacing: -.01em; }
+.about h2 { font-size: clamp(28px, 3.2vw, 38px); font-weight: 800; letter-spacing: -.025em; }
+.about p { max-width: 60ch; color: var(--dim); font-size: 15.5px; line-height: 1.55; margin: 0; }
 .about p b { color: var(--ink); font-family: var(--f-display); font-weight: 600; }
-.about .b-lead { font: 600 clamp(20px, 1.9vw, 24px)/1.35 var(--f-display); color: var(--ink); letter-spacing: -.01em; }
+.about .b-lead { font: 600 clamp(17px, 1.5vw, 19px)/1.4 var(--f-display); color: var(--ink); letter-spacing: -.01em; }
 .about .hl { font-family: var(--f-body); font-style: italic; font-weight: 600; background: linear-gradient(var(--hi), var(--hi)) 0 88% / 100% 40% no-repeat; }
 .about .lead-in { font-family: var(--f-body); font-style: italic; font-weight: 600; color: var(--trap); }
 .about .m { font: 600 .82em var(--f-mono); color: var(--ink); background: var(--sunk); border-radius: 5px; padding: 1px 6px; white-space: nowrap; }
@@ -273,7 +274,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .card-body h3 { font-size: 24px; }
   .card-body p { font-size: 15.5px; }
   .plays { --t: calc((var(--H) - 150px) / 2); grid-template-columns: repeat(4, var(--t)); grid-template-rows: auto; margin: 0; }
-  .about { width: min(1500px, 120vw); grid-template-columns: min(260px, calc((var(--H) - 20px) * .7)) minmax(0, 600px) 380px; gap: 56px; align-items: center; }
+  .about { width: min(1500px, 120vw); grid-template-columns: min(260px, calc((var(--H) - 20px) * .7)) minmax(0, 600px) 380px; gap: 56px; align-items: start; align-self: start; margin-top: 2vh; }
   .contact { grid-column: auto; }
   .foot { flex-direction: column; justify-content: center; align-self: stretch; width: 240px; border-top: 0; border-left: 1px solid var(--line); padding: 0 0 0 36px; }
 }
@@ -357,10 +358,11 @@ button { font: inherit; color: inherit; cursor: pointer; }
     <div class="txt frame" data-frame="Frame · About">
       <h2 data-zh="你好，我是玥妍。">Hi, I’m Amanda.</h2>
       <!-- bio stays in English on the Chinese page too -->
-      <p class="b-lead">I’m Amanda (Yueyan) Zhang, a grad student at <span class="m">NYU ITP</span> in Brooklyn, designing products that feel <em class="hl">warm and human.</em></p>
+      <p class="b-lead">A grad student at <span class="m">NYU ITP</span> in Brooklyn, designing products that feel <em class="hl">warm and human.</em></p>
       <p><em class="lead-in">Empathy is where I start.</em> I walk through the experience myself and listen closely to the people living it, until I understand what they actually need.</p>
       <p>I like to stay close to how things get built, so I <span class="m">prototype fast</span> and build with <span class="m">AI-assisted code</span> when needed.</p>
       <p>Since 2024, I’ve been designing <b>AI products</b>, from an AI music platform at <span class="m">initi:AI</span> to agent features at <span class="m">N7 Interactive</span>. Right now, I’m also <span class="marker">building my own startup.</span></p>
+      <p class="closer" data-zh="在这之前，我是一个会&lt;a class=&quot;sewn&quot; href=&quot;fashion.html&quot;&gt;做衣服&lt;/a&gt;的 marketer。">Before this, I was a marketer who <a class="sewn" href="fashion.html">makes clothes</a>.</p>
       <div class="more" tabindex="0">
         <h3><span data-zh="更多的我">More of me</span> <i aria-hidden="true">↓</i></h3>
         <div class="more-body"><div>
