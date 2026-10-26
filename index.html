@@ -120,6 +120,10 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .statement .marker { background: linear-gradient(var(--hi), var(--hi)) 0 88% / 100% 34% no-repeat; }
 .statement .chip-w { font: 600 .62em var(--f-mono); vertical-align: .18em; background: var(--ink); color: var(--bg); border-radius: 6px; padding: .04em .3em; }
 @media (max-width: 760px) { .work-head { grid-template-columns: minmax(0, 1fr); } }
+/* numbers stay folded until the card is hovered, so the row reads calm */
+.card .metrics { max-height: 0; opacity: 0; overflow: hidden; padding-top: 0; border-top-color: transparent; transition: max-height .35s cubic-bezier(.22, 1, .36, 1), opacity .25s ease, padding-top .35s ease, border-color .25s ease; }
+.card:hover .metrics, .card:focus-visible .metrics { max-height: 110px; opacity: 1; padding-top: 12px; border-top-color: var(--line); }
+@media (hover: none) { .card .metrics { max-height: none; opacity: 1; padding-top: 12px; border-top-color: var(--line); } }
 /* card details slide up over the image on hover / keyboard focus (role, course, timeline) */
 .details { position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 3; background: var(--surface); color: var(--ink); border-radius: 12px; padding: 12px 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, .18);
   translate: 0 calc(100% + 16px); transition: translate .35s cubic-bezier(.22, 1, .36, 1); }
@@ -221,7 +225,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .scroll-hint { display: block; position: absolute; right: 0; top: 50%; font: italic 400 26px var(--f-body); color: var(--dim); animation: nudge 1.6s ease-in-out infinite; }
   @keyframes nudge { 50% { translate: 10px 0; } }
   #playground { display: flex; align-items: center; gap: 64px; }
-  #work { display: flex; flex-direction: column; justify-content: center; gap: 28px; align-self: stretch; }
+  #work { display: flex; flex-direction: column; justify-content: flex-start; padding-top: 2vh; gap: 28px; align-self: stretch; }
   .work-head .statement { font-size: min(40px, 4.4vh); }
   .sec-head { flex-direction: column; align-items: flex-start; width: 280px; flex: none; }
   .work { display: flex; gap: 48px; margin: 0; }
@@ -316,7 +320,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
       <h2 data-zh="你好，我是玥妍。">Hi, I’m Amanda.</h2>
       <!-- TODO(Amanda): draft bio, rewrite in your own words -->
       <p>I’m Amanda (Yueyan) Zhang, a UX &amp; product designer studying at NYU. I care about whether a product is honest with people: can they see the real price up front, and can they leave when they want to? I research first, then test ideas with prototypes people can actually tap.</p>
-      <p class="offscreen" data-zh="下了屏幕，我是一个会&lt;a class=&quot;sewn&quot; href=&quot;fashion.html&quot;&gt;做衣服&lt;/a&gt;的设计师。&lt;small&gt;本科学的是服装设计。我还攀岩、打羽毛球。&lt;/small&gt;">Off screen, I’m a designer who <a class="sewn" href="fashion.html">makes clothes</a>.<small>I studied fashion design as an undergrad. I also climb and play badminton.</small></p>
+      <p class="offscreen" data-zh="在这之前，我是一个会&lt;a class=&quot;sewn&quot; href=&quot;fashion.html&quot;&gt;做衣服&lt;/a&gt;的 marketer。&lt;small&gt;本科学的是服装设计。我还攀岩、打羽毛球。&lt;/small&gt;">Before this, I was a marketer who <a class="sewn" href="fashion.html">makes clothes</a>.<small>I studied fashion design as an undergrad. I also climb and play badminton.</small></p>
     </div>
   </section>
 
