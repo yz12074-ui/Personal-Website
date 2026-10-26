@@ -75,15 +75,24 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .size-tag { position: absolute; left: 50%; bottom: -30px; translate: -50% 0; z-index: 4; font: 10.5px var(--f-mono); background: var(--sel); color: #fff; padding: 2px 6px; border-radius: 4px; opacity: 0; pointer-events: none; transition: opacity .15s; white-space: nowrap; }
 .frame:hover > .size-tag { opacity: 1; }
 
+/* ---------- intro: first screen is just the name ---------- */
+.intro { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; padding: 24px 0 8px; position: relative; }
+.intro .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.intro .tags span { font: 13px var(--f-mono); background: var(--sunk); border-radius: 8px; padding: 8px 12px; }
+.intro .name { font-size: clamp(56px, 12vw, 168px); font-weight: 800; letter-spacing: -.045em; line-height: .86; text-transform: uppercase; margin: 6px 0 4px -.04em; }
+.intro .tagline { font: italic 600 clamp(24px, 2.6vw, 38px)/1.2 var(--f-body); background: var(--hi); padding: 2px 10px; margin: 0; }
+.intro .sub { font: 400 clamp(20px, 2vw, 30px)/1.3 var(--f-body); color: var(--dim); margin: 0 0 8px; }
+.scroll-hint { display: none; }
+
 /* ---------- hero ---------- */
 .hero { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr); gap: 52px 56px; align-items: start; padding-top: 28px; }
 .who { display: flex; flex-direction: column; gap: 22px; }
 .who .eyebrow { color: var(--trap); }
-.who h1 { font-size: clamp(44px, 6.2vw, 90px); font-weight: 800; letter-spacing: -0.035em; line-height: .98; }
-.who h1 .serif { font-family: var(--f-body); font-style: italic; font-weight: 400; letter-spacing: -0.02em; }
-.who h1 .marker { background: linear-gradient(var(--hi), var(--hi)) 0 88% / 100% 34% no-repeat; padding: 0 .04em; }
-.who h1 .chip-w { font-family: var(--f-mono); font-weight: 600; font-size: .5em; letter-spacing: 0; vertical-align: .32em; background: var(--ink); color: var(--bg); border-radius: 8px; padding: .06em .3em; }
-html:lang(zh-CN) .who h1 { font-size: clamp(40px, 5.4vw, 78px); line-height: 1.14; }
+.who .h1 { font-size: clamp(34px, 5vw, 60px); font-weight: 800; letter-spacing: -0.035em; line-height: .98; }
+.who .h1 .serif { font-family: var(--f-body); font-style: italic; font-weight: 400; letter-spacing: -0.02em; }
+.who .h1 .marker { background: linear-gradient(var(--hi), var(--hi)) 0 88% / 100% 34% no-repeat; padding: 0 .04em; }
+.who .h1 .chip-w { font-family: var(--f-mono); font-weight: 600; font-size: .5em; letter-spacing: 0; vertical-align: .32em; background: var(--ink); color: var(--bg); border-radius: 8px; padding: .06em .3em; }
+html:lang(zh-CN) .who .h1 { font-size: clamp(30px, 4.6vw, 54px); line-height: 1.14; }
 .proof { display: flex; flex-wrap: wrap; gap: 8px; }
 .proof span { font: 12px var(--f-mono); padding: 6px 10px; border-radius: 99px; background: var(--surface); border: 1px solid var(--line); color: var(--dim); }
 .proof b { color: var(--ink); font-weight: 600; }
@@ -214,9 +223,12 @@ html:lang(zh-CN) .who h1 { font-size: clamp(40px, 5.4vw, 78px); line-height: 1.1
   .track { --H: calc(100vh - 236px); position: relative; display: flex; flex-direction: row; max-width: none; margin: 0; align-items: center; gap: 150px; width: max-content; height: 100vh; padding: 204px 140px 32px 6vw; will-change: transform; }
   .track > section, .track > footer { flex: none; }
   .line { position: absolute; left: 0; top: 52px; width: 100%; margin: 0; overflow: visible; }
+  .intro { width: calc(100vw - 6vw - 150px); justify-content: center; align-self: stretch; padding: 0 0 4vh; }
+  .scroll-hint { display: block; position: absolute; right: 0; top: 50%; font: italic 400 26px var(--f-body); color: var(--dim); animation: nudge 1.6s ease-in-out infinite; }
+  @keyframes nudge { 50% { translate: 10px 0; } }
   .hero { width: min(1180px, 88vw); grid-template-columns: minmax(0, 1fr) 320px; align-items: center; padding: 0; gap: 48px; }
-  .who h1 { font-size: min(84px, 8.6vh, 6vw); }
-  html:lang(zh-CN) .who h1 { font-size: min(74px, 7.6vh, 5.4vw); }
+  .who .h1 { font-size: min(60px, 6.4vh, 4.4vw); }
+  html:lang(zh-CN) .who .h1 { font-size: min(54px, 5.8vh, 4vw); }
   .who { gap: min(22px, 2.2vh); }
   .focus { grid-column: auto; grid-template-columns: minmax(0, 1fr); gap: 12px; }
   .focus a { padding: 14px 16px; }
@@ -251,21 +263,30 @@ html:lang(zh-CN) .who h1 { font-size: clamp(40px, 5.4vw, 78px); line-height: 1.1
   <!-- ===== CLOTHESLINE: every visitor's signature card ===== -->
   <div class="line" id="line" aria-label="Visitors' signatures"><div class="line-in" id="lineIn"><svg class="rope" aria-hidden="true"><path id="rope"/></svg></div></div>
 
+  <!-- ===== INTRO: first screen ===== -->
+  <section class="intro" aria-label="Intro">
+    <div class="tags"><span data-zh="NYU-ITP 硕士">Master’s @ NYU-ITP</span><span data-zh="UX 与产品设计师">UX &amp; Product Designer</span><span data-zh="0 → 1 进行中">0 → 1 in progress.</span></div>
+    <h1 class="name">Amanda Zhang</h1>
+    <p class="tagline" data-zh="先在乎，再创造。">I care, then I create.</p>
+    <p class="sub" data-zh="做有意义的设计。">Building meaningful design.</p>
+    <div class="cta">
+      <a class="btn solid" href="#work" data-zh="看作品 →">See the work →</a>
+      <a class="btn" href="temu.html" data-zh="从最完整的开始：Temu →">Start with Temu →</a>
+    </div>
+    <span class="scroll-hint" aria-hidden="true" data-zh="» 往下滚，看更多">» scroll to see more</span>
+  </section>
+
   <!-- ===== HERO ===== -->
   <section class="hero">
     <div class="who frame" data-frame="Frame · Intro">
       <p class="eyebrow mono" data-zh="张玥妍 Amanda · UX 产品设计师 · 纽约">Amanda (Yueyan) Zhang · UX &amp; Product Designer · NYC</p>
-      <h1 data-zh="我设计&lt;span class=&quot;serif&quot;&gt;诚实&lt;/span&gt;的产品：从&lt;span class=&quot;marker&quot;&gt;结算流程&lt;/span&gt;到 &lt;span class=&quot;chip-w&quot;&gt;AI&lt;/span&gt; 陪伴。">I design <span class="serif">honest</span> products, from <span class="marker">checkout flows</span> to <span class="chip-w">AI</span> companions.</h1>
+      <h2 class="h1" data-zh="我设计&lt;span class=&quot;serif&quot;&gt;诚实&lt;/span&gt;的产品：从&lt;span class=&quot;marker&quot;&gt;结算流程&lt;/span&gt;到 &lt;span class=&quot;chip-w&quot;&gt;AI&lt;/span&gt; 陪伴。">I design <span class="serif">honest</span> products, from <span class="marker">checkout flows</span> to <span class="chip-w">AI</span> companions.</h2>
       <p class="lead" data-zh="我从用户研究出发，尽早做原型、找真人测试。每个案例都有可以点的原型，和背后的数据。">I start from research, prototype early and test with real people. Every case study comes with a clickable prototype and the numbers behind it.</p>
       <div class="proof" aria-label="Quick facts">
         <span data-zh="在 &lt;b&gt;NYU&lt;/b&gt; 读书">Studying at <b>NYU</b></span>
         <span data-zh="&lt;b&gt;4&lt;/b&gt; 个案例"><b>4</b> case studies</span>
         <span data-zh="做过 &lt;b&gt;A/B&lt;/b&gt; 测试的重设计"><b>A/B</b>-tested redesign</span>
         <span data-zh="本科 &lt;b&gt;服装设计&lt;/b&gt;">BA in <b>fashion design</b></span>
-      </div>
-      <div class="cta">
-        <a class="btn solid" href="#work" data-zh="看作品 →">See the work →</a>
-        <a class="btn" href="temu.html" data-zh="从最完整的开始：Temu →">Start with Temu →</a>
       </div>
       <span class="size-tag" aria-hidden="true"></span>
     </div>
