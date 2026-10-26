@@ -433,7 +433,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
     hangLine();
   }
   // spread the cards along the whole page; the rope sags a little between pegs
-  // Section name cards (desktop only) ride the rope, so each one slides in from the right with its section. Signature cards share the line and keep clear of them.
+  // Section signposts (desktop only) ride the rope: every screen has one at its top right pointing to the next. Signature cards share the line and keep clear of them.
   const SECTIONS = [['work', 'Work', '作品', '#E8590C'], ['playground', 'Playground', '实验', '#0B7A66'], ['about', 'About', '关于', '#2F6BFF']];
   function hangLine() {
     const box = $('#lineIn');
@@ -442,12 +442,13 @@ button { font: inherit; color: inherit; cursor: pointer; }
     const W = wide.matches ? track.offsetWidth : Math.max($('#line').clientWidth, n * 150 + 80);
     box.style.width = W + 'px';
     const secXs = wide.matches ? SECTIONS.map(([id, en, z, c], i) => {
-      // Work waits at the right edge of the first screen; the others hang above their own heading
-      const x = i === 0 ? innerWidth - 300 : document.getElementById(id).offsetLeft + 80;
+      // each card is a signpost: it waits at the top right of the screen before it, pointing to what's next
+      const pageStart = i === 0 ? 0 : document.getElementById(SECTIONS[i - 1][0]).offsetLeft - 60;
+      const x = pageStart + innerWidth - 300;
       const a = document.createElement('a'); a.className = 'clip sec'; a.href = '#' + id;
       a.style.setProperty('--pc', c); a.style.setProperty('--r', [-3, 2, -2][i] + 'deg'); a.style.setProperty('--d', -i + 's');
       a.style.left = x + 'px'; a.style.top = ROPE_Y - 4 + 'px';
-      a.innerHTML = `<i class="peg"></i><small>0${i + 1}</small>${tr(en, z)}`;
+      a.innerHTML = `<i class="peg"></i><small>${tr('NEXT', '下一站')} · 0${i + 1}</small>${tr(en, z)} ›`;
       box.append(a); return x;
     }) : [];
     const first = wide.matches ? 120 : 80, step = n > 1 ? Math.max(150, (W - first - 200) / (n - 1)) : 0;
