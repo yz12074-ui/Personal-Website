@@ -40,7 +40,7 @@ body { margin: 0; background-color: var(--bg); color: var(--ink); font: 400 18px
   background-image: linear-gradient(90deg, color-mix(in srgb, var(--dot) 70%, transparent) 1px, transparent 1px), linear-gradient(color-mix(in srgb, var(--dot) 70%, transparent) 1px, transparent 1px),
     linear-gradient(90deg, color-mix(in srgb, var(--dot) 35%, transparent) 1px, transparent 1px), linear-gradient(color-mix(in srgb, var(--dot) 35%, transparent) 1px, transparent 1px);
   background-size: 5cm 5cm, 5cm 5cm, 1cm 1cm, 1cm 1cm; background-attachment: fixed;
-  padding: 64px max(16px, 4vw) 0; overflow-x: hidden; }
+  padding: 16px max(16px, 4vw) 0; overflow-x: hidden; }
 html:lang(zh-CN) body { font-family: var(--f-body), "PingFang SC", "Noto Sans SC", sans-serif; }
 h1, h2, h3 { font-family: var(--f-display); margin: 0; line-height: 1.05; text-wrap: balance; }
 p { margin: 0; }
@@ -52,16 +52,20 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .canvas { max-width: 1240px; margin: 0 auto; display: flex; flex-direction: column; gap: 104px; padding-bottom: 40px; }
 
 /* ---------- top bar ---------- */
-.bar { position: fixed; z-index: 31; top: 0; left: 0; right: 0; height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 max(16px, 4vw);
-  background: color-mix(in srgb, var(--bg) 90%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
-.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-family: var(--f-display); font-weight: 800; font-size: 17px; white-space: nowrap; }
-.brand i { font-style: normal; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; background: var(--ink); color: var(--bg); font-size: 14px; }
-.bar nav { display: flex; align-items: center; gap: 4px; }
-.bar nav a { text-decoration: none; font: 12.5px var(--f-mono); color: var(--dim); padding: 6px 10px; border-radius: 8px; }
-.bar nav a:hover { color: var(--ink); background: var(--sunk); }
+/* ---------- nav: three painted pegs clipped to the rope; hover drops a label ---------- */
+.pegs { position: fixed; z-index: 31; top: 0; right: max(16px, 3vw); display: flex; align-items: flex-start; gap: 22px; }
+.navpeg { position: relative; display: flex; flex-direction: column; align-items: center; text-decoration: none; padding-top: 22px; }
+.navpeg i { width: 12px; height: 40px; border-radius: 3px; rotate: var(--pr, 0deg); background: linear-gradient(90deg, color-mix(in srgb, var(--pc) 75%, #000), var(--pc) 45%, color-mix(in srgb, var(--pc) 80%, #000));
+  box-shadow: 0 2px 4px rgba(0, 0, 0, .18); position: relative; transition: rotate .3s cubic-bezier(.3, 1.6, .5, 1); }
+.navpeg i::after { content: ""; position: absolute; left: -2px; right: -2px; top: 15px; height: 3px; border-radius: 2px; background: #9A9A9A; }
+.navpeg span { position: absolute; top: 66px; font: 600 12px var(--f-mono); white-space: nowrap; background: var(--pc); color: #fff; padding: 4px 9px; border-radius: 4px; box-shadow: 0 4px 10px rgba(0, 0, 0, .12);
+  opacity: 0; translate: 0 -8px; rotate: var(--pr, 0deg); transition: opacity .2s ease, translate .3s cubic-bezier(.3, 1.6, .5, 1); pointer-events: none; }
+.navpeg:hover i, .navpeg:focus-visible i { rotate: calc(var(--pr, 0deg) * -2); }
+.navpeg:hover span, .navpeg:focus-visible span { opacity: 1; translate: 0 0; }
+@media (hover: none) { .navpeg span { opacity: 1; translate: 0 0; } }
+.pegs .lang-toggle { margin: 32px 0 0 4px; }
 .lang-toggle { font: 12px var(--f-mono); color: var(--dim); background: var(--surface); border: 1px solid var(--line); border-radius: 99px; padding: 5px 12px; margin-left: 6px; white-space: nowrap; }
 .lang-toggle b { color: var(--ink); font-weight: 600; }
-@media (max-width: 760px) { .bar nav a:not(.keep) { display: none; } .brand span { display: none; } }
 
 /* ---------- frames: selection box with handles on hover, name tag on top-left ---------- */
 .frame { position: relative; }
@@ -76,10 +80,13 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .frame:hover > .size-tag { opacity: 1; }
 
 /* ---------- intro: first screen is just the name ---------- */
+.frame.quiet::before { opacity: 0; transition: opacity .15s; }
+.frame.quiet:hover::before, .frame.quiet:focus-within::before { opacity: 1; }
+.intro .lines { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
 .intro { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; padding: 24px 0 8px; position: relative; }
 .intro .tags { display: flex; flex-wrap: wrap; gap: 8px; }
 .intro .tags span { font: 13px var(--f-mono); background: var(--sunk); border-radius: 8px; padding: 8px 12px; }
-.intro .name { font-size: clamp(56px, 12vw, 168px); font-weight: 800; letter-spacing: -.045em; line-height: .86; text-transform: uppercase; margin: 6px 0 4px -.04em; }
+.intro .name { font-size: clamp(48px, calc((94vw - 190px) / 6.6), 168px); font-weight: 800; letter-spacing: -.045em; line-height: .86; text-transform: uppercase; margin: 6px 0 4px -.04em; }
 .intro .tagline { font: italic 600 clamp(24px, 2.6vw, 38px)/1.2 var(--f-body); background: var(--hi); padding: 2px 10px; margin: 0; }
 .intro .sub { font: 400 clamp(20px, 2vw, 30px)/1.3 var(--f-body); color: var(--dim); margin: 0 0 8px; }
 .scroll-hint { display: none; }
@@ -218,10 +225,10 @@ button { font: inherit; color: inherit; cursor: pointer; }
 @media (min-width: 900px) and (hover: hover) {
   body { padding: 0; }
   .hstick { position: sticky; top: 0; height: 100vh; overflow: hidden; }
-  .track { --H: calc(100vh - 236px); position: relative; display: flex; flex-direction: row; max-width: none; margin: 0; align-items: center; gap: 150px; width: max-content; height: 100vh; padding: 204px 140px 32px 6vw; will-change: transform; }
+  .track { --H: calc(100vh - 200px); position: relative; display: flex; flex-direction: row; max-width: none; margin: 0; align-items: center; gap: 150px; width: max-content; height: 100vh; padding: 168px 140px 32px 6vw; will-change: transform; }
   .track > section, .track > footer { flex: none; }
-  .line { position: absolute; left: 0; top: 52px; width: 100%; margin: 0; overflow: visible; }
-  .intro { width: calc(100vw - 6vw - 150px); justify-content: center; align-self: stretch; padding: 0 0 4vh; }
+  .line { position: absolute; left: 0; top: 16px; width: 100%; margin: 0; overflow: visible; }
+  .intro { min-width: 0; width: calc(100vw - 6vw - 150px); justify-content: center; align-self: stretch; padding: 0 0 4vh; }
   .scroll-hint { display: block; position: absolute; right: 0; top: 50%; font: italic 400 26px var(--f-body); color: var(--dim); animation: nudge 1.6s ease-in-out infinite; }
   @keyframes nudge { 50% { translate: 10px 0; } }
   #playground { display: flex; align-items: center; gap: 64px; }
@@ -240,16 +247,12 @@ button { font: inherit; color: inherit; cursor: pointer; }
 </style>
 </head>
 <body>
-<header class="bar">
-  <a class="brand" href="#top"><i>玥</i><span>Amanda Zhang</span></a>
-  <nav aria-label="Main">
-    <a href="#work" class="keep" data-zh="作品">Work</a>
-    <a href="#playground" data-zh="实验">Playground</a>
-    <a href="#about" data-zh="关于">About</a>
-    <a href="wall.html" data-zh="签名墙">Wall</a>
-    <button class="lang-toggle" type="button"><b>EN</b> / 中文</button>
-  </nav>
-</header>
+<nav class="pegs" aria-label="Main">
+  <a class="navpeg" href="#work" style="--pc:#E8590C;--pr:-4deg" aria-label="Work"><i></i><span data-zh="作品">Work</span></a>
+  <a class="navpeg" href="#playground" style="--pc:#0B7A66;--pr:3deg" aria-label="Playground"><i></i><span data-zh="实验">Playground</span></a>
+  <a class="navpeg" href="#about" style="--pc:#2F6BFF;--pr:-2deg" aria-label="About"><i></i><span data-zh="关于">About</span></a>
+  <button class="lang-toggle" type="button"><b>EN</b> / 中文</button>
+</nav>
 
 <div id="hwrap"><div class="hstick">
 <main class="canvas track" id="top">
@@ -258,13 +261,14 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
   <!-- ===== INTRO: first screen ===== -->
   <section class="intro" aria-label="Intro">
-    <div class="tags"><span data-zh="NYU-ITP 硕士">Master’s @ NYU-ITP</span><span data-zh="UX 与产品设计师">UX &amp; Product Designer</span><span data-zh="0 → 1 进行中">0 → 1 in progress.</span></div>
-    <h1 class="name">Amanda Zhang</h1>
-    <p class="tagline" data-zh="先在乎，再创造。">I care, then I create.</p>
-    <p class="sub" data-zh="做有意义的设计。">Building meaningful design.</p>
-    <div class="cta">
+    <div class="tags frame quiet" data-frame="Tags"><span data-zh="NYU-ITP 硕士">Master’s @ NYU-ITP</span><span data-zh="UX 与产品设计师">UX &amp; Product Designer</span><span data-zh="0 → 1 进行中">0 → 1 in progress.</span><span class="size-tag" aria-hidden="true"></span></div>
+    <div class="frame quiet" data-frame="H1 · Name"><h1 class="name">Amanda Zhang</h1><span class="size-tag" aria-hidden="true"></span></div>
+    <div class="frame quiet lines" data-frame="Text · Tagline"><p class="tagline" data-zh="先在乎，再创造。">I care, then I create.</p>
+    <p class="sub" data-zh="做有意义的设计。">Building meaningful design.</p><span class="size-tag" aria-hidden="true"></span></div>
+    <div class="cta frame quiet" data-frame="Buttons">
       <a class="btn solid" href="#work" data-zh="看作品 →">See the work →</a>
       <a class="btn" href="temu.html" data-zh="从最完整的开始：Temu →">Start with Temu →</a>
+      <span class="size-tag" aria-hidden="true"></span>
     </div>
     <span class="scroll-hint" aria-hidden="true" data-zh="» 往下滚，看更多">» scroll to see more</span>
   </section>
