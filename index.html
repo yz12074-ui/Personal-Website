@@ -195,6 +195,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .about .hl { font-family: var(--f-body); font-style: italic; font-weight: 600; background: linear-gradient(var(--hi), var(--hi)) 0 88% / 100% 40% no-repeat; }
 .about .lead-in { font-family: var(--f-body); font-style: italic; font-weight: 600; color: var(--trap); }
 .about .m { font: 600 .82em var(--f-mono); color: var(--ink); background: var(--sunk); border-radius: 5px; padding: 1px 6px; white-space: nowrap; }
+a.m { text-decoration: none; transition: background .2s, color .2s; }
+a.m:hover, a.m:focus-visible { background: var(--ink); color: var(--bg); }
 .about .marker { color: var(--ink); background: linear-gradient(var(--hi-o), var(--hi-o)) 0 88% / 100% 40% no-repeat; }
 .about p em { font-style: italic; color: var(--ink); }
 /* "More of me": folded until hover / focus */
@@ -366,7 +368,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
       <div class="more" tabindex="0">
         <h3><span data-zh="更多的我">More of me</span> <i aria-hidden="true">↓</i></h3>
         <div class="more-body"><div>
-          <p>Before UX, I spent two years in <b>brand marketing</b> at <span class="m">ITOCHU Textile</span>, running social media for <span class="m">Gramicci</span> and <span class="m">TAION</span> in China. Watching how people actually choose a product still shapes how I design.</p>
+          <p>Before UX, I spent two years in <b>brand marketing</b> at <a class="m" href="https://www.itochu.co.jp/en/" target="_blank" rel="noopener">ITOCHU Textile ↗</a>, running social media for <a class="m" href="https://gramicci.com/" target="_blank" rel="noopener">Gramicci ↗</a>, <a class="m" href="https://taion-wear.jp/" target="_blank" rel="noopener">TAION ↗</a> and <a class="m" href="https://www.mountain-equipment.com/" target="_blank" rel="noopener">Mountain Equipment ↗</a> in China. Watching how people actually choose a product still shapes how I design.</p>
           <p>Outside of design, you can usually find me in <em>dance studios</em>, on a <em>climbing wall</em>, or on a <em>badminton court</em>.</p>
         </div></div>
       </div>
