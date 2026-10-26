@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-zh="服装设计 — 张玥妍">Fashion — Amanda</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..800,100,1;1,9..144,400..800,100,1&family=Gaegu:wght@700&family=Silkscreen&family=ZCOOL+KuaiLe&display=swap">
+<style>
+/* Amanda Climbing Gym design system: chalk ground, Fraunces + DM Sans, a few hold words per line.
+   This page is the "sewn label" chapter: gingham patches with stitched edges stand in for holds. */
+:root {
+  --chalk: #fafaf6; --wall: #eceee7; --paper: #ffffff; --ink: #2a2433; --ink-soft: #5e566b; --line: #d8d4cc;
+  --strawberry: #ff6f61; --lemon: #ffd23f; --sky: #5bb6f2; --mint: #4cc38a; --grape: #9b7bea; --bubblegum: #ff8fc7; --on-hold: #2a2433;
+  --strawberry-deep: #bf3326; --grape-deep: #6a4bc4; --focus: #2a2433;
+  --font-serif: "Fraunces", "Noto Serif SC", Georgia, serif;
+  --font-sans: "DM Sans", "PingFang SC", "Noto Sans SC", system-ui, sans-serif;
+  --font-hold: "Bagel Fat One", "ZCOOL KuaiLe", system-ui, sans-serif;
+  --font-crayon: Gaegu, "ZCOOL KuaiLe", cursive;
+  --font-pixel: Silkscreen, ui-monospace, monospace;
+  --radius-tape: 3px; --radius-card: 18px; --radius-pill: 999px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --chalk: #1c1922; --wall: #26222e; --paper: #2f2a38; --ink: #f5f1ea; --ink-soft: #bdb5c9; --line: #433c4f;
+  --strawberry-deep: #ff8a7e; --grape-deep: #b9a1ff; --focus: #ffd23f; color-scheme: dark; } }
+:root[data-theme="dark"] { --chalk: #1c1922; --wall: #26222e; --paper: #2f2a38; --ink: #f5f1ea; --ink-soft: #bdb5c9; --line: #433c4f;
+  --strawberry-deep: #ff8a7e; --grape-deep: #b9a1ff; --focus: #ffd23f; color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--chalk); color: var(--ink); font: 400 16px/26px var(--font-sans); padding-inline: max(16px, 5vw); padding-block: 0 72px; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
+.wrap { max-width: 1080px; margin: 0 auto; }
+html:lang(zh-CN) body { font-family: "PingFang SC", "Noto Sans SC", var(--font-sans); }
+
+/* top bar */
+.top { display: flex; justify-content: space-between; align-items: center; padding-block: 20px; }
+.top a { text-decoration: none; font-weight: 500; font-size: 14px; }
+.lang-toggle { font: inherit; font-size: 13px; color: var(--ink-soft); background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-pill); padding: 4px 14px; cursor: pointer; }
+.lang-toggle b { color: var(--ink); }
+
+/* type */
+.label { font: 700 12px/16px var(--font-sans); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); margin: 0 0 14px; }
+h1, h2, h3 { font-family: var(--font-serif); font-variation-settings: "SOFT" 100, "WONK" 1; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(44px, 7vw, 88px); line-height: 0.98; font-weight: 650; letter-spacing: -0.02em; }
+h2 { font-size: clamp(28px, 3.6vw, 40px); line-height: 1.1; font-weight: 600; }
+h3 { font-size: 22px; line-height: 1.2; font-weight: 600; }
+.lead { font-size: 19px; line-height: 30px; max-width: 58ch; margin: 22px 0 0; color: var(--ink-soft); }
+html:lang(zh-CN) h1 { font-size: clamp(36px, 5.6vw, 68px); line-height: 1.15; }
+
+/* hold words used on this page */
+.sewn { position: relative; display: inline-block; font-style: italic; padding: 0.02em 0.3em 0.1em; rotate: -2deg; color: var(--on-hold); border-radius: 6px;
+  background-color: #fff; background-image: repeating-linear-gradient(0deg, rgba(255, 143, 199, 0.5) 0 8px, transparent 8px 16px), repeating-linear-gradient(90deg, rgba(255, 143, 199, 0.5) 0 8px, transparent 8px 16px);
+  box-shadow: 0 5px 0 rgba(42, 36, 51, 0.2); }
+.sewn::after { content: ""; position: absolute; inset: 0.12em; border: 2px dashed var(--on-hold); border-radius: 3px; pointer-events: none; }
+.hw-crayon { font-family: var(--font-crayon); font-weight: 700; font-size: 1.12em; color: var(--grape-deep); padding-bottom: 0.06em;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='8'%3E%3Cpath d='M0 5 Q5.5 0 11 5 T22 5' fill='none' stroke='%23ff8fc7' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E") left bottom / 22px 8px repeat-x; }
+.hw-pixel { font-family: var(--font-pixel); font-size: 0.6em; background: var(--lemon); color: var(--on-hold); padding: 0.06em 0.22em; vertical-align: 0.2em; }
+
+/* hero */
+.hero { padding-block: clamp(32px, 7vw, 88px) clamp(40px, 6vw, 72px); }
+.thread { display: block; width: 100%; max-width: 520px; height: 40px; margin-top: 30px; }
+.thread path { fill: none; stroke: var(--strawberry); stroke-width: 2.5; stroke-dasharray: 9 7; stroke-linecap: round; }
+
+/* "what sewing taught me" */
+section { padding-block: clamp(48px, 7vw, 96px) 0; }
+.lessons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin-top: 32px; }
+.lesson { position: relative; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-card); padding: 26px 24px 24px; }
+.lesson::before { content: ""; position: absolute; inset: 8px; border: 1.5px dashed var(--line); border-radius: 12px; pointer-events: none; }
+.lesson .pair { font: 700 12px/16px var(--font-sans); letter-spacing: 0.1em; text-transform: uppercase; color: var(--strawberry-deep); margin: 0 0 10px; }
+.lesson p { margin: 10px 0 0; color: var(--ink-soft); }
+.lesson:nth-child(2) { rotate: 0.6deg; } .lesson:nth-child(3) { rotate: -0.5deg; }
+
+/* collections: stitched frames waiting for Amanda's photos */
+.collections { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 24px; margin-top: 32px; }
+.look { margin: 0; }
+.frame { position: relative; aspect-ratio: 3 / 4; border-radius: var(--radius-card); background-color: var(--wall); display: grid; place-items: center; text-align: center; padding: 24px; color: var(--ink-soft); font-size: 14px;
+  background-image: repeating-linear-gradient(45deg, transparent 0 14px, rgba(155, 123, 234, 0.08) 14px 28px); }
+.frame::before { content: ""; position: absolute; inset: 10px; border: 2px dashed var(--line); border-radius: 12px; }
+.look:first-child .frame { aspect-ratio: 3 / 4.6; }
+.look figcaption { margin-top: 12px; font-size: 13px; line-height: 20px; color: var(--ink-soft); }
+.look figcaption b { display: block; font: 600 20px/1.2 var(--font-serif); color: var(--ink); }
+
+/* process: sketch → pattern → toile → final */
+.process { list-style: none; padding: 0; margin: 32px 0 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; counter-reset: step; }
+.process li { counter-increment: step; }
+.process .frame { aspect-ratio: 1; font-size: 13px; }
+.process b { display: block; margin-top: 12px; font: 600 18px/1.2 var(--font-serif); }
+.process b::before { content: counter(step, decimal-leading-zero) "  "; font: 700 12px var(--font-sans); letter-spacing: 0.1em; color: var(--strawberry-deep); }
+.process span { font-size: 13px; color: var(--ink-soft); }
+
+.end { display: flex; flex-wrap: wrap; gap: 12px; margin-top: clamp(56px, 8vw, 110px); padding-top: 32px; border-top: 1px solid var(--line); }
+.btn { display: inline-block; text-decoration: none; font-weight: 500; font-size: 14px; border: 1.5px solid var(--ink); border-radius: var(--radius-pill); padding: 9px 18px; }
+.btn.primary { background: var(--ink); color: var(--chalk); }
+
+@media (max-width: 860px) { .lessons, .collections { grid-template-columns: 1fr; } .process { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a href="index.html" data-zh="← 回到攀岩墙">← Back to the wall</a>
+    <button class="lang-toggle" type="button"><b>EN</b> / 中文</button>
+  </div>
+
+  <header class="hero">
+    <p class="label" data-zh="服装设计 · 本科">Fashion design · Undergraduate</p>
+    <h1 data-zh="在做像素之前，<br>我做的是&lt;span class=&quot;sewn&quot;&gt;布料&lt;/span&gt;。">Before pixels,<br>I worked in <span class="sewn">fabric</span>.</h1>
+    <!-- TODO(Amanda): confirm or rewrite this lead; add school and year if you like -->
+    <p class="lead" data-zh="本科我学的是服装设计。这里是我设计并亲手做出来的衣服：从草图、打版、白坯样衣，到最后的成衣。">I studied fashion design as an undergrad. These are clothes I designed and made with my own hands, from sketch and pattern to toile and finished garment.</p>
+    <svg class="thread" viewBox="0 0 520 40" aria-hidden="true"><path d="M2 30 C 90 4, 170 38, 260 18 S 430 6, 518 26"/></svg>
+  </header>
+
+  <section aria-labelledby="lessons-title">
+    <p class="label" data-zh="从衣服到产品">From clothes to products</p>
+    <!-- TODO(Amanda): these three pairings are drafts; keep the ones that are true for you -->
+    <h2 id="lessons-title" data-zh="缝纫教会我的 &lt;span class=&quot;hw-crayon&quot;&gt;UX&lt;/span&gt;">What sewing taught me about <span class="hw-crayon">UX</span></h2>
+    <div class="lessons">
+      <article class="lesson">
+        <p class="pair" data-zh="打版 → 系统思维">Pattern making → systems</p>
+        <h3 data-zh="一个版片动，整件衣服都跟着动。">Change one seam and every piece moves.</h3>
+        <p data-zh="打版让我习惯先看整体结构，再处理细节，就像设计一套组件系统。">Pattern making taught me to see the whole structure before the details, the same way I approach a component system.</p>
+      </article>
+      <article class="lesson">
+        <p class="pair" data-zh="试衣 → 可用性测试">Fittings → usability tests</p>
+        <h3 data-zh="试衣，就是在真实的人身上做测试。">A fitting is a test on a real body.</h3>
+        <p data-zh="衣服在纸上再好看，穿上不舒服就要改。用户测试也是一样。">However good a garment looks on paper, it changes once someone moves in it. Testing a product works the same way.</p>
+      </article>
+      <article class="lesson">
+        <p class="pair" data-zh="面料 → 约束与手感">Fabric → constraints and feel</p>
+        <h3 data-zh="每种面料都有自己的规则。">Every fabric has its own rules.</h3>
+        <p data-zh="垂感、弹性、厚度决定了能做什么，就像每个平台的规范和技术限制。">Drape, stretch and weight decide what is possible, like the rules and limits of every platform.</p>
+      </article>
+    </div>
+  </section>
+
+  <section aria-labelledby="looks-title">
+    <p class="label" data-zh="作品">Collections</p>
+    <h2 id="looks-title" data-zh="我做过的衣服">Clothes I made</h2>
+    <!-- TODO(Amanda): replace each frame with a photo: images/fashion/look-1.webp … (portrait, 3:4) -->
+    <div class="collections">
+      <figure class="look"><div class="frame" data-zh="作品照片即将上线">Photos coming soon</div><figcaption><b data-zh="系列 01">Collection 01</b><span data-zh="名称、年份与面料">Name, year and fabric</span></figcaption></figure>
+      <figure class="look"><div class="frame" data-zh="作品照片即将上线">Photos coming soon</div><figcaption><b data-zh="系列 02">Collection 02</b><span data-zh="名称、年份与面料">Name, year and fabric</span></figcaption></figure>
+      <figure class="look"><div class="frame" data-zh="作品照片即将上线">Photos coming soon</div><figcaption><b data-zh="系列 03">Collection 03</b><span data-zh="名称、年份与面料">Name, year and fabric</span></figcaption></figure>
+    </div>
+  </section>
+
+  <section aria-labelledby="process-title">
+    <p class="label" data-zh="过程">Process</p>
+    <h2 id="process-title" data-zh="一件衣服是怎么做出来的">How one garment gets made</h2>
+    <!-- TODO(Amanda): one photo per step: images/fashion/process-sketch.webp, -pattern, -toile, -final -->
+    <ol class="process">
+      <li><div class="frame" data-zh="草图">Sketch</div><b data-zh="草图">Sketch</b><span data-zh="想法和比例">Idea and proportion</span></li>
+      <li><div class="frame" data-zh="打版">Pattern</div><b data-zh="打版">Pattern</b><span data-zh="把立体拆成平面">Turning 3D into flat pieces</span></li>
+      <li><div class="frame" data-zh="白坯样衣">Toile</div><b data-zh="白坯样衣">Toile</b><span data-zh="先用便宜的布试一次">A first try in cheap cotton</span></li>
+      <li><div class="frame" data-zh="成衣">Final</div><b data-zh="成衣">Final</b><span data-zh="真正的面料和细节">Real fabric, real finish</span></li>
+    </ol>
+  </section>
+
+  <div class="end">
+    <a class="btn primary" href="index.html#projects" data-zh="看看我的 UX 作品 →">See my UX work →</a>
+    <a class="btn" href="wall.html" data-zh="在墙上签个名 ✎">Sign the wall ✎</a>
+  </div>
+</div>
+<script src="assets/i18n.js" defer></script>
+</body>
+</html>

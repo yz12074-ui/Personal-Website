@@ -1,1088 +1,681 @@
 <!DOCTYPE html>
-<html lang="zh">
-
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amanda Z — Designer</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-zh="张玥妍 Amanda — UX 产品设计师">Amanda Zhang — UX &amp; Product Designer</title>
+<meta name="description" content="Amanda (Yueyan) Zhang, UX and product designer at NYU: honest checkouts, AI companions and service systems.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik+Scribble&family=Londrina+Outline&family=Shrikhand&family=Abril+Fatface&family=Bowlby+One&text=AMNDZHGamndzhg&display=swap">
+<style>
+/* Layout: the homepage is a canvas on pattern paper that you read left to right: on desktop, scrolling
+   down slides the whole page sideways. Visitors' signature cards hang on a clothesline along the top,
+   so new names drift past as you scroll. Mobile keeps a normal vertical page.
+   Every block is a "frame" that shows a selection box on hover. Visitors sign in at the door and
+   their signature hangs in the Visitors frame. Same tokens as the case studies: orange = the problem,
+   teal = the redesign, yellow = highlighter. */
+:root {
+  --bg: #F2F1EC; --surface: #FFFFFF; --sunk: #E7E5DE; --ink: #1D1B19; --dim: #6A655E; --line: #D6D2C8; --dot: #CFCBC0;
+  --trap: #E8590C; --trap-soft: #FCE3D2; --honest: #0B7A66; --honest-soft: #D3EEE7; --hi: #FFE15A; --hi-o: #FFC29A;
+  --sel: #2F6BFF;
+  --f-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --f-body: "Source Serif 4", "Noto Serif SC", Georgia, serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #171614; --surface: #211F1C; --sunk: #2A2825; --ink: #EEEAE2; --dim: #A39D93; --line: #3A3733; --dot: #3A3733;
+  --trap: #FF7A33; --trap-soft: #3D2416; --honest: #3CC4A6; --honest-soft: #14332C; --hi: #8A7414; --hi-o: #8A3D12;
+  --sel: #6F9BFF; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #171614; --surface: #211F1C; --sunk: #2A2825; --ink: #EEEAE2; --dim: #A39D93; --line: #3A3733; --dot: #3A3733;
+  --trap: #FF7A33; --trap-soft: #3D2416; --honest: #3CC4A6; --honest-soft: #14332C; --hi: #8A7414; --hi-o: #8A3D12;
+  --sel: #6F9BFF; color-scheme: dark; }
 
-    <style>
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
-         :root {
-            --apricot: #FAF5EF;
-            --apricot-mid: #F3EAE0;
-            --apricot-warm: #E8D9C8;
-            --apricot-deep: #D4C0A8;
-            --ink: #2C2118;
-            --ink-mid: #6B5A4A;
-            --ink-light: #9E8E7E;
-            --accent: #C4785A;
-            --accent-light: #E8A882;
-            --white: #FEFCFA;
-            --card-bg: rgba(255, 255, 255, 0.72);
-            --sidebar-w: 160px;
-            --transition: 0.45s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        html {
-            scroll-behavior: smooth;
-        }
-        
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--apricot);
-            color: var(--ink);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        /* Subtle grain texture */
-        
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-            background-size: 200px;
-            pointer-events: none;
-            z-index: 0;
-        }
-        /* ─── SIDEBAR ─── */
-        
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: var(--sidebar-w);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 0 0 0 36px;
-            z-index: 100;
-            gap: 10px;
-        }
-        
-        .sidebar-logo {
-            position: absolute;
-            top: 32px;
-            left: 36px;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 15px;
-            font-weight: 300;
-            color: var(--ink);
-            letter-spacing: 0.02em;
-            text-decoration: none;
-            opacity: 0.7;
-        }
-        
-        .sidebar-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        .nav-item {
-            font-size: 13px;
-            font-weight: 400;
-            color: var(--ink-light);
-            cursor: pointer;
-            letter-spacing: 0.01em;
-            transition: color 0.25s ease, transform 0.25s ease;
-            padding: 2px 0;
-            text-decoration: none;
-            width: fit-content;
-            position: relative;
-        }
-        
-        .nav-item::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 0;
-            height: 0.5px;
-            background: var(--accent);
-            transition: width 0.3s ease;
-        }
-        
-        .nav-item:hover {
-            color: var(--ink);
-            transform: translateX(4px);
-        }
-        
-        .nav-item:hover::after {
-            width: 100%;
-        }
-        
-        .nav-item.active {
-            color: var(--ink);
-        }
-        
-        .nav-item.active::after {
-            width: 100%;
-        }
-        /* ─── MAIN ─── */
-        
-        .main {
-            margin-left: var(--sidebar-w);
-            padding: 0 60px 0 20px;
-            position: relative;
-            z-index: 1;
-        }
-        /* ─── HERO ─── */
-        
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 80px 0;
-            opacity: 0;
-            transform: translateY(24px);
-            animation: fadeUp 1s ease 0.2s forwards;
-        }
-        
-        .hero-eyebrow {
-            font-size: 12px;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--ink-light);
-            margin-bottom: 28px;
-            font-weight: 400;
-        }
-        
-        .hero-name {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(52px, 7vw, 88px);
-            font-weight: 300;
-            line-height: 1.0;
-            letter-spacing: -0.02em;
-            color: var(--ink);
-            margin-bottom: 12px;
-        }
-        
-        .hero-name em {
-            font-style: italic;
-            color: var(--accent);
-        }
-        
-        .hero-sub {
-            font-size: 15px;
-            color: var(--ink-mid);
-            font-weight: 300;
-            margin-top: 20px;
-            max-width: 420px;
-            line-height: 1.65;
-        }
-        
-        .hero-tags {
-            display: flex;
-            gap: 10px;
-            margin-top: 36px;
-            flex-wrap: wrap;
-        }
-        
-        .tag {
-            font-size: 11px;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: var(--ink-mid);
-            border: 0.5px solid var(--apricot-deep);
-            padding: 5px 14px;
-            border-radius: 100px;
-            background: var(--card-bg);
-        }
-        
-        .scroll-hint {
-            position: absolute;
-            bottom: 36px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 11px;
-            color: var(--ink-light);
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            animation: bounceY 2.5s ease-in-out infinite;
-        }
-        
-        .scroll-hint-line {
-            width: 32px;
-            height: 0.5px;
-            background: var(--ink-light);
-        }
-        /* ─── SECTIONS ─── */
-        
-        .section {
-            padding: 80px 0;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.7s ease, transform 0.7s ease;
-        }
-        
-        .section.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        .section-label {
-            font-size: 11px;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            color: var(--ink-light);
-            margin-bottom: 40px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-        
-        .section-label::after {
-            content: '';
-            flex: 1;
-            height: 0.5px;
-            background: var(--apricot-warm);
-            max-width: 80px;
-        }
-        /* ─── PROJECT CARDS ─── */
-        
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 24px;
-            align-items: start; /* a card that grows on hover doesn't stretch its neighbour */
-        }
-        
-        .project-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            overflow: hidden;
-            border: 0.5px solid var(--apricot-warm);
-            cursor: pointer;
-            transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            position: relative;
-            text-decoration: none;
-            color: inherit;
-        }
-        
-        /* hover: lifts, tilts a little (alternating), and grows to show details.
-           rotate/translate are separate properties so the fade-in script's inline transform doesn't cancel them. */
-        .project-card:hover {
-            translate: 0 -4px;
-            rotate: var(--tilt, -0.8deg);
-            border-color: var(--accent-light);
-            box-shadow: 0 16px 48px rgba(196, 120, 90, 0.14);
-        }
-        .project-card:nth-child(even) { --tilt: 0.8deg; }
-        .card-cover { width: 100%; height: 100%; object-fit: cover; transition: transform .48s cubic-bezier(.22,1,.36,1); }
-        .project-card:hover .card-cover, .project-card:hover .card-image-inner { transform: scale(1.03); }
-        .card-image-inner { transition: transform .48s cubic-bezier(.22,1,.36,1); }
-        .card-pill {
-            position: absolute; left: 50%; bottom: 16px; translate: -50% 8px; opacity: 0;
-            background: var(--accent); color: #fff; border-radius: 999px; padding: 9px 20px;
-            font-size: 13px; letter-spacing: .02em; white-space: nowrap;
-            transition: opacity .26s ease, translate .26s ease; pointer-events: none;
-        }
-        .project-card:hover .card-pill { opacity: 1; translate: -50% 0; }
-        .card-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 6px; }
-        .card-head .card-title { margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .card-chip { flex: none; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-mid); background: var(--apricot-mid); border-radius: 4px; padding: 3px 7px; }
-        .card-metrics { display: flex; margin-top: 14px; list-style: none; }
-        .card-metrics li { flex: 1; padding: 0 14px; border-left: 0.5px solid var(--apricot-warm); display: flex; flex-direction: column; gap: 4px; }
-        .card-metrics li:first-child { padding-left: 0; border-left: 0; }
-        .card-metrics b { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400; color: var(--ink); line-height: 1; white-space: nowrap; }
-        .card-metrics span { font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-light); }
-        .card-details { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .32s cubic-bezier(.22,1,.36,1); }
-        .card-details > div { min-height: 0; overflow: hidden; }
-        .project-card:hover .card-details { grid-template-rows: 1fr; }
-        .card-details dl { margin: 16px 0 0; padding-top: 14px; border-top: 1px dashed var(--apricot-deep); display: grid; gap: 8px; opacity: 0; translate: 0 4px; transition: opacity .26s ease .06s, translate .26s ease .06s; }
-        .project-card:hover .card-details dl { opacity: 1; translate: 0 0; }
-        .card-details dl div { display: grid; grid-template-columns: 90px 1fr; gap: 24px; font-size: 12.5px; }
-        .card-details dt { font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-light); }
-        .card-details dd { margin: 0; color: var(--ink-mid); }
-        @media (prefers-reduced-motion: reduce) { .project-card, .card-details, .card-details dl, .card-pill, .card-cover { transition: none !important; } }
-        
-        .project-card:active {
-            transform: scale(1.01);
-        }
-        
-        
-        .card-image {
-            width: 100%;
-            aspect-ratio: 16/10;
-            background: var(--apricot-mid);
-            overflow: hidden;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        
-        .card-image-inner {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 48px;
-            font-weight: 300;
-            color: var(--apricot-deep);
-            position: relative;
-            overflow: hidden;
-        }
-        /* Placeholder visuals for each project */
-        
-        .proj-visual-1 {
-            background: linear-gradient(135deg, #F0E6D8 0%, #E2CDB8 100%);
-        }
-        
-        .proj-visual-2 {
-            background: linear-gradient(135deg, #E8D5C4 0%, #D4C0A8 100%);
-        }
-        
-        .proj-visual-3 {
-            background: linear-gradient(135deg, #EAE0D4 0%, #D8CCBE 100%);
-        }
-        
-        .proj-visual-4 {
-            background: linear-gradient(135deg, #F0E8DC 0%, #E0D0C0 100%);
-        }
-        
-        .proj-visual-5 {
-            background: linear-gradient(135deg, #E4DAD0 0%, #CDBBA8 100%);
-        }
-        
-        .proj-glyph {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 72px;
-            font-weight: 300;
-            color: rgba(196, 120, 90, 0.2);
-            position: absolute;
-            bottom: -12px;
-            right: 12px;
-            line-height: 1;
-        }
-        
-        .proj-mockup {
-            width: 52%;
-            height: 88%;
-            border-radius: 10px;
-            background: var(--white);
-            border: 0.5px solid rgba(196, 120, 90, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            color: var(--ink-light);
-            font-family: 'DM Sans', sans-serif;
-            letter-spacing: 0.04em;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .proj-mockup-wide {
-            width: 70%;
-            height: 78%;
-        }
-        /* Card content */
-        
-        .card-content {
-            padding: 20px 24px 24px;
-            background: var(--card-bg);
-        }
-        
-        .card-tag {
-            font-size: 10px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--accent);
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-        
-        .card-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 20px;
-            font-weight: 400;
-            color: var(--ink);
-            margin-bottom: 8px;
-            line-height: 1.25;
-            letter-spacing: -0.01em;
-        }
-        
-        .card-desc {
-            font-size: 13px;
-            color: var(--ink-mid);
-            line-height: 1.6;
-            font-weight: 300;
-        }
-        
-        .card-arrow {
-            display: inline-block;
-            margin-top: 12px;
-            font-size: 11px;
-            color: var(--ink-light);
-            letter-spacing: 0.04em;
-            transition: color 0.25s, transform 0.25s;
-        }
-        
-        .project-card:hover .card-arrow {
-            color: var(--accent);
-            transform: translateX(4px);
-        }
-        /* ─── PLAYGROUND ─── */
-        
-        .playground-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 14px;
-        }
-        
-        .play-card {
-            background: var(--card-bg);
-            border-radius: 14px;
-            overflow: hidden;
-            border: 0.5px solid var(--apricot-warm);
-            cursor: pointer;
-            transition: transform var(--transition), border-color var(--transition);
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-        
-        .play-card:hover {
-            transform: scale(1.04);
-            border-color: var(--accent-light);
-        }
-        
-        .play-card-inner {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            color: var(--ink-light);
-            font-weight: 300;
-            letter-spacing: 0.02em;
-            text-align: center;
-            padding: 20px;
-        }
-        
-        .play-label {
-            position: absolute;
-            bottom: 12px;
-            left: 14px;
-            font-size: 11px;
-            color: var(--ink-mid);
-            letter-spacing: 0.03em;
-        }
-        
-        .play-visual-1 {
-            background: linear-gradient(160deg, #F5E8D8 0%, #EAD4BE 100%);
-        }
-        
-        .play-visual-2 {
-            background: linear-gradient(160deg, #DDE8E0 0%, #C8D8CC 100%);
-        }
-        
-        .play-visual-3 {
-            background: linear-gradient(160deg, #E8DDF5 0%, #D4C8EA 100%);
-        }
-        
-        .play-visual-4 {
-            background: linear-gradient(160deg, #F5E8D8 0%, #E0CCBA 100%);
-        }
-        
-        .play-visual-5 {
-            background: linear-gradient(160deg, #F5DDD8 0%, #E8C8C4 100%);
-        }
-        
-        .play-visual-6 {
-            background: linear-gradient(160deg, #D8E8F5 0%, #C4D4E8 100%);
-        }
-        /* ─── CONNECT ─── */
-        
-        .connect-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 32px;
-            align-items: start;
-        }
-        
-        .about-photo {
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            background: var(--apricot-warm);
-            margin-bottom: 24px;
-            border: 2px solid var(--apricot-deep);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 24px;
-            color: var(--accent);
-            font-weight: 300;
-        }
-        
-        .about-text {
-            font-size: 14px;
-            color: var(--ink-mid);
-            line-height: 1.75;
-            font-weight: 300;
-            max-width: 360px;
-        }
-        
-        .about-text p+p {
-            margin-top: 14px;
-        }
-        
-        .connect-links {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            padding-top: 8px;
-        }
-        
-        .connect-link {
-            font-size: 16px;
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: 300;
-            color: var(--ink-mid);
-            text-decoration: none;
-            letter-spacing: 0.01em;
-            transition: color 0.25s, transform 0.25s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 0;
-            border-bottom: 0.5px solid transparent;
-            transition: all 0.25s;
-        }
-        
-        .connect-link:hover {
-            color: var(--accent);
-            transform: translateX(6px);
-            border-bottom-color: var(--apricot-warm);
-        }
-        
-        .connect-link-arrow {
-            font-size: 12px;
-            opacity: 0;
-            transition: opacity 0.25s;
-        }
-        
-        .connect-link:hover .connect-link-arrow {
-            opacity: 1;
-        }
-        /* ─── FOOTER ─── */
-        
-        .footer {
-            padding: 48px 0 60px;
-            border-top: 0.5px solid var(--apricot-warm);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .footer-name {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 13px;
-            font-weight: 300;
-            color: var(--ink-light);
-        }
-        
-        .footer-year {
-            font-size: 12px;
-            color: var(--ink-light);
-        }
-        /* ─── ANIMATIONS ─── */
-        
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(24px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes bounceY {
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(6px);
-            }
-        }
-        /* Stagger children */
-        
-        .hero-eyebrow {
-            animation: fadeUp 0.8s ease 0.1s both;
-        }
-        
-        .hero-name {
-            animation: fadeUp 0.9s ease 0.25s both;
-        }
-        
-        .hero-sub {
-            animation: fadeUp 0.9s ease 0.4s both;
-        }
-        
-        .hero-tags {
-            animation: fadeUp 0.9s ease 0.55s both;
-        }
-        
-        .scroll-hint {
-            animation: fadeUp 0.9s ease 0.7s both, bounceY 2.5s ease-in-out 1.5s infinite;
-        }
-        /* Card stagger */
-        
-        .project-card:nth-child(1) {
-            transition-delay: 0s;
-        }
-        
-        .project-card:nth-child(2) {
-            transition-delay: 0.08s;
-        }
-        
-        .project-card:nth-child(3) {
-            transition-delay: 0.16s;
-        }
-        
-        .project-card:nth-child(4) {
-            transition-delay: 0.24s;
-        }
-        
-        .play-card:nth-child(1) {
-            transition-delay: 0s;
-        }
-        
-        .play-card:nth-child(2) {
-            transition-delay: 0.06s;
-        }
-        
-        .play-card:nth-child(3) {
-            transition-delay: 0.12s;
-        }
-        
-        .play-card:nth-child(4) {
-            transition-delay: 0.18s;
-        }
-        
-        .play-card:nth-child(5) {
-            transition-delay: 0.24s;
-        }
-        
-        .play-card:nth-child(6) {
-            transition-delay: 0.30s;
-        }
-        /* Pixel art decorative element */
-        
-        .pixel-dots {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            display: grid;
-            grid-template-columns: repeat(4, 5px);
-            gap: 3px;
-        }
-        
-        .pixel-dot {
-            width: 5px;
-            height: 5px;
-            border-radius: 1px;
-            background: var(--apricot-deep);
-            opacity: 0.5;
-        }
-        
-        .pixel-dot:nth-child(odd) {
-            opacity: 0.3;
-        }
-        /* Divider decorative */
-        
-        .divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--apricot-warm) 30%, var(--apricot-warm) 70%, transparent);
-            margin: 0;
-        }
-        /* Responsive */
-        
-        @media (max-width: 768px) {
-             :root {
-                --sidebar-w: 0px;
-            }
-            .sidebar {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                top: auto;
-                width: 100%;
-                height: 56px;
-                flex-direction: row;
-                justify-content: center;
-                padding: 0 24px;
-                background: var(--apricot);
-                border-top: 0.5px solid var(--apricot-warm);
-                z-index: 100;
-            }
-            .sidebar-logo {
-                display: none;
-            }
-            .sidebar-nav {
-                flex-direction: row;
-                gap: 28px;
-            }
-            .main {
-                margin-left: 0;
-                padding: 0 24px;
-            }
-            .projects-grid {
-                grid-template-columns: 1fr;
-            }
-            .playground-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .connect-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background-color: var(--bg); color: var(--ink); font: 400 18px/1.6 var(--f-body);
+  /* pattern paper: fine 1 cm grid, a stronger line every 5 cm */
+  background-image: linear-gradient(90deg, color-mix(in srgb, var(--dot) 70%, transparent) 1px, transparent 1px), linear-gradient(color-mix(in srgb, var(--dot) 70%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--dot) 35%, transparent) 1px, transparent 1px), linear-gradient(color-mix(in srgb, var(--dot) 35%, transparent) 1px, transparent 1px);
+  background-size: 5cm 5cm, 5cm 5cm, 1cm 1cm, 1cm 1cm; background-attachment: fixed;
+  padding: 16px max(16px, 4vw) 0; overflow-x: hidden; }
+html:lang(zh-CN) body { font-family: var(--f-body), "PingFang SC", "Noto Sans SC", sans-serif; }
+h1, h2, h3 { font-family: var(--f-display); margin: 0; line-height: 1.05; text-wrap: balance; }
+p { margin: 0; }
+a { color: inherit; }
+button { font: inherit; color: inherit; cursor: pointer; }
+.mono { font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+:focus-visible { outline: 2px solid var(--sel); outline-offset: 3px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.canvas { max-width: 1240px; margin: 0 auto; display: flex; flex-direction: column; gap: 104px; padding-bottom: 40px; }
+
+/* ---------- top bar ---------- */
+/* ---------- nav: three painted pegs clipped to the rope; hover drops a label ---------- */
+.pegs { position: fixed; z-index: 31; top: 0; right: max(16px, 3vw); display: flex; align-items: flex-start; gap: 22px; }
+.navpeg { position: relative; display: flex; flex-direction: column; align-items: center; text-decoration: none; padding-top: 22px; }
+.navpeg i { width: 12px; height: 40px; border-radius: 3px; rotate: var(--pr, 0deg); background: linear-gradient(90deg, color-mix(in srgb, var(--pc) 75%, #000), var(--pc) 45%, color-mix(in srgb, var(--pc) 80%, #000));
+  box-shadow: 0 2px 4px rgba(0, 0, 0, .18); position: relative; transition: rotate .3s cubic-bezier(.3, 1.6, .5, 1); }
+.navpeg i::after { content: ""; position: absolute; left: -2px; right: -2px; top: 15px; height: 3px; border-radius: 2px; background: #9A9A9A; }
+.navpeg span { position: absolute; top: 66px; font: 600 12px var(--f-mono); white-space: nowrap; background: var(--pc); color: #fff; padding: 4px 9px; border-radius: 4px; box-shadow: 0 4px 10px rgba(0, 0, 0, .12);
+  opacity: 0; translate: 0 -8px; rotate: var(--pr, 0deg); transition: opacity .2s ease, translate .3s cubic-bezier(.3, 1.6, .5, 1); pointer-events: none; }
+.navpeg:hover i, .navpeg:focus-visible i { rotate: calc(var(--pr, 0deg) * -2); }
+.navpeg:hover span, .navpeg:focus-visible span { opacity: 1; translate: 0 0; }
+@media (hover: none) { .navpeg span { opacity: 1; translate: 0 0; } }
+.pegs .lang-toggle { margin: 32px 0 0 4px; }
+@media (min-width: 900px) and (hover: hover) { .navpeg { display: none; } }
+.lang-toggle { font: 12px var(--f-mono); color: var(--dim); background: var(--surface); border: 1px solid var(--line); border-radius: 99px; padding: 5px 12px; margin-left: 6px; white-space: nowrap; }
+.lang-toggle b { color: var(--ink); font-weight: 600; }
+
+/* ---------- frames: selection box with handles on hover, name tag on top-left ---------- */
+.frame { position: relative; }
+.frame::before { content: attr(data-frame); position: absolute; left: 0; top: -22px; font: 11px var(--f-mono); color: var(--dim); white-space: nowrap; transition: color .15s; }
+.frame::after { content: ""; position: absolute; inset: -6px; border: 1.5px solid var(--sel); border-radius: 4px; opacity: 0; pointer-events: none; transition: opacity .15s;
+  background:
+    linear-gradient(var(--surface), var(--surface)) 0 0 / 8px 8px no-repeat, linear-gradient(var(--surface), var(--surface)) 100% 0 / 8px 8px no-repeat,
+    linear-gradient(var(--surface), var(--surface)) 0 100% / 8px 8px no-repeat, linear-gradient(var(--surface), var(--surface)) 100% 100% / 8px 8px no-repeat; }
+.frame:hover::after, .frame:focus-visible::after, .frame:focus-within::after { opacity: 1; }
+.frame:hover::before, .frame:focus-visible::before, .frame:focus-within::before { color: var(--sel); }
+.size-tag { position: absolute; left: 50%; bottom: -30px; translate: -50% 0; z-index: 4; font: 10.5px var(--f-mono); background: var(--sel); color: #fff; padding: 2px 6px; border-radius: 4px; opacity: 0; pointer-events: none; transition: opacity .15s; white-space: nowrap; }
+.frame:hover > .size-tag { opacity: 1; }
+
+/* ---------- intro: first screen is just the name ---------- */
+.frame.quiet::before { opacity: 0; transition: opacity .15s; }
+.frame.quiet:hover::before, .frame.quiet:focus-within::before { opacity: 1; }
+.intro .lines { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+.intro { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; padding: 24px 0 8px; position: relative; }
+.intro .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.intro .tags span { font: 13px var(--f-mono); background: var(--sunk); border-radius: 8px; padding: 8px 12px; }
+.intro .name { font-size: clamp(48px, calc((94vw - 190px) / 6.6), 168px); font-weight: 800; letter-spacing: -.045em; line-height: .86; text-transform: uppercase; margin: 6px 0 4px -.04em; }
+/* name letters: plain until you touch them, then each turns into scribble, crayon or cut-paper type */
+.name { white-space: nowrap; }
+.name .L { display: inline-block; text-align: center; white-space: pre; position: relative; letter-spacing: 0; margin-right: -.045em; transition: translate .25s cubic-bezier(.3, 1.6, .5, 1); }
+.name .L:hover { translate: 0 -.04em; }
+.name .L.s-scribble { font: 400 1.04em/1 "Rubik Scribble", var(--f-display); color: #4BA3DC; letter-spacing: 0; }
+.name .L.s-scribble::after { content: "✦"; position: absolute; top: -.05em; right: -.12em; font: 400 .26em var(--f-display); color: var(--ink); }
+.name .L.s-crayon { font: 400 1em/1 "Londrina Outline", var(--f-display); color: var(--a); letter-spacing: 0; text-shadow: .035em .03em 0 var(--b), -.025em .015em 0 var(--c); }
+.name .L.s-cut { font: 400 .78em/1.02 var(--cf); color: var(--ink2, #1D1B19); background: var(--paper); padding: .05em .06em 0; rotate: var(--rot); letter-spacing: 0; vertical-align: .08em;
+  clip-path: polygon(2% 4%, 96% 0, 100% 92%, 61% 100%, 4% 96%, 0 40%); box-shadow: none; }
+.intro .tagline { font: italic 600 clamp(24px, 2.6vw, 38px)/1.2 var(--f-body); background: var(--hi); padding: 2px 10px; margin: 0; }
+.intro .sub { font: 400 clamp(20px, 2vw, 30px)/1.3 var(--f-body); color: var(--dim); margin: 0 0 8px; }
+.scroll-hint { display: none; }
+
+/* ---------- hero ---------- */
+.cta { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; font: 13px var(--f-mono); text-decoration: none; border: 1px solid var(--line); background: var(--surface); border-radius: 99px; padding: 10px 16px; transition: translate .2s; }
+.btn:hover { translate: 0 -2px; }
+.btn.solid { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+
+/* ---------- clothesline: signature cards pinned with wooden pegs ---------- */
+.line { position: relative; height: 150px; overflow-x: auto; overflow-y: hidden; margin: 0 calc(-1 * max(16px, 4vw)) 8px; scrollbar-width: none; }
+.line-in { position: relative; height: 100%; }
+.rope { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.rope path { fill: none; stroke: #B89B72; stroke-width: 2.5; stroke-dasharray: 6 2; stroke-linecap: round; }
+.clip { position: absolute; margin: 0; width: 118px; translate: -50% 0; rotate: var(--r, 0deg); transform-origin: 50% 0; padding: 14px 8px 6px; border-radius: 3px;
+  background: color-mix(in srgb, var(--c, #FFE15A) 45%, #fff); box-shadow: 0 6px 14px rgba(0, 0, 0, .1); transition: rotate .4s cubic-bezier(.3, 1.6, .5, 1); }
+.clip:hover { rotate: calc(var(--r, 0deg) * -1.5); }
+.clip img { display: block; width: 100%; aspect-ratio: 12 / 5; object-fit: contain; }
+.clip small { display: block; margin-top: 2px; font: 9.5px var(--f-mono); color: #4A453E; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; }
+.clip.you small { color: #C2410C; }
+.peg { position: absolute; left: 50%; top: -12px; width: 9px; height: 30px; margin-left: -4.5px; border-radius: 2px; rotate: var(--pr, 4deg);
+  background: linear-gradient(90deg, #C9A06A, #E6C391 45%, #B98C55); box-shadow: 0 1px 2px rgba(0, 0, 0, .2); }
+.peg::after { content: ""; position: absolute; left: -2px; right: -2px; top: 11px; height: 3px; border-radius: 2px; background: #9A9A9A; }
+.clip.landing { outline: 2px dashed var(--sel); outline-offset: 3px; }
+.clip.sec { width: auto; min-width: 128px; padding: 20px 18px 10px; background: var(--surface); color: var(--ink); text-decoration: none; text-align: center; font: 800 24px/1 var(--f-display); letter-spacing: -.02em; border-top: 4px solid var(--pc); }
+.clip.sec small { display: block; margin: 0 0 4px; font: 600 10px var(--f-mono); color: var(--pc); letter-spacing: .08em; }
+.clip.sec .peg { width: 12px; margin-left: -6px; top: -16px; height: 36px; background: linear-gradient(90deg, color-mix(in srgb, var(--pc) 75%, #000), var(--pc) 45%, color-mix(in srgb, var(--pc) 80%, #000)); }
+.clip.add { font: 11px/1.4 var(--f-mono); color: var(--dim); background: var(--surface); border: 1.5px dashed var(--line); box-shadow: none; cursor: pointer; text-align: center; padding: 18px 8px 12px; }
+.clip.add b { display: block; font: 600 15px var(--f-display); color: var(--ink); }
+@keyframes sway { 50% { rotate: calc(var(--r, 0deg) + 2deg); } }
+.clip:not(.add) { animation: sway 5s ease-in-out infinite; animation-delay: var(--d, 0s); }
+.clip:hover { animation: none; }
+
+/* ---------- work ---------- */
+.work-head { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px 56px; align-items: center; }
+.work-head h2 { font-size: clamp(36px, 4.4vw, 60px); font-weight: 800; letter-spacing: -.035em; line-height: .95; max-width: 5.2em; }
+.statement { margin: 0; font: 800 clamp(24px, 2.8vw, 42px)/1.08 var(--f-display); letter-spacing: -.02em; text-transform: uppercase; max-width: 20em; }
+.statement .serif { font-family: var(--f-body); font-style: italic; font-weight: 600; text-transform: none; }
+.statement .marker { background: linear-gradient(var(--hi), var(--hi)) 0 88% / 100% 34% no-repeat; }
+.statement .chip-w { font: 600 .62em var(--f-mono); vertical-align: .18em; background: var(--ink); color: var(--bg); border-radius: 6px; padding: .04em .3em; }
+@media (max-width: 760px) { .work-head { grid-template-columns: minmax(0, 1fr); } }
+/* numbers stay folded until the card is hovered, so the row reads calm */
+.card .metrics { max-height: 0; opacity: 0; overflow: hidden; padding-top: 0; border-top-color: transparent; transition: max-height .35s cubic-bezier(.22, 1, .36, 1), opacity .25s ease, padding-top .35s ease, border-color .25s ease; }
+.card:hover .metrics, .card:focus-visible .metrics { max-height: 110px; opacity: 1; padding-top: 12px; border-top-color: var(--line); }
+@media (hover: none) { .card .metrics { max-height: none; opacity: 1; padding-top: 12px; border-top-color: var(--line); } }
+/* card details slide up over the image on hover / keyboard focus (role, course, timeline) */
+.details { position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 3; background: var(--surface); color: var(--ink); border-radius: 12px; padding: 12px 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, .18);
+  translate: 0 calc(100% + 16px); transition: translate .35s cubic-bezier(.22, 1, .36, 1); }
+.card:hover .details, .card:focus-visible .details { translate: 0 0; }
+.details dl { margin: 0; display: grid; gap: 6px; }
+.details dl div { display: grid; grid-template-columns: 96px 1fr; gap: 14px; font-size: 14px; line-height: 1.35; }
+.details dt { font: 10.5px var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--dim); padding-top: 2px; }
+.details dd { margin: 0; }
+
+.sec-head { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; }
+.sec-head h2 { font-size: clamp(32px, 4.4vw, 54px); font-weight: 800; letter-spacing: -.03em; }
+.sec-head p { font-size: 16px; color: var(--dim); max-width: 46ch; }
+.work { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 52px 28px; margin-top: 40px; }
+.card { display: flex; flex-direction: column; text-decoration: none; }
+.shot { position: relative; aspect-ratio: 16 / 11; border-radius: 18px; overflow: hidden; background: var(--sunk); display: grid; place-items: center; }
+.shot > img.cover { width: 100%; height: 100%; object-fit: cover; transition: scale .5s cubic-bezier(.22, 1, .36, 1); }
+.shot > img.mock { max-width: 82%; max-height: 86%; object-fit: contain; transition: scale .5s cubic-bezier(.22, 1, .36, 1); }
+.card:hover .shot > img { scale: 1.035; }
+.shot.lavender { background: #E6E1F7; } .shot.sky { background: #DCEEF7; } .shot.blue { background: #E1E3FA; }
+.pills { position: absolute; top: 14px; left: 14px; right: 14px; display: flex; flex-wrap: wrap; gap: 6px; z-index: 2; }
+.pills span { font: 11px var(--f-mono); background: rgba(255, 255, 255, .92); color: #1D1B19; border-radius: 99px; padding: 4px 10px; }
+.pills span.hot { background: #E8590C; color: #fff; }
+.card-body { display: flex; flex-direction: column; gap: 8px; padding: 16px 4px 0; }
+.card-body h3 { font-size: 28px; font-weight: 800; letter-spacing: -.02em; display: flex; align-items: center; gap: 10px; }
+.card-body h3 svg { width: 18px; height: 18px; color: var(--dim); }
+.card-body p { font-size: 17px; color: var(--dim); }
+.metrics { list-style: none; padding: 12px 0 0; margin: 4px 0 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.metrics b { display: block; font-family: var(--f-display); font-size: 26px; font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.metrics span { font: 10.5px var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--dim); }
+.card:first-child .metrics b { color: var(--trap); }
+@media (max-width: 820px) { .work { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- playground ---------- */
+.plays { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px 18px; margin-top: 40px; }
+.play { display: flex; flex-direction: column; gap: 8px; text-decoration: none; }
+.play .tile { aspect-ratio: 1; border-radius: 16px; overflow: hidden; background: var(--surface); border: 1px solid var(--line); display: grid; place-items: center; transition: translate .2s; }
+.play:hover .tile { translate: 0 -3px; }
+.play .tile img { width: 100%; height: 100%; object-fit: contain; background: #fff; }
+.play b { font-family: var(--f-display); font-size: 17px; font-weight: 600; margin-top: 4px; }
+.play span.d { font: 11px var(--f-mono); color: var(--dim); }
+.gingham { background-color: #fff !important; background-image: repeating-linear-gradient(0deg, rgba(255, 143, 199, .4) 0 10px, transparent 10px 20px), repeating-linear-gradient(90deg, rgba(255, 143, 199, .4) 0 10px, transparent 10px 20px); }
+.sewn { position: relative; display: inline-block; font-family: var(--f-body); font-style: italic; color: #1D1B19; background-color: #fff; padding: .08em .35em .14em; rotate: -3deg; border-radius: 4px; box-shadow: 0 3px 0 rgba(29, 27, 25, .18); text-decoration: none;
+  background-image: repeating-linear-gradient(0deg, rgba(255, 143, 199, .45) 0 7px, transparent 7px 14px), repeating-linear-gradient(90deg, rgba(255, 143, 199, .45) 0 7px, transparent 7px 14px); }
+.sewn::after { content: ""; position: absolute; inset: 4px; border: 1.5px dashed #1D1B19; border-radius: 2px; pointer-events: none; }
+@media (max-width: 820px) { .plays { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* ---------- about: photo · bio (mixed type) · contact ---------- */
+.about { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 40px; align-items: start; }
+.about-photo { margin: 0; }
+.about-photo img { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 18px; filter: grayscale(1); transition: filter .4s; }
+.about-photo:hover img { filter: none; }
+.about .txt { display: flex; flex-direction: column; gap: 12px; }
+.about .closer { font: 600 clamp(20px, 1.8vw, 24px)/1.4 var(--f-display); color: var(--ink); letter-spacing: -.01em; }
+.about h2 { font-size: clamp(28px, 3.2vw, 38px); font-weight: 800; letter-spacing: -.025em; }
+.about p { max-width: 60ch; color: var(--dim); font-size: 15.5px; line-height: 1.55; margin: 0; }
+.about p b { color: var(--ink); font-family: var(--f-display); font-weight: 600; }
+.about .b-lead { font: 600 clamp(17px, 1.5vw, 19px)/1.4 var(--f-display); color: var(--ink); letter-spacing: -.01em; }
+.about .hl { font-family: var(--f-body); font-style: italic; font-weight: 600; background: linear-gradient(var(--hi), var(--hi)) 0 88% / 100% 40% no-repeat; }
+.about .lead-in { font-family: var(--f-body); font-style: italic; font-weight: 600; color: var(--trap); }
+.about .m { font: 600 .82em var(--f-mono); color: var(--ink); background: var(--sunk); border-radius: 5px; padding: 1px 6px; white-space: nowrap; }
+a.m { text-decoration: none; transition: background .2s, color .2s; }
+a.m:hover, a.m:focus-visible { background: var(--ink); color: var(--bg); }
+.about .marker { color: var(--ink); background: linear-gradient(var(--hi-o), var(--hi-o)) 0 88% / 100% 40% no-repeat; }
+.about p em { font-style: italic; color: var(--ink); }
+/* "More of me": folded until hover / focus */
+.more { border-top: 1px dashed var(--line); padding-top: 12px; outline-offset: 4px; }
+.more h3 { font: 600 13px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--dim); cursor: default; display: flex; gap: 8px; align-items: center; }
+.more h3 i { font-style: normal; transition: rotate .3s; }
+.more-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .4s cubic-bezier(.22, 1, .36, 1); }
+.more-body > div { min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: 10px; }
+.more-body p:first-child { margin-top: 10px; }
+.more:hover .more-body, .more:focus-within .more-body { grid-template-rows: 1fr; }
+.more:hover h3, .more:focus-within h3 { color: var(--ink); }
+.more:hover h3 i, .more:focus-within h3 i { rotate: 180deg; }
+@media (hover: none) { .more-body { grid-template-rows: 1fr; } }
+/* contact me: big rows like my old site */
+.contact { grid-column: 1 / -1; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 22px 24px; display: flex; flex-direction: column; }
+.contact h2 { font-size: clamp(34px, 3.6vw, 48px); margin-bottom: 10px; }
+.c-row { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; padding: 14px 0; border-top: 1px solid var(--line); }
+.c-row .k { grid-column: 1; font: 11px var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--dim); }
+.c-row b { grid-column: 1; font: 600 clamp(18px, 1.7vw, 22px) var(--f-display); letter-spacing: -.01em; overflow-wrap: anywhere; }
+.c-row i { grid-column: 2; grid-row: 1 / 3; align-self: center; font-style: normal; font: 20px var(--f-mono); transition: translate .25s cubic-bezier(.3, 1.6, .5, 1); }
+.c-row:hover i, .c-row:focus-visible i { translate: 4px -4px; }
+.c-row:hover b, .c-row:focus-visible b { color: var(--trap); }
+.c-row:focus-visible { outline: 2px solid var(--sel); outline-offset: 2px; border-radius: 6px; }
+.c-row.copied .k { color: var(--honest); }
+@media (max-width: 760px) { .about { grid-template-columns: minmax(0, 1fr); } .about-photo { max-width: 220px; } }
+.foot { display: flex; flex-wrap: wrap; align-items: center; gap: 40px 64px; padding: 40px 0 36px; border-top: 1px solid var(--line); }
+.the-end { display: flex; flex-direction: column; gap: 10px; }
+.nomore { margin: 0; font: 800 clamp(56px, 7vw, 112px)/.9 var(--f-display); letter-spacing: -.045em; text-transform: uppercase; }
+.godyou { margin: 0; font: italic 400 clamp(22px, 2.2vw, 32px)/1.25 var(--f-body); color: var(--dim); }
+.godyou em { color: var(--ink); font-weight: 600; background: linear-gradient(var(--hi), var(--hi)) 0 88% / 100% 38% no-repeat; }
+.foot-side { display: flex; flex-direction: column; gap: 14px; }
+.ipod { margin: 0; display: flex; flex-direction: column; gap: 8px; }
+/* the sketch is a fixed 520 × 820 canvas, shown at 55%; the p5 "full" view adds a 42px header, cropped off the top */
+.ipod-box { width: 286px; height: 451px; overflow: hidden; border-radius: 24px; }
+.ipod-box iframe { width: 520px; height: 862px; border: 0; transform: scale(.55) translateY(-42px); transform-origin: 0 0; }
+.ipod figcaption { font: 11px var(--f-mono); color: var(--dim); }
+.foot-meta { display: flex; gap: 16px; font: 12px var(--f-mono); color: var(--dim); }
+.foot a { text-decoration: none; }
+
+/* ---------- signature door ---------- */
+.door { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 16px;
+  background-color: var(--bg); background-image: inherit; background-size: 5cm 5cm, 5cm 5cm, 1cm 1cm, 1cm 1cm; transition: opacity .5s ease; }
+.door.out { opacity: 0; pointer-events: none; }
+.door-card { width: min(640px, 100%); display: flex; flex-direction: column; gap: 16px; animation: rise .6s cubic-bezier(.22, 1, .36, 1); }
+@keyframes rise { from { opacity: 0; translate: 0 16px; } }
+.door-card .mono { color: var(--dim); }
+.door-card h2 { font-size: clamp(32px, 5.2vw, 56px); font-weight: 800; letter-spacing: -.03em; margin-bottom: 14px; }
+.door-card h2 em { font-family: var(--f-body); font-weight: 400; }
+.pad-frame { position: relative; background: #fff; border-radius: 6px; }
+.pad-frame::before { content: "Frame · Signature"; position: absolute; left: 0; top: -20px; font: 11px var(--f-mono); color: var(--sel); }
+.pad-frame::after { content: ""; position: absolute; inset: -5px; border: 1.5px solid var(--sel); border-radius: 4px; pointer-events: none;
+  background: linear-gradient(var(--surface), var(--surface)) 0 0 / 8px 8px no-repeat, linear-gradient(var(--surface), var(--surface)) 100% 0 / 8px 8px no-repeat, linear-gradient(var(--surface), var(--surface)) 0 100% / 8px 8px no-repeat, linear-gradient(var(--surface), var(--surface)) 100% 100% / 8px 8px no-repeat; }
+.pad { position: relative; z-index: 1; display: block; width: 100%; aspect-ratio: 12 / 5; touch-action: none; cursor: crosshair; }
+.pad-line { position: absolute; left: 7%; right: 7%; bottom: 22%; border-top: 1.5px dashed #D6D2C8; pointer-events: none; }
+.pad-x { position: absolute; left: 4%; bottom: 23%; font: 600 22px var(--f-display); color: #B9B4A8; pointer-events: none; }
+.pad-hint { position: absolute; inset: 0; display: grid; place-items: center; font: 13px var(--f-mono); color: #6A655E; pointer-events: none; transition: opacity .2s; }
+.door-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+.door-row input { flex: 1 1 180px; min-width: 0; font: 15px var(--f-body); border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 99px; padding: 10px 16px; }
+.door-actions { display: flex; gap: 8px; }
+.door-actions button { border: 1px solid var(--line); background: var(--surface); border-radius: 99px; padding: 10px 16px; font: 13px var(--f-mono); }
+.door-actions .go { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.door-actions .go[aria-disabled="true"] { opacity: .45; cursor: not-allowed; }
+.papers { display: flex; align-items: center; gap: 8px; font: 12px var(--f-mono); color: var(--dim); }
+.papers button { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--surface); background: color-mix(in srgb, var(--c) 60%, #fff); box-shadow: 0 0 0 1px var(--line); padding: 0; }
+.papers button[aria-checked="true"] { box-shadow: 0 0 0 2px var(--ink); }
+.door .skip { align-self: center; font: 12px var(--f-mono); color: var(--dim); background: none; border: 0; text-decoration: underline; text-underline-offset: 3px; }
+.flyer { position: fixed; z-index: 101; pointer-events: none; background: #fff; border-radius: 10px; box-shadow: 0 18px 40px rgba(0, 0, 0, .18); transform-origin: 0 0; }
+.flyer img { display: block; width: 100%; height: 100%; object-fit: contain; }
+/* homepage blocks arrive one by one after the door opens */
+.arriving .canvas > * { opacity: 0; translate: 0 14px; }
+.arrived .canvas > * { transition: opacity .5s ease, translate .6s cubic-bezier(.22, 1, .36, 1); transition-delay: calc(var(--i, 0) * 110ms); }
+/* ---------- left-to-right reading (desktop): JS sets #hwrap's height and slides .track ---------- */
+@media (min-width: 900px) and (hover: hover) {
+  body { padding: 0; }
+  .hstick { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+  .track { --H: calc(100vh - 200px); position: relative; display: flex; flex-direction: row; max-width: none; margin: 0; align-items: center; gap: 150px; width: max-content; height: 100vh; padding: 168px 140px 32px 6vw; will-change: transform; }
+  .track > section, .track > footer { flex: none; }
+  .line { position: absolute; left: 0; top: 16px; width: 100%; margin: 0; overflow: visible; }
+  .intro { min-width: 0; width: calc(100vw - 6vw - 150px); justify-content: center; align-self: stretch; padding: 0 0 4vh; }
+  .scroll-hint { display: block; position: absolute; right: 0; top: 50%; font: italic 400 26px var(--f-body); color: var(--dim); animation: nudge 1.6s ease-in-out infinite; }
+  @keyframes nudge { 50% { translate: 10px 0; } }
+  #playground { display: flex; align-items: center; gap: 64px; }
+  #work { display: flex; flex-direction: column; justify-content: flex-start; padding-top: 2vh; gap: 28px; align-self: stretch; }
+  .work-head .statement { font-size: min(40px, 4.4vh); }
+  .sec-head { flex-direction: column; align-items: flex-start; width: 280px; flex: none; }
+  .work { display: flex; gap: 48px; margin: 0; }
+  .card { width: calc((var(--H) - 360px) * 16 / 11); min-width: 340px; }
+  .card-body h3 { font-size: 24px; }
+  .card-body p { font-size: 15.5px; }
+  .plays { --t: calc((var(--H) - 150px) / 2); grid-template-columns: repeat(4, var(--t)); grid-template-rows: auto; margin: 0; }
+  .about { width: min(1500px, 120vw); grid-template-columns: min(260px, calc((var(--H) - 20px) * .7)) minmax(0, 600px) 380px; gap: 56px; align-items: start; align-self: start; margin-top: 2vh; }
+  .contact { grid-column: auto; }
+  .foot { flex-wrap: nowrap; align-self: stretch; border-top: 0; border-left: 1px solid var(--line); padding: 0 0 0 64px; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
 </head>
-
 <body>
+<nav class="pegs" aria-label="Main">
+  <a class="navpeg" href="#work" style="--pc:#E8590C;--pr:-4deg" aria-label="Work"><i></i><span data-zh="作品">Work</span></a>
+  <a class="navpeg" href="#playground" style="--pc:#0B7A66;--pr:3deg" aria-label="Playground"><i></i><span data-zh="实验">Playground</span></a>
+  <a class="navpeg" href="#about" style="--pc:#2F6BFF;--pr:-2deg" aria-label="About"><i></i><span data-zh="关于">About</span></a>
+  <button class="lang-toggle" type="button"><b>EN</b> / 中文</button>
+</nav>
 
-    <!-- Sidebar -->
-    <nav class="sidebar">
-        <span class="sidebar-logo">玥妍</span>
-        <div class="sidebar-nav">
-            <a href="#projects" class="nav-item active" onclick="setActive(this)">Projects</a>
-            <a href="#playground" class="nav-item" onclick="setActive(this)">Playground</a>
-            <a href="#connect" class="nav-item" onclick="setActive(this)">Connect</a>
-        </div>
-    </nav>
+<div id="hwrap"><div class="hstick">
+<main class="canvas track" id="top">
+  <!-- ===== CLOTHESLINE: every visitor's signature card ===== -->
+  <div class="line" id="line" aria-label="Visitors' signatures"><div class="line-in" id="lineIn"><svg class="rope" aria-hidden="true"><path id="rope"/></svg></div></div>
 
-    <!-- Main -->
-    <div class="main">
-
-        <!-- Hero -->
-        <section class="hero" id="top">
-            <p class="hero-eyebrow">Portfolio · 2025</p>
-            <h1 class="hero-name">
-                Amanda —<br>
-                <em>designer</em> crafting<br> quiet moments.
-            </h1>
-            <p class="hero-sub">
-                Multidisciplinary designer exploring the space between form, function, and feeling. Drawn to interactions that breathe.
-            </p>
-            <div class="hero-tags">
-                <span class="tag">Interaction Design</span>
-                <span class="tag">Visual Design</span>
-                <span class="tag">Brand</span>
-                <span class="tag">Motion</span>
-            </div>
-            <div class="scroll-hint">
-                <span class="scroll-hint-line"></span> scroll
-            </div>
-        </section>
-
-        <!-- Projects Section -->
-        <section class="section" id="projects">
-            <div class="section-label">Selected Work</div>
-
-            <div class="projects-grid">
-
-                <!-- Project: Temu -->
-                <a href="temu.html" class="project-card">
-                    <div class="card-image"><img class="card-cover" src="images/temu/cover.jpg" alt="Temu's prize wheel next to the Temu app icon"><span class="card-pill">View case study</span></div>
-                    <div class="card-content">
-                        <div class="card-head"><h3 class="card-title">The Gift Card Trap</h3><span class="card-chip">Class project</span></div>
-                        <p class="card-desc">An ethical redesign of Temu’s coupon pop-up maze</p>
-                        <ul class="card-metrics"><li><b>21→3</b><span>screens</span></li><li><b>7</b><span>dark patterns</span></li><li><b>$151→$94</b><span>checkout</span></li></ul>
-                        <div class="card-details"><div><dl><div><dt>Role</dt><dd>Solo · research & design</dd></div><div><dt>Course</dt><dd>Dark Patterns</dd></div><div><dt>Timeline</dt><dd>Sep 2026 · 1 week</dd></div></dl></div></div>
-                    </div>
-                </a>
-
-                <!-- Project: Olive -->
-                <a href="olive.html" class="project-card">
-                    <div class="card-image">
-                        <div class="card-image-inner proj-visual-2">
-                            <div class="proj-mockup" style="flex-direction:column;gap:8px;">
-                                <div style="width:36px;height:36px;border-radius:50%;background:var(--apricot-mid);"></div>
-                                <div style="display:flex;gap:10px;">
-                                    <div style="text-align:center;">
-                                        <div style="font-size:9px;font-weight:500;color:var(--ink);">90</div>
-                                        <div style="font-size:7px;color:var(--ink-light);">score</div>
-                                    </div>
-                                    <div style="text-align:center;">
-                                        <div style="font-size:9px;font-weight:500;color:var(--ink);">72</div>
-                                        <div style="font-size:7px;color:var(--ink-light);">following</div>
-                                    </div>
-                                    <div style="text-align:center;">
-                                        <div style="font-size:9px;font-weight:500;color:var(--ink);">38</div>
-                                        <div style="font-size:7px;color:var(--ink-light);">follower</div>
-                                    </div>
-                                </div>
-                                <div style="width:70%;height:1px;background:var(--apricot-warm);"></div>
-                                <div style="font-size:7px;color:var(--ink-light);">history</div>
-                            </div>
-                            <span class="proj-glyph">02</span>
-                        </div>
-                    <span class="card-pill">View case study</span></div>
-                    <div class="card-content">
-                        <div class="card-head"><h3 class="card-title">Olive</h3><span class="card-chip">Client work</span></div>
-                        <p class="card-desc">Brand &amp; app redesign for a holistic food scanner</p>
-                        <ul class="card-metrics"><li><b>350K+</b><span>users</span></li><li><b>1–2 wk</b><span>sprint</span></li></ul>
-                        <div class="card-details"><div><dl><div><dt>Role</dt><dd>UI · micro-interactions</dd></div><div><dt>Team</dt><dd>With Dan Alves</dd></div><div><dt>Timeline</dt><dd>Nov 2025</dd></div></dl></div></div>
-                    </div>
-                </a>
-
-                <!-- Project: SoftConstruct -->
-                <a href="softconstruct.html" class="project-card">
-                    <div class="card-image">
-                        <div class="card-image-inner proj-visual-3">
-                            <div class="proj-mockup" style="flex-direction:column;gap:6px;">
-                                <div style="width:80%;height:5px;background:var(--apricot-warm);border-radius:2px;"></div>
-                                <div style="width:60%;height:5px;background:var(--apricot-mid);border-radius:2px;"></div>
-                                <div style="width:72%;height:5px;background:var(--apricot-warm);border-radius:2px;"></div>
-                                <div style="margin-top:6px;width:60%;height:14px;border-radius:3px;background:var(--accent-light);opacity:0.4;"></div>
-                            </div>
-                            <span class="proj-glyph">03</span>
-                        </div>
-                    <span class="card-pill">View case study</span></div>
-                    <div class="card-content">
-                        <div class="card-head"><h3 class="card-title">SoftConstruct</h3><span class="card-chip">Internship</span></div>
-                        <p class="card-desc">Landing page for the mobile game First Run</p>
-                        <ul class="card-metrics"><li><b>5</b><span>page sections</span></li><li><b>2 wk</b><span>duration</span></li></ul>
-                        <div class="card-details"><div><dl><div><dt>Role</dt><dd>Lead designer · UI &amp; prototyping</dd></div><div><dt>Team</dt><dd>SoftConstruct developers</dd></div><div><dt>Timeline</dt><dd>2023</dd></div></dl></div></div>
-                    </div>
-                </a>
-
-                <!-- Project: Sonic -->
-                <a href="sonic-archive.html" class="project-card">
-                    <div class="card-image">
-                        <div class="card-image-inner proj-visual-4">
-                            <div class="proj-mockup" style="flex-direction:column;align-items:flex-start;gap:5px;padding:12px;">
-                                <div style="font-size:8px;font-weight:500;color:var(--ink);letter-spacing:0.06em;">SONIC</div>
-                                <div style="width:100%;height:1px;background:var(--apricot-warm);"></div>
-                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;width:100%;">
-                                    <div style="height:18px;background:var(--apricot-mid);border-radius:2px;"></div>
-                                    <div style="height:18px;background:var(--apricot-warm);border-radius:2px;"></div>
-                                    <div style="height:18px;background:var(--apricot-warm);border-radius:2px;"></div>
-                                    <div style="height:18px;background:var(--apricot-mid);border-radius:2px;"></div>
-                                </div>
-                            </div>
-                            <span class="proj-glyph">04</span>
-                        </div>
-                    <span class="card-pill">View case study</span></div>
-                    <div class="card-content">
-                        <div class="card-head"><h3 class="card-title">Sonic Archive</h3><span class="card-chip">Personal</span></div>
-                        <p class="card-desc">A fan web archive of Sonic the Hedgehog</p>
-                        <ul class="card-metrics"><li><b>30+</b><span>game titles</span></li><li><b>4</b><span>archive sections</span></li></ul>
-                        <div class="card-details"><div><dl><div><dt>Role</dt><dd>Solo designer &amp; developer</dd></div><div><dt>Tools</dt><dd>Figma · HTML/CSS · JS</dd></div><div><dt>Timeline</dt><dd>2024 · 3 weeks</dd></div></dl></div></div>
-                    </div>
-                </a>
-            </div>
-        </section>
-
-        <div class="divider"></div>
-
-        <!-- Playground Section -->
-        <section class="section" id="playground">
-            <div class="section-label">Playground</div>
-
-            <div class="playground-grid">
-
-                <a href="cookie-thief.html" class="play-card" style="text-decoration:none;background:#fff;">
-                    <img src="assets/cookie-thief-cover.png" alt="Cookie Thief: pixel rat offline game" style="width:100%;height:100%;object-fit:contain;">
-                    <span class="play-label">Cookie Thief</span>
-                </a>
-
-                <div class="play-card" onclick="void(0)">
-                    <div class="card-image-inner play-visual-2" style="width:100%;height:100%;">
-                        <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:rgba(80,100,90,0.4);text-align:center;line-height:1.2;">
-                            Gen<br>erative
-                        </div>
-                    </div>
-                    <span class="play-label">Processing / p5.js</span>
-                </div>
-
-                <div class="play-card" onclick="void(0)">
-                    <div class="card-image-inner play-visual-3" style="width:100%;height:100%;">
-                        <div style="display:flex;flex-direction:column;gap:3px;">
-                            <div style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(80,60,120,0.5);">Every Byte</div>
-                            <div style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(80,60,120,0.4);">is Action</div>
-                        </div>
-                    </div>
-                    <span class="play-label">Pixel Art Poster</span>
-                </div>
-
-                <div class="play-card" onclick="void(0)">
-                    <div class="card-image-inner play-visual-4" style="width:100%;height:100%;">
-                        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
-                            <div style="width:28px;height:48px;border-radius:4px;background:rgba(196,120,90,0.2);border:1px solid rgba(196,120,90,0.3);"></div>
-                            <div style="font-size:8px;color:rgba(120,80,60,0.5);letter-spacing:0.06em;">3D Scene</div>
-                        </div>
-                    </div>
-                    <span class="play-label">Twinmotion / VR</span>
-                </div>
-
-                <div class="play-card" onclick="void(0)">
-                    <div class="card-image-inner play-visual-5" style="width:100%;height:100%;">
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
-                            <div style="height:24px;background:rgba(196,100,90,0.2);border-radius:3px;"></div>
-                            <div style="height:24px;background:rgba(196,100,90,0.3);border-radius:3px;"></div>
-                            <div style="height:24px;background:rgba(196,100,90,0.15);border-radius:3px;"></div>
-                            <div style="height:24px;background:rgba(196,100,90,0.25);border-radius:3px;"></div>
-                        </div>
-                    </div>
-                    <span class="play-label">iOS Explorations</span>
-                </div>
-
-                <div class="play-card" onclick="void(0)">
-                    <div class="card-image-inner play-visual-6" style="width:100%;height:100%;">
-                        <div style="display:flex;flex-direction:column;gap:5px;align-items:center;">
-                            <div style="width:40px;height:2px;background:rgba(60,100,160,0.3);border-radius:1px;transform:rotate(-20deg);"></div>
-                            <div style="width:32px;height:2px;background:rgba(60,100,160,0.2);border-radius:1px;transform:rotate(-20deg);"></div>
-                            <div style="width:40px;height:2px;background:rgba(60,100,160,0.4);border-radius:1px;transform:rotate(-20deg);"></div>
-                        </div>
-                    </div>
-                    <span class="play-label">Motion Studies</span>
-                </div>
-
-
-            </div>
-        </section>
-
-        <div class="divider"></div>
-
-        <!-- Connect Section -->
-        <section class="section" id="connect">
-            <div class="section-label">Connect</div>
-
-            <div class="connect-grid">
-
-                <div>
-                    <div class="about-photo">悦</div>
-                    <p class="about-text">
-                        <p>I'm Yueyan (Amanda) Zhang — a multidisciplinary designer interested in the quiet space between interaction and emotion. Started in visual design, drawn into motion and micro-interactions.</p>
-                        <p>I believe good design feels inevitable. Currently exploring new work and collaborations.</p>
-                    </p>
-                </div>
-
-                <div class="connect-links">
-                    <a href="#" class="connect-link">
-          Resume <span class="connect-link-arrow">↗</span>
-        </a>
-                    <a href="#" class="connect-link">
-          LinkedIn <span class="connect-link-arrow">↗</span>
-        </a>
-                    <a href="#" class="connect-link">
-          Email <span class="connect-link-arrow">↗</span>
-        </a>
-                    <a href="#" class="connect-link">
-          Instagram <span class="connect-link-arrow">↗</span>
-        </a>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- Footer -->
-        <footer class="footer">
-            <span class="footer-name">Yueyan · 玥妍</span>
-            <a href="foody.html" class="footer-year" style="text-decoration:none">Foody prototype →</a>
-            <span class="footer-year">© 2025</span>
-        </footer>
-
+  <!-- ===== INTRO: first screen ===== -->
+  <section class="intro" aria-label="Intro">
+    <div class="tags frame quiet" data-frame="Tags"><span data-zh="NYU-ITP 硕士">Master’s @ NYU-ITP</span><span data-zh="UX 与产品设计师">UX &amp; Product Designer</span><span data-zh="0 → 1 进行中">0 → 1 in progress.</span><span class="size-tag" aria-hidden="true"></span></div>
+    <div class="frame quiet" data-frame="H1 · Name"><h1 class="name">Amanda Zhang</h1><span class="size-tag" aria-hidden="true"></span></div>
+    <div class="frame quiet lines" data-frame="Text · Tagline"><p class="tagline" data-zh="先在乎，再创造。">I care, then I create.</p>
+    <p class="sub" data-zh="做有意义的设计。">Building meaningful design.</p><span class="size-tag" aria-hidden="true"></span></div>
+    <div class="cta frame quiet" data-frame="Buttons">
+      <a class="btn solid" href="#work" data-zh="看作品 →">See the work →</a>
+      <a class="btn" href="temu.html" data-zh="从最完整的开始：Temu →">Start with Temu →</a>
+      <span class="size-tag" aria-hidden="true"></span>
     </div>
+    <span class="scroll-hint" aria-hidden="true" data-zh="» 往下滚，看更多">» scroll to see more</span>
+  </section>
 
-    <script>
-        // Intersection observer for section reveal
-        const sections = document.querySelectorAll('.section');
-        const cards = document.querySelectorAll('.project-card, .play-card');
+  <!-- ===== WORK ===== -->
+  <section id="work">
+    <div class="work-head">
+      <h2 data-zh="精选作品">Selected work</h2>
+      <p class="statement" data-zh="我设计&lt;span class=&quot;serif&quot;&gt;诚实&lt;/span&gt;的产品：从&lt;span class=&quot;marker&quot;&gt;结算流程&lt;/span&gt;到 &lt;span class=&quot;chip-w&quot;&gt;AI&lt;/span&gt; 陪伴。">I design <span class="serif">honest</span> products, from <span class="marker">checkout flows</span> to <span class="chip-w">AI</span> companions.</p>
+    </div>
+    <div class="work">
+      <a class="card frame" data-frame="01 · The Gift Card Trap" href="temu.html">
+        <div class="shot"><img class="cover" src="images/temu/cover.jpg" alt="Temu's prize wheel next to the Temu app icon" data-zh-alt="Temu 的抽奖转盘和 Temu App 图标"><div class="pills"><span class="hot" data-zh="A/B 测试">A/B tested</span><span data-zh="课程项目">class project</span><span data-zh="独立完成">solo</span></div><div class="details"><div><dl><div><dt data-zh="角色">Role</dt><dd data-zh="独立完成 · 研究与设计">Solo · research &amp; design</dd></div><div><dt data-zh="课程">Course</dt><dd data-zh="黑暗模式">Dark Patterns</dd></div><div><dt data-zh="时间">Timeline</dt><dd data-zh="2026.09 · 1 周">Sep 2026 · 1 week</dd></div></dl></div></div></div>
+        <div class="card-body"><h3 data-zh="礼品卡陷阱">The Gift Card Trap</h3><p data-zh="对 Temu 优惠券弹窗迷宫的一次伦理重设计。">An ethical redesign of Temu’s coupon pop-up maze.</p>
+          <ul class="metrics"><li><b>21→3</b><span data-zh="页面">screens</span></li><li><b>7</b><span data-zh="种黑暗模式">dark patterns</span></li><li><b>$151→$94</b><span data-zh="结算金额">checkout</span></li></ul></div>
+      </a>
+      <a class="card frame" data-frame="02 · LoveLink" href="lovelink.html">
+        <div class="shot lavender"><img class="mock" src="images/home/lovelink-card.webp" alt="A hand holding an iPhone with the LoveLink chat screen" data-zh-alt="手持 iPhone，屏幕上是 LoveLink 聊天界面" loading="lazy"><div class="pills"><span>0→1</span><span data-zh="AI 交互">AI interaction</span><span>iOS</span></div><div class="details"><div><dl><div><dt data-zh="角色">Role</dt><dd data-zh="UX 研究 · UI 设计">UX research · UI design</dd></div><div><dt data-zh="平台">Platform</dt><dd data-zh="iOS App">iOS app</dd></div><div><dt data-zh="时间">Timeline</dt><dd data-zh="2024.10 – 2024.12">Oct – Dec 2024</dd></div></dl></div></div></div>
+        <div class="card-body"><h3>LoveLink</h3><p data-zh="用 AI 朋友和共建房间，让异地情侣保持亲近的 iOS App。">An iOS app that keeps long-distance couples close with AI friends and a shared room.</p>
+          <ul class="metrics"><li><b>137</b><span data-zh="份问卷">survey responses</span></li><li><b>3</b><span data-zh="位访谈">interviews</span></li><li><b>5</b><span data-zh="个功能模块">app tabs</span></li></ul></div>
+      </a>
+      <a class="card frame" data-frame="03 · VIVA TOY" href="viva-toy.html">
+        <div class="shot sky"><img class="mock" src="images/home/viva-card.webp" alt="VIVA TOY app screens held in hand" data-zh-alt="手持的 VIVA TOY App 界面" loading="lazy"><div class="pills"><span data-zh="服务设计">service design</span><span data-zh="商业模式">business model</span><span data-zh="个人项目">personal</span></div><div class="details"><div><dl><div><dt data-zh="角色">Role</dt><dd data-zh="服务设计 · 商业模式">Service design · business model</dd></div><div><dt data-zh="产出">Deliverable</dt><dd data-zh="服务系统 + App">Service system + app</dd></div><div><dt data-zh="时间">Timeline</dt><dd data-zh="2024.11 – 2025.01">Nov 2024 – Jan 2025</dd></div></dl></div></div></div>
+        <div class="card-body"><h3>VIVA TOY</h3><p data-zh="让电子玩具被修好、继续被使用的维修与循环服务。">A repair-and-reuse service that keeps electronic toys in play.</p>
+          <ul class="metrics"><li><b>3</b><span data-zh="类用户">user groups</span></li><li><b>7</b><span data-zh="个品牌对比">brands compared</span></li><li><b>2</b><span data-zh="张服务蓝图">blueprints</span></li></ul></div>
+      </a>
+      <a class="card frame" data-frame="04 · Aban" href="aban.html">
+        <div class="shot blue"><img class="mock" src="images/home/aban-card.webp" alt="Aban AI music website on a desktop monitor" data-zh-alt="阿伴 AI 音乐创作网站，显示在台式显示器上" loading="lazy"><div class="pills"><span data-zh="需要密码">password</span><span data-zh="网页">web</span><span data-zh="AI 音乐">AI music</span></div><div class="details"><div><dl><div><dt data-zh="查看">Access</dt><dd data-zh="需要密码">Password protected</dd></div><div><dt data-zh="平台">Platform</dt><dd data-zh="网页">Web</dd></div></dl></div></div></div>
+        <div class="card-body"><h3><span data-zh="阿伴 Aban">Aban</span><svg viewBox="0 0 24 24" role="img" aria-label="Password protected"><rect x="5" y="11" width="14" height="10" rx="2" fill="currentColor"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></svg></h3><p data-zh="把灵感变成收入的 AI 音乐网站。找我要密码。">An AI music website that turns inspiration into income. Ask me for the password.</p>
+          <ul class="metrics"><li><b>AI</b><span data-zh="音乐创作">music creation</span></li><li><b data-zh="网页">Web</b><span data-zh="平台">platform</span></li><li><b data-zh="密码">Locked</b><span data-zh="找我要访问权限">ask for access</span></li></ul></div>
+      </a>
+    </div>
+  </section>
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, {
-            threshold: 0.1,
-            rootMargin: '0px 0px -60px 0px'
-        });
+  <!-- ===== PLAYGROUND ===== -->
+  <section id="playground">
+    <div class="sec-head">
+      <h2 data-zh="实验">Playground</h2>
+      <p data-zh="小原型和小游戏，每个都在试一个想法。">Small prototypes and games, each one testing a single idea.</p>
+    </div>
+    <div class="plays">
+      <a class="play frame" data-frame="Signal Trap" href="cookie-thief.html"><div class="tile"><img src="assets/cookie-thief-cover.png" alt="Pixel rat offline game, game over screen" data-zh-alt="像素老鼠离线小游戏的 Game Over 画面" loading="lazy"></div><b>Signal Trap</b><span class="d" data-zh="一个黑暗模式小游戏">a dark-pattern game</span></a>
+      <a class="play frame" data-frame="Fashion" href="fashion.html"><div class="tile gingham"><span class="sewn" style="font-size:24px" data-zh="做衣服">makes clothes</span></div><b data-zh="服装设计">Fashion design</b><span class="d" data-zh="本科作品">undergrad work</span></a>
+      <a class="play frame" data-frame="Wall" href="wall.html"><div class="tile"><span style="font:italic 400 26px var(--f-body);rotate:-4deg" data-zh="签个名 ✎">sign here ✎</span></div><b data-zh="签名墙">Signature wall</b><span class="d" data-zh="每位访客一张卡">one card per visitor</span></a>
+    </div>
+  </section>
 
-        sections.forEach(s => observer.observe(s));
+  <!-- ===== ABOUT ===== -->
+  <section id="about" class="about">
+    <figure class="about-photo frame" data-frame="Image · Amanda"><img src="images/home/about-photo.webp" alt="Portrait of Amanda" data-zh-alt="张玥妍的肖像" loading="lazy"></figure>
+    <div class="txt frame" data-frame="Frame · About">
+      <h2 data-zh="你好，我是玥妍。">Hi, I’m Amanda.</h2>
+      <!-- bio stays in English on the Chinese page too -->
+      <p class="b-lead">A grad student at <span class="m">NYU ITP</span> in Brooklyn, designing products that feel <em class="hl">warm and human.</em></p>
+      <p><em class="lead-in">Empathy is where I start.</em> I walk through the experience myself and listen closely to the people living it, until I understand what they actually need.</p>
+      <p>I like to stay close to how things get built, so I <span class="m">prototype fast</span> and build with <span class="m">AI-assisted code</span> when needed.</p>
+      <p>Since 2024, I’ve been designing <b>AI products</b>, from an AI music platform at <span class="m">initi:AI</span> to agent features at <span class="m">N7 Interactive</span>. Right now, I’m also <span class="marker">building my own startup.</span></p>
+      <p class="closer" data-zh="在这之前，我是一个会&lt;a class=&quot;sewn&quot; href=&quot;fashion.html&quot;&gt;做衣服&lt;/a&gt;的 marketer。">Before this, I was a marketer who <a class="sewn" href="fashion.html">makes clothes</a>.</p>
+      <div class="more" tabindex="0">
+        <h3><span data-zh="更多的我">More of me</span> <i aria-hidden="true">↓</i></h3>
+        <div class="more-body"><div>
+          <p>Before UX, I spent two years in <b>brand marketing</b> at <a class="m" href="https://www.itochu.co.jp/en/" target="_blank" rel="noopener">ITOCHU Textile ↗</a>, running social media for <a class="m" href="https://gramicci.com/" target="_blank" rel="noopener">Gramicci ↗</a>, <a class="m" href="https://taion-wear.jp/" target="_blank" rel="noopener">TAION ↗</a> and <a class="m" href="https://www.mountain-equipment.com/" target="_blank" rel="noopener">Mountain Equipment ↗</a> in China. Watching how people actually choose a product still shapes how I design.</p>
+          <p>Outside of design, you can usually find me in <em>dance studios</em>, on a <em>climbing wall</em>, or on a <em>badminton court</em>.</p>
+        </div></div>
+      </div>
+    </div>
+    <aside class="contact frame" data-frame="Frame · Contact me" aria-labelledby="contact-title">
+      <h2 id="contact-title" data-zh="联系我">Contact me</h2>
+      <button type="button" class="c-row" id="copyEmail" data-email="yz12074@nyu.edu"><span class="k" data-zh="邮箱 · 点击复制">Email · click to copy</span><b>yz12074@nyu.edu</b><i aria-hidden="true">⧉</i></button>
+      <a class="c-row" href="https://www.linkedin.com/in/yueyan-zhang-32a800358" target="_blank" rel="noopener"><span class="k">LinkedIn</span><b>Yueyan (Amanda) Zhang</b><i aria-hidden="true">↗</i></a>
+      <a class="c-row" href="https://drive.google.com/file/d/1B6-i2RoIu8FqGo9C3Kq7dGXys6Rky79E/view?usp=sharing" target="_blank" rel="noopener"><span class="k" data-zh="简历 · 英文">Resume · English</span><b>CV (EN)</b><i aria-hidden="true">↗</i></a>
+      <a class="c-row" href="https://drive.google.com/file/d/184YV-w04FZQ7mF_kf7-CJkpLy2x_W0DA/view?usp=sharing" target="_blank" rel="noopener"><span class="k" data-zh="简历 · 中文">Resume · Chinese</span><b>简历（中文）</b><i aria-hidden="true">↗</i></a>
+      <a class="c-row" href="wall.html"><span class="k" data-zh="签名墙">Signature wall</span><b data-zh="留个签名 ✎">Leave a signature ✎</b><i aria-hidden="true">→</i></a>
+    </aside>
+  </section>
 
-        // Card fade-in observer
-        const cardObserver = new IntersectionObserver((entries) => {
-            entries.forEach((entry, i) => {
-                if (entry.isIntersecting) {
-                    setTimeout(() => {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                    }, 0);
-                }
-            });
-        }, {
-            threshold: 0.05
-        });
+  <footer class="foot">
+    <div class="the-end">
+      <p class="nomore" data-zh="没有更多了！">No more!</p>
+      <p class="godyou" data-zh="天哪，你&lt;em&gt;真的&lt;/em&gt;对我很感兴趣！">God, you’re <em>really</em> interested in me!</p>
+    </div>
+    <div class="foot-side">
+      <!-- my iPod, made in p5.js: wheel to scroll, centre to pick a song, MENU to go back -->
+      <figure class="ipod frame quiet" data-frame="p5.js · My iPod">
+        <div class="ipod-box"><iframe src="https://editor.p5js.org/yueyanZ/full/eyrTmwvfg" title="Amanda's iPod music player, made with p5.js" loading="lazy" allow="autoplay"></iframe></div>
+        <figcaption data-zh="我的随身听 · 点中间选歌 ▶">my iPod · click the centre to pick a song ▶</figcaption>
+      </figure>
+      <div class="foot-meta">
+        <span>Amanda (Yueyan) Zhang · 张玥妍</span>
+        <a href="foody.html" data-zh="Foody 原型 →">Foody prototype →</a>
+        <span>© 2026</span>
+      </div>
+    </div>
+  </footer>
+</main>
+</div></div>
 
-        cards.forEach(card => {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(16px)';
-            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease, box-shadow 0.45s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.45s cubic-bezier(0.4, 0, 0.2, 1), scale 0.45s cubic-bezier(0.4, 0, 0.2, 1), rotate 0.32s cubic-bezier(0.22, 1, 0.36, 1), translate 0.32s cubic-bezier(0.22, 1, 0.36, 1)';
-            cardObserver.observe(card);
-        });
+<!-- ===== THE DOOR: sign in to enter ===== -->
+<div class="door" id="door" role="dialog" aria-modal="true" aria-labelledby="door-title" hidden>
+  <div class="door-card">
+    <p class="mono" data-zh="欢迎来到我的画布">Welcome to my canvas</p>
+    <h2 id="door-title" data-zh="进来之前，&lt;em&gt;签个名&lt;/em&gt;吧。">Sign in. <em>Literally.</em></h2>
+    <div class="pad-frame">
+      <canvas class="pad" id="pad" width="960" height="400" aria-label="Signature pad: draw your signature with a mouse or finger"></canvas>
+      <span class="pad-x" aria-hidden="true">×</span><span class="pad-line" aria-hidden="true"></span>
+      <span class="pad-hint" id="padHint" data-zh="用鼠标或手指在这里签名。签名会挂在我的主页上。">Draw your signature here. It will hang on my homepage.</span>
+    </div>
+    <div class="papers" role="radiogroup" aria-label="Card colour" id="papers"><span data-zh="卡片颜色">Card colour</span></div>
+    <div class="door-row">
+      <input id="signName" type="text" maxlength="20" autocomplete="nickname" placeholder="Your name (optional)" aria-label="Your name (optional)">
+      <div class="door-actions">
+        <button type="button" id="clearPad" data-zh="擦掉">Clear</button>
+        <button type="button" class="go" id="enter" aria-disabled="true" data-zh="签好了，进来 →">Enter →</button>
+      </div>
+    </div>
+    <button type="button" class="skip" id="skipDoor" data-zh="跳过，直接看作品">Skip and see the work</button>
+  </div>
+</div>
 
-        // Active nav
-        function setActive(el) {
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            el.classList.add('active');
-        }
+<script src="assets/wall-config.js"></script>
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const zh = () => document.documentElement.lang === 'zh-CN';
+  const tr = (en, z) => (zh() ? z : en);
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const store = {
+    get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+  };
+  const ENDPOINT = window.WALL_ENDPOINT || '';
+  const TAPE = ['#FFE15A', '#FFC29A', '#9FE0CF', '#F9B9C9', '#B9CCFF'];
 
-        // Scroll-based active nav
-        const sectionIds = ['projects', 'playground', 'connect'];
-        const navItems = document.querySelectorAll('.nav-item');
+  /* ---------- left-to-right reading: page height = how far the track slides ---------- */
+  const wide = matchMedia('(min-width: 900px) and (hover: hover)');
+  const wrap = $('#hwrap'), track = $('.track');
+  let dist = 0;
+  function slide() { if (wide.matches) track.style.transform = `translate3d(${-Math.min(Math.max(scrollY - wrap.offsetTop, 0), dist)}px, 0, 0)`; }
+  function layout() {
+    if (wide.matches) { dist = Math.max(0, track.offsetWidth - innerWidth); wrap.style.height = innerHeight + dist + 'px'; }
+    else { dist = 0; wrap.style.height = ''; track.style.transform = ''; }
+    hangLine(); slide();
+  }
+  addEventListener('scroll', slide, { passive: true });
+  addEventListener('resize', layout);
+  // trackpad sideways swipes move the page too
+  addEventListener('wheel', e => { if (wide.matches && Math.abs(e.deltaX) > Math.abs(e.deltaY)) scrollBy(0, e.deltaX); }, { passive: true });
+  // in-page links (#work, #about…) jump to the section's place on the track
+  const go = id => { const t = id && id !== 'top' && document.getElementById(id); scrollTo({ top: t ? wrap.offsetTop + t.offsetLeft - 60 : 0, behavior: reduced ? 'auto' : 'smooth' }); };
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a[href^="#"]'); if (!a || !wide.matches) return;
+    e.preventDefault(); const id = a.getAttribute('href').slice(1); go(id); history.replaceState(null, '', '#' + id);
+  });
+  // Figma-style size readout on hovered frames
+  document.querySelectorAll('.frame').forEach(f => f.addEventListener('pointerenter', () => {
+    const t = f.querySelector(':scope > .size-tag'); if (!t) return;
+    const r = f.getBoundingClientRect(); t.textContent = `${Math.round(r.width)} × ${Math.round(r.height)}`;
+  }));
 
-        window.addEventListener('scroll', () => {
-            let current = '';
-            sectionIds.forEach(id => {
-                const el = document.getElementById(id);
-                if (el && window.scrollY >= el.offsetTop - 200) {
-                    current = id;
-                }
-            });
-            navItems.forEach(n => {
-                n.classList.remove('active');
-                if (n.getAttribute('href') === '#' + current) {
-                    n.classList.add('active');
-                }
-            });
-        });
-    </script>
+  /* ---------- clothesline: the same signature cards as wall.html ---------- */
+  let cards = [];
+  async function loadCards() {
+    if (!ENDPOINT) return store.get('wall-demo', []);
+    try { const r = await fetch(ENDPOINT); return (await r.json()).items || []; } catch { return store.get('wall-demo', []); }
+  }
+  const mine = new Set(store.get('wall-mine', []));
+  const ROPE_Y = 26;
+  function renderSigs(landingId) {
+    const box = $('#lineIn'); box.querySelectorAll('.clip').forEach(n => n.remove());
+    // newest first, so a fresh signature hangs where the page starts
+    const list = [...cards].reverse().filter(c => typeof c.sig === 'string' && c.sig.startsWith('data:image/png;base64,')).slice(0, 40);
+    list.forEach((c, i) => {
+      const d = document.createElement('figure');
+      d.className = 'clip' + (mine.has(c.id) ? ' you' : '') + (c.id === landingId ? ' landing' : '');
+      d.id = 'sig-' + c.id;
+      d.style.setProperty('--r', [-4, 3, -2, 5, -3][i % 5] + 'deg');
+      d.style.setProperty('--pr', [5, -4, 3][i % 3] + 'deg');
+      d.style.setProperty('--d', -(i * 0.7) + 's');
+      d.style.setProperty('--c', /^#[0-9a-f]{6}$/i.test(c.color) ? c.color : TAPE[i % TAPE.length]);
+      const img = document.createElement('img'); img.src = c.sig; img.alt = tr(`Signature of ${c.name}`, `${c.name} 的签名`);
+      const cap = document.createElement('small'); cap.textContent = (mine.has(c.id) ? tr('you · ', '你 · ') : '') + c.name;
+      d.append(Object.assign(document.createElement('i'), { className: 'peg' }), img, cap); box.append(d);
+    });
+    // an empty card at the end of the line: sign it to hang your own
+    const add = document.createElement('button'); add.type = 'button'; add.className = 'clip add';
+    add.innerHTML = `<i class="peg"></i><b>${tr('Sign ✎', '签个名 ✎')}</b>${tr(`${cards.length} signature${cards.length === 1 ? '' : 's'}`, `已有 ${cards.length} 个签名`)}`;
+    add.onclick = openDoor; box.append(add);
+    hangLine();
+  }
+  // spread the cards along the whole page; the rope sags a little between pegs
+  // Section signposts (desktop only) ride the rope: every screen has one at its top right pointing to the next. Signature cards share the line and keep clear of them.
+  const SECTIONS = [['work', 'Work', '作品', '#E8590C'], ['playground', 'Playground', '实验', '#0B7A66'], ['about', 'About', '关于', '#2F6BFF']];
+  function hangLine() {
+    const box = $('#lineIn');
+    box.querySelectorAll('.sec').forEach(n => n.remove());
+    const sigs = [...box.querySelectorAll('.clip')], n = sigs.length;
+    const W = wide.matches ? track.offsetWidth : Math.max($('#line').clientWidth, n * 150 + 80);
+    box.style.width = W + 'px';
+    const secXs = wide.matches ? SECTIONS.map(([id, en, z, c], i) => {
+      // each card is a signpost: it waits at the top right of the screen before it, pointing to what's next
+      const pageStart = i === 0 ? 0 : document.getElementById(SECTIONS[i - 1][0]).offsetLeft - 60;
+      const x = pageStart + innerWidth - 300;
+      const a = document.createElement('a'); a.className = 'clip sec'; a.href = '#' + id;
+      a.style.setProperty('--pc', c); a.style.setProperty('--r', [-3, 2, -2][i] + 'deg'); a.style.setProperty('--d', -i + 's');
+      a.style.left = x + 'px'; a.style.top = ROPE_Y - 4 + 'px';
+      a.innerHTML = `<i class="peg"></i><small>${tr('NEXT', '下一站')} · 0${i + 1}</small>${tr(en, z)} ›`;
+      box.append(a); return x;
+    }) : [];
+    const first = wide.matches ? 120 : 80, step = n > 1 ? Math.max(150, (W - first - (wide.matches ? 460 : 200)) / (n - 1)) : 0;
+    const xs = sigs.map((c, i) => {
+      let x = first + i * step;
+      // ponytail: one nudge past a nearby section card; with very many signatures two cards can still touch
+      secXs.forEach(sx => { if (Math.abs(x - sx) < 170) x = sx + 170; });
+      c.style.left = x + 'px'; c.style.top = ROPE_Y - 4 + 'px'; return x;
+    });
+    let d = `M0 ${ROPE_Y}`, px = 0;
+    [...xs, ...secXs].sort((a, b) => a - b).concat(W).forEach(x => { const sag = Math.min(22, (x - px) * .04); d += ` Q${(px + x) / 2} ${ROPE_Y + sag * 2} ${x} ${ROPE_Y}`; px = x; });
+    $('#rope').setAttribute('d', d);
+  }
 
+  /* ---------- contact: click the email to copy it ---------- */
+  $('#copyEmail').onclick = async e => {
+    const b = e.currentTarget, k = b.querySelector('.k'), was = k.innerHTML;
+    try { await navigator.clipboard.writeText(b.dataset.email); k.textContent = tr('Copied ✓', '已复制 ✓'); }
+    catch { location.href = 'mailto:' + b.dataset.email; return; }
+    b.classList.add('copied'); setTimeout(() => { k.innerHTML = was; b.classList.remove('copied'); }, 1600);
+  };
+
+  /* ---------- card colour, picked at the door ---------- */
+  let paper = TAPE[0];
+  TAPE.forEach((c, i) => {
+    const b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'radio'); b.setAttribute('aria-checked', i === 0); b.setAttribute('aria-label', c);
+    b.style.setProperty('--c', c);
+    b.onclick = () => { paper = c; $('#papers').querySelectorAll('button').forEach(x => x.setAttribute('aria-checked', x === b)); };
+    $('#papers').append(b);
+  });
+
+  /* ---------- the door ---------- */
+  const door = $('#door'), pad = $('#pad'), g = pad.getContext('2d');
+  let inked = false, drawing = false, last = null, minX, minY, maxX, maxY;
+  g.lineCap = g.lineJoin = 'round'; g.lineWidth = 6; g.strokeStyle = '#1D1B19';
+  const pos = e => { const r = pad.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width * pad.width, y: (e.clientY - r.top) / r.height * pad.height }; };
+  pad.addEventListener('pointerdown', e => { drawing = true; last = pos(e); pad.setPointerCapture(e.pointerId); });
+  pad.addEventListener('pointermove', e => {
+    if (!drawing) return;
+    const p = pos(e), mid = { x: (last.x + p.x) / 2, y: (last.y + p.y) / 2 };
+    g.beginPath(); g.moveTo(last.mx ?? last.x, last.my ?? last.y); g.quadraticCurveTo(last.x, last.y, mid.x, mid.y); g.stroke();
+    last = { x: p.x, y: p.y, mx: mid.x, my: mid.y };
+    minX = Math.min(minX, p.x); minY = Math.min(minY, p.y); maxX = Math.max(maxX, p.x); maxY = Math.max(maxY, p.y);
+    if (!inked) { inked = true; $('#padHint').style.opacity = 0; $('#enter').setAttribute('aria-disabled', 'false'); }
+  });
+  ['pointerup', 'pointercancel'].forEach(t => pad.addEventListener(t, () => { drawing = false; }));
+  function clearPad() { g.clearRect(0, 0, pad.width, pad.height); inked = false; minX = minY = Infinity; maxX = maxY = -Infinity; $('#padHint').style.opacity = 1; $('#enter').setAttribute('aria-disabled', 'true'); }
+  $('#clearPad').onclick = clearPad;
+  // stored signature: trimmed to the ink, scaled into 240 × 100 (a few KB, same format as wall.html)
+  function sigData() {
+    const m = 18, w = Math.max(40, maxX - minX + m * 2), h = Math.max(30, maxY - minY + m * 2);
+    const out = document.createElement('canvas'); out.width = 240; out.height = 100;
+    const s = Math.min(240 / w, 100 / h), o = out.getContext('2d');
+    o.drawImage(pad, minX - m, minY - m, w, h, (240 - w * s) / 2, (100 - h * s) / 2, w * s, h * s);
+    return out.toDataURL('image/png');
+  }
+
+  function openDoor() { clearPad(); door.hidden = false; door.classList.remove('out'); document.body.style.overflow = 'hidden'; }
+  function closeDoor() { door.classList.add('out'); document.body.style.overflow = ''; setTimeout(() => { door.hidden = true; }, 500); }
+  function arrive() {
+    if (reduced) return;
+    document.querySelectorAll('.canvas > *').forEach((n, i) => n.style.setProperty('--i', i));
+    document.documentElement.classList.add('arriving');
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      document.documentElement.classList.replace('arriving', 'arrived');
+      setTimeout(() => document.documentElement.classList.remove('arrived'), 1400);
+    }));
+  }
+
+  $('#skipDoor').onclick = () => { store.set('door-seen', 1); closeDoor(); arrive(); };
+  door.addEventListener('keydown', e => { if (e.key === 'Escape') $('#skipDoor').click(); });
+
+  $('#enter').onclick = async () => {
+    if (!inked) { $('#padHint').style.opacity = 1; $('#padHint').textContent = tr('Draw a signature first ✎', '先签个名吧 ✎'); return; }
+    const name = ($('#signName').value.trim() || tr('a visitor', '一位访客')).slice(0, 20);
+    const card = { id: 'local-' + Date.now(), name, note: '', color: paper, sig: sigData(), likes: 0, time: new Date().toISOString().slice(0, 10) };
+    const from = pad.getBoundingClientRect();
+    cards.push(card); mine.add(card.id); store.set('wall-mine', [...mine]); store.set('door-seen', 1);
+    if (!ENDPOINT) store.set('wall-demo', cards); else fetch(ENDPOINT, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'add', ...card }) }).catch(() => {});
+    renderSigs(card.id);
+    const target = document.getElementById('sig-' + card.id);
+    if (reduced || !target) { closeDoor(); return; }
+    // fly the signature out of the pad and hang it on the Visitors frame
+    target.style.visibility = 'hidden';
+    const fly = document.createElement('div'); fly.className = 'flyer';
+    fly.innerHTML = `<img src="${card.sig}" alt="">`;
+    Object.assign(fly.style, { left: from.left + 'px', top: from.top + 'px', width: from.width + 'px', height: from.height + 'px' });
+    document.body.append(fly);
+    closeDoor(); arrive();
+    await new Promise(r => setTimeout(r, 450));
+    const to = target.getBoundingClientRect(), sx = to.width / from.width, sy = to.height / from.height;
+    const anim = fly.animate([
+      { transform: 'translate(0, 0) scale(1) rotate(0deg)' },
+      { transform: `translate(${(to.left - from.left) * .5}px, ${(to.top - from.top) * .3 - 90}px) scale(${(sx + 1) / 2}, ${(sy + 1) / 2}) rotate(-7deg)`, offset: .45 },
+      { transform: `translate(${to.left - from.left}px, ${to.top - from.top}px) scale(${sx}, ${sy}) rotate(0deg)` },
+    ], { duration: 1100, easing: 'cubic-bezier(.5, 0, .2, 1)', fill: 'forwards' });
+    const land = () => { if (!fly.isConnected) return; target.style.visibility = ''; fly.remove(); setTimeout(() => target.classList.remove('landing'), 2400); };
+    anim.onfinish = land;
+    setTimeout(land, 1600);   // backgrounded tabs pause animations: hang it up anyway
+  };
+
+  new MutationObserver(() => renderSigs()).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+  loadCards().then(d => { cards = d; renderSigs(); });
+  addEventListener('load', layout);
+  document.fonts?.ready.then(layout);
+  /* ---------- my name: hover a letter and it changes type ---------- */
+  const PAL = ['#E8590C', '#0B7A66', '#FFE15A', '#2F6BFF', '#F9B9C9', '#9FE0CF', '#B9A7F2', '#C6F04D'];
+  const CUT = ['Shrikhand', '"Abril Fatface"', '"Bowlby One"', 'var(--f-display)', 'var(--f-body)'];
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  const nameEl = $('.name'), word = nameEl.textContent;
+  nameEl.setAttribute('aria-label', word);
+  nameEl.innerHTML = [...word].map(ch => `<span class="L" aria-hidden="true">${ch}</span>`).join('');
+  const letters = [...nameEl.querySelectorAll('.L')];
+  // lock each box to the plain glyph's width so swapped fonts never shove the line around
+  function lockLetters() { letters.forEach(l => { l.style.width = ''; }); letters.forEach(l => { l.style.width = l.getBoundingClientRect().width + 'px'; }); }
+  const STYLES = ['s-scribble', 's-crayon', 's-cut'];
+  const timers = new Map();
+  function dress(l, i, turn) {
+    if (l.textContent === ' ') return;
+    clearTimeout(timers.get(l));
+    l.classList.remove(...STYLES);
+    const st = STYLES[(i + turn) % 3];   // neighbours alternate between the three looks
+    l.style.setProperty('--a', pick(PAL)); l.style.setProperty('--b', pick(PAL)); l.style.setProperty('--c', pick(PAL));
+    l.style.setProperty('--paper', pick(PAL)); l.style.setProperty('--cf', pick(CUT)); l.style.setProperty('--rot', (Math.random() * 10 - 5).toFixed(1) + 'deg');
+    l.classList.add(st);
+    timers.set(l, setTimeout(() => l.classList.remove(...STYLES), 1600));
+  }
+  let turn = 0;
+  letters.forEach((l, i) => l.addEventListener('pointerenter', () => dress(l, i, turn++)));
+  document.fonts?.ready.then(() => {
+    lockLetters();
+    // one wave on arrival, so people see the name is touchable
+    if (!reduced) letters.forEach((l, i) => setTimeout(() => dress(l, i, 0), 700 + i * 80));
+  });
+  addEventListener('resize', lockLetters);
+
+  layout();
+  if (location.hash && wide.matches) setTimeout(() => go(location.hash.slice(1)), 50);
+  // First visit opens the door; ?door always does. Returning visitors, deep links (#work…) and ?nodoor go straight in.
+  const q = new URLSearchParams(location.search);
+  if (q.has('door') || (!store.get('door-seen', 0) && !location.hash && !q.has('nodoor'))) openDoor();
+})();
+</script>
+<script src="assets/i18n.js" defer></script>
 </body>
-
 </html>
