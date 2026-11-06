@@ -763,6 +763,8 @@ html.inphone .splash{padding-top:20px}
 .tag-fy{font-size:11px;font-weight:700;color:var(--accent);border:1px solid var(--accent);border-radius:99px;padding:0 7px}
 .prefsbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
 .prefsbar b{color:var(--ink)}
+/* Test log is for my own playtests: hidden unless the URL has ?log=1 */
+.logbox{display:none}html.showlog .logbox{display:block}
 @media (prefers-reduced-motion: reduce){.prefs{animation:none}.pq-art .draw{stroke-dashoffset:0}.pq-card.seen .pq-art .draw,.pq-card.seen .pq-art svg{animation:none}.pf-tile,.pq-opt,.pq-card{transition:none}}
 </style>
 </head>
@@ -2575,6 +2577,7 @@ if(U.loc&&navigator.permissions&&navigator.permissions.query)navigator.permissio
 refreshFrom();refreshTableCount();renderAsks();
 buildIsland();buildHunger();$("album").inert=true;$("taste").inert=true;
 if(/[?&]bare=1/.test(location.search))document.documentElement.classList.add("inphone");
+if(/[?&]log=1/.test(location.search))document.documentElement.classList.add("showlog");
 showSplash();
 $("locBtn").addEventListener("click",async()=>{
   if(HERE)return toast("Distances are from where you are.");
