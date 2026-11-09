@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NuzzleBot — Amanda Zhang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;600&family=Silkscreen&display=swap">
+<link rel="stylesheet" href="assets/case.css">
+<style>
+/* NuzzleBot's own colours: fur pink stage, screen blue for the eyes */
+:root{--brand:#F2A3BF;--brand-soft:#FCE4EC;--eye:#2F8CFF}
+:root[data-theme="dark"]{--brand-soft:#3D2230}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--brand-soft:#3D2230}}
+.stage{height:auto;aspect-ratio:16/9;background:#EDEBEC}
+.stage video{width:100%;height:100%;object-fit:cover;display:block}
+
+/* touch demo: stroke = happy, press and hold = angry, like the velostat code */
+.pet{display:grid;grid-template-columns:260px minmax(0,1fr);gap:40px;align-items:center}
+@media (max-width:760px){.pet{grid-template-columns:minmax(0,1fr);justify-items:center}}
+.bot{position:relative;width:260px;aspect-ratio:1;border-radius:46% 46% 40% 40%;background:radial-gradient(circle at 50% 35%,#F7BCD0,#E98FB0);touch-action:none;cursor:grab;user-select:none;transition:transform .2s}
+.bot:active{cursor:grabbing}
+.bot::before,.bot::after{content:"";position:absolute;top:-14px;width:54px;height:54px;background:#E98FB0;border-radius:6px 40px 6px 6px;transition:rotate .2s}
+.bot::before{left:34px;rotate:-12deg}.bot::after{right:34px;rotate:102deg}
+.bot.happy::before{animation:wig .35s ease-in-out infinite alternate}.bot.happy::after{animation:wig2 .35s ease-in-out infinite alternate}
+@keyframes wig{to{rotate:-28deg}}@keyframes wig2{to{rotate:118deg}}
+.bot.angry{animation:shake .12s linear infinite}
+@keyframes shake{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+.scr{position:absolute;left:22%;top:34%;width:56%;height:36%;background:#141018;border-radius:12px;display:flex;justify-content:center;align-items:center;gap:22%}
+.scr i{width:13%;height:52%;background:var(--eye);border-radius:2px;transition:all .2s}
+.bot.blink .scr i{height:6%}
+.bot.happy .scr i{background:none;width:auto;height:auto;font-style:normal}
+.bot.happy .scr i::before{content:"♥";color:#FF5A8A;font-size:30px}
+.bot.angry .scr i{background:#FF3B30;height:14%;width:22%}
+.bot.angry .scr i:first-child{rotate:25deg}.bot.angry .scr i:last-child{rotate:-25deg}
+.gauge{display:flex;flex-direction:column;gap:10px}
+.bar{height:12px;border-radius:99px;background:var(--sunk);overflow:hidden}
+.bar b{display:block;height:100%;width:0;background:var(--honest);transition:width .1s,background .2s}
+.bar.hot b{background:var(--trap)}
+.mood{font-family:var(--f-mono);font-size:13px}
+
+.gal{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:640px){.gal{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.gal figure{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;transition:transform .3s cubic-bezier(.3,1.4,.5,1)}
+.gal figure:nth-child(odd){rotate:-1deg}.gal figure:nth-child(even){rotate:1deg}
+.gal figure:hover{transform:translateY(-6px) scale(1.02)}
+.gal img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:#fff}
+.gal figcaption{padding:10px 12px;font-family:var(--f-mono);font-size:11px;color:var(--dim)}
+.zoomable img{cursor:zoom-in}
+.moods{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.moods figure{margin:0;border-radius:14px;overflow:hidden;background:var(--surface);border:1px solid var(--line);transition:transform .3s cubic-bezier(.3,1.4,.5,1)}
+.moods figure:hover{transform:translateY(-6px) rotate(-1deg)}
+.moods img{width:100%;aspect-ratio:3/2;object-fit:cover;display:block}
+.faces img{aspect-ratio:1}
+.moods figcaption{padding:10px 12px;font-family:var(--f-mono);font-size:11px;color:var(--dim)}
+.clips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.clips{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.clips figure{margin:0;border-radius:14px;overflow:hidden;background:var(--surface);border:1px solid var(--line)}
+.clips video{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#EDEBEC}
+.clips figcaption{padding:10px 12px;font-size:14.5px;line-height:1.4}
+.clips figcaption b{display:block;font-family:var(--f-display);font-size:16px}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="toc">
+    <a class="home" href="index.html#work" data-zh="← 全部作品">← All work</a>
+    <button class="lang-toggle" type="button"><b>EN</b> / 中文</button>
+    <span class="meta" data-zh="目录">CONTENTS</span>
+    <nav id="toc">
+      <a href="#context" data-zh="缘起">Context</a>
+      <a href="#character" data-zh="性格">Character</a>
+      <a href="#touch" data-zh="摸一摸">Touch it</a>
+      <a href="#logic" data-zh="行为逻辑">Behavior</a>
+      <a href="#build" data-zh="制作">Build</a>
+      <a href="#hardware" data-zh="硬件">Hardware</a>
+      <a href="#film" data-zh="影片">Film</a>
+      <a href="#reflection" data-zh="反思">Reflection</a>
+    </nav>
+  </aside>
+
+  <main>
+    <div class="toc-m"><a href="index.html#work" data-zh="← 全部作品">← All work</a><button class="lang-toggle" type="button"><b>EN</b> / 中文</button></div>
+
+    <section class="hero" id="top">
+      <div class="stage"><video src="images/nuzzlebot/hero.mp4" poster="images/nuzzlebot/hero-poster.webp" autoplay muted loop playsinline aria-label="NuzzleBot wanders in, gets petted, shows heart eyes, gets angry when pressed and scoots off"></video></div>
+      <div class="tags"><span class="tag" data-zh="陪伴机器人">Companion robot</span><span class="tag" data-zh="人机交互">HRI</span><span class="tag" data-zh="物理计算">Physical computing</span><span class="tag" data-zh="交互设计">Interaction design</span></div>
+      <h1><span class="star">✳</span><span data-zh="NuzzleBot：摸摸它，它会回应你">NuzzleBot: pet it, and it pets back</span></h1>
+      <p class="lead" data-zh="一只会在家里闲逛的毛绒小机器人。它读得懂你怎么摸它：顺着摸会开心，用力按会生气跑开。给不能养宠物的人一点温暖的陪伴。">A furry little robot that wanders around your home. It can tell how you touch it: stroke it and it’s happy, press too hard and it huffs off. Warm company for people who can’t keep a pet.</p>
+      <div class="info">
+        <div><span class="mono" data-zh="角色">Role</span><span data-zh="产品设计 · 交互与动效 · 硬件制作">Product design · interaction &amp; motion · hardware</span></div>
+        <div><span class="mono" data-zh="团队">Team</span><span data-zh="与 Shuoyue (Lucas) Wu 合作">With Shuoyue (Lucas) Wu</span></div>
+        <div><span class="mono" data-zh="时间">Timeline</span><span data-zh="3 周 · 2025.12 · ITP 物理计算">3 weeks · Dec 2025 · ITP Intro to PComp</span></div>
+        <div><span class="mono" data-zh="工具">Tools</span><span>Arduino · Blender · VS Code · 3D printing</span></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><strong>3</strong><span data-zh="种表情">moods on screen</span></div>
+        <div class="stat"><strong>30</strong><span data-zh="个压力触点">pressure points</span></div>
+        <div class="stat t"><strong>2</strong><span data-zh="块 Nano 塞进身体">Nanos inside</span></div>
+        <div class="stat h"><strong>0</strong><span data-zh="根外接线">wires out</span></div>
+      </div>
+    </section>
+
+    <section id="context">
+      <span class="eyebrow" data-zh="缘起">Context</span>
+      <h2 data-zh="从一只会尖叫的面包，到一只会害羞的猫。">From a screaming loaf of bread to a shy cat.</h2>
+      <p data-zh="我在 ITP 的第一个物理计算作品是一块会尖叫的面包。它很好笑，但我想做点能让人产生感情的东西。">My first PComp piece at ITP was a loaf of bread that screams when you press it. Funny, but I wanted to make something people could feel for.</p>
+      <p data-zh="灵感来自我表姐家的猫：它不总理你，但你摸对了地方，它会眯起眼。<span class='emph'>很多老人、孩子和租房的年轻人想要这种陪伴，却养不了宠物。</span>">The spark was my cousin’s cat: it ignores you most of the time, until you scratch the right spot and it squints with joy. <span class="emph">Plenty of older adults, kids and young renters want that kind of company but can’t keep a pet.</span></p>
+    </section>
+
+    <section>
+      <div class="hmw" style="background:#D9628E">
+        <span class="mono" data-zh="我们可以怎样">How might we</span>
+        <p data-zh="怎样让一个小机器人只靠「被摸」，就有自己的脾气和性格？">How might a small robot show a personality of its own, just from the way it’s touched?</p>
+      </div>
+    </section>
+
+    <section id="character" class="wide">
+      <span class="eyebrow ok" data-zh="性格">Character</span>
+      <h2 data-zh="害羞，但很好摸。">Shy, but very pettable.</h2>
+      <p data-zh="我们参考了 Moflin 和 LOVOT，把它定成一只像小猫的性格：平时自己闲逛找乐子，被摸会有反应，太久没人理会觉得无聊。">We looked at Moflin and LOVOT and settled on a kitten-like character: it wanders off to find its own fun, reacts when you touch it, and gets bored when nobody does.</p>
+      <div class="moods faces">
+        <figure><img src="images/nuzzlebot/face-curious.webp" alt="Render: NuzzleBot with two upright blue eyes, curious" data-zh-alt="渲染图：NuzzleBot 竖着两只蓝眼睛，好奇" loading="lazy"><figcaption data-zh="好奇：东看看西看看">Curious: looking around</figcaption></figure>
+        <figure><img src="images/nuzzlebot/face-happy.webp" alt="Render: NuzzleBot with smiling arc eyes and little hearts around it" data-zh-alt="渲染图：NuzzleBot 眯眼笑，周围飘着小爱心" loading="lazy"><figcaption data-zh="开心：被摸舒服了">Happy: pet just right</figcaption></figure>
+        <figure><img src="images/nuzzlebot/face-sleepy.webp" alt="Render: NuzzleBot with sleepy half-closed eyes and Zzz" data-zh-alt="渲染图：NuzzleBot 半闭着眼，打瞌睡" loading="lazy"><figcaption data-zh="无聊：太久没人理">Bored: left alone too long</figcaption></figure>
+      </div>
+      <div class="duo">
+        <figure><img src="images/nuzzlebot/ref-plush.webp" alt="Reference: a round pink fluffy cat plush" data-zh-alt="参考：一只圆滚滚的粉色毛绒猫玩偶" loading="lazy">
+          <figcaption><b data-zh="外形参考">Shape reference</b><span data-zh="圆、软、一摸就想再摸一下。（参考图，非我们制作）">Round, soft, begging to be stroked again. (Reference image, not ours.)</span></figcaption></figure>
+        <figure><img src="images/nuzzlebot/shells-printed.webp" alt="Two 3D-printed white shells with cat ears, a short round one and a longer one" data-zh-alt="两个 3D 打印的白色猫耳外壳，一个短圆，一个更长" loading="lazy">
+          <figcaption><b data-zh="两种身形，问了路人">Two body shapes, tested on people</b><span data-zh="短圆的：「想拍一拍，更可爱」。长的：「像毛毛虫，想顺着背摸」。<span class='hl-o'>形状会告诉人该怎么摸它。</span>">Short and round: “I want to tap it, it’s cuter.” Long: “Looks like a caterpillar, I want to stroke its back.” <span class="hl-o">The shape tells people how to touch it.</span></span></figcaption></figure>
+      </div>
+    </section>
+
+    <section id="touch" class="wide">
+      <span class="eyebrow ok" data-zh="摸一摸">Touch it</span>
+      <h2 data-zh="来，摸摸它。">Go on, pet it.</h2>
+      <div class="pet">
+        <div class="bot" id="bot" role="img" aria-label="Interactive NuzzleBot face"><div class="scr"><i></i><i></i></div></div>
+        <div class="gauge">
+          <p data-zh="用鼠标或手指<b>来回划过</b>它的身体，是顺毛；<b>按住不放</b>，就是用力按。规则和它身体里的压力矩阵一样。">Move your cursor or finger <b>back and forth across</b> it to stroke. <b>Press and hold</b> to push hard. Same rules as the pressure matrix inside it.</p>
+          <span class="mono" data-zh="压力">Pressure</span>
+          <div class="bar" id="bar"><b></b></div>
+          <span class="mood" id="mood" data-zh="状态：闲逛中">Mood: wandering</span>
+          <p class="cap" data-zh="真机：整片 Velostat 都被轻轻摸到 → 爱心眼并停下来；任一点压力超过 90% → 生气，跑开 2 秒。">The real thing: gentle pressure across the whole velostat sheet → heart eyes and it stops; any point over 90% → angry, runs off for 2 seconds.</p>
+        </div>
+      </div>
+      <div class="moods">
+        <figure><img src="images/nuzzlebot/mood-normal.webp" alt="Close-up of the screen face with two blue rectangle eyes" data-zh-alt="屏幕特写：两只蓝色方块眼睛" loading="lazy"><figcaption data-zh="平常：东张西望">Normal: looking around</figcaption></figure>
+        <figure><img src="images/nuzzlebot/mood-happy.webp" alt="Close-up of the screen face with two red heart eyes" data-zh-alt="屏幕特写：两只红色爱心眼" loading="lazy"><figcaption data-zh="被顺毛：爱心眼">Stroked: heart eyes</figcaption></figure>
+        <figure><img src="images/nuzzlebot/mood-angry.webp" alt="Close-up of the screen face with slanted angry eyes" data-zh-alt="屏幕特写：斜着的生气眼睛" loading="lazy"><figcaption data-zh="被按太重：生气">Pressed too hard: angry</figcaption></figure>
+      </div>
+      <p class="cap" data-zh="实拍：NYU DocLab">Photos: NYU DocLab</p>
+    </section>
+
+    <section id="logic" class="wide">
+      <span class="eyebrow ok" data-zh="行为逻辑">Behavior</span>
+      <h2 data-zh="一张图，就是它的全部脾气。">Its whole temper, on one page.</h2>
+      <p data-zh="默认在划定区域里随机闲逛。碰到边界就转 80–100°；被轻摸会停下、开心、抖耳朵；被重按会生气跑开；3 分钟没人理就无聊。点击放大。">By default it roams inside a set area. At the edge it turns 80–100°. A light touch: it stops, gets happy, wiggles its ears. A hard press: it gets angry and runs. Three minutes alone: bored. Click to zoom.</p>
+      <div class="zoomable"><img class="chart" src="images/nuzzlebot/logic.webp" alt="Flowchart: idle random movement, touched light or heavy, boundary turn, boredom after 3 minutes" data-zh-alt="流程图：随机闲逛、轻摸或重按、碰边界转向、3 分钟无人理会感到无聊" loading="lazy"></div>
+      <div class="trio ok">
+        <div><b data-zh="闲逛">Wander</b><span data-zh="底部 4 个光敏电阻看地上的黑线，像宠物一样待在自己的地盘里。">Four photoresistors underneath watch for a black line, so it stays on its own turf like a pet.</span></div>
+        <div><b data-zh="开心">Happy</b><span data-zh="轻摸持续 1 秒以上：爱心眼，停下来，耳朵抖一抖。">Gentle strokes for over a second: heart eyes, it stops, ears wiggle.</span></div>
+        <div><b data-zh="生气">Angry</b><span data-zh="按得太重：皱眉、冒火，然后跑开。">Too hard: furrowed brow, an anger mark, then it bolts.</span></div>
+      </div>
+    </section>
+
+    <section id="build" class="wide">
+      <span class="eyebrow" data-zh="制作">Build</span>
+      <h2 data-zh="小身体，装下了所有东西。">A tiny body that had to fit everything.</h2>
+      <p data-zh="外壳在 Blender 里建模、3D 打印，开了屏幕窗、耳朵舵机孔和传感器孔。最难的是空间：轮子、电机、两块 Nano 和一大把线都要塞进去。">We modeled the shell in Blender and 3D printed it, with cutouts for the screen, ear servos and sensors. The hard part was space: wheels, motors, two Nanos and a fistful of wire all had to fit.</p>
+      <div class="gal">
+        <figure><img src="images/nuzzlebot/shell-model.webp" alt="Blender model of the dome shell with a screen window" data-zh-alt="Blender 里的球形外壳模型，有屏幕开口" loading="lazy"><figcaption data-zh="Blender 建模">Blender model</figcaption></figure>
+        <figure><img src="images/nuzzlebot/wheel.webp" alt="Half shell with a wheel and yellow geared motor mounted" data-zh-alt="半个外壳里装好了轮子和黄色减速电机" loading="lazy"><figcaption data-zh="轮子和电机就位">Wheel and motor in place</figcaption></figure>
+        <figure><img src="images/nuzzlebot/shell-open.webp" alt="White shell on wheels with wires sticking out" data-zh-alt="装上轮子的白色外壳，线从里面冒出来" loading="lazy"><figcaption data-zh="能跑了，线还很乱">It drives. The wires don’t behave.</figcaption></figure>
+        <figure><img src="images/nuzzlebot/shell-inside.webp" alt="Inside the shell: Arduino Nano on a perfboard, motor driver and wiring" data-zh-alt="外壳内部：洞洞板上的 Arduino Nano、电机驱动和走线" loading="lazy"><figcaption data-zh="焊到洞洞板上">Soldered onto perfboard</figcaption></figure>
+        <figure><img src="images/nuzzlebot/concept-ghost.webp" alt="Concept render: pink fur draped over the body with a dizzy face on screen" data-zh-alt="概念渲染：粉色毛皮披在身上，屏幕上是晕乎乎的表情" loading="lazy"><figcaption data-zh="毛皮版型概念图">Fur cover concept</figcaption></figure>
+        <figure><img src="images/nuzzlebot/photo-front.webp" alt="The finished NuzzleBot in shaggy pink fur, front view" data-zh-alt="完成的 NuzzleBot，长毛粉色，正面" loading="lazy"><figcaption data-zh="穿上毛衣，完成">Fur on. Done.</figcaption></figure>
+      </div>
+    </section>
+
+    <section id="hardware" class="wide">
+      <span class="eyebrow" data-zh="硬件">Hardware</span>
+      <h2 data-zh="两块 Nano，一块管感受，一块管行动。">Two Nanos: one feels, one moves.</h2>
+      <div class="split">
+        <div class="zoomable"><img class="chart" src="images/nuzzlebot/wiring.webp" alt="Wiring diagram: two Arduino Nanos, ST7789 screen, motor driver, PCA9685 servo board, two motors, two servos, velostat matrix" data-zh-alt="接线图：两块 Arduino Nano、ST7789 屏幕、电机驱动、PCA9685 舵机板、两个电机、两个舵机、Velostat 矩阵" loading="lazy"></div>
+        <div class="txt">
+          <p data-zh="<b>感受：</b>一块 Nano 扫描 Velostat 压力矩阵，决定表情，画在 ST7789 小屏上。"><b>Feel:</b> one Nano scans a velostat pressure matrix, picks the mood and draws it on an ST7789 screen.</p>
+          <p data-zh="<b>行动：</b>它把指令（走 / 停 / 正常）串口发给另一块 Nano，后者驱动两个轮子，读光敏电阻守边界。"><b>Move:</b> it sends a one-letter command (go / stop / normal) over serial to the second Nano, which drives the wheels and reads the photoresistors to stay in bounds.</p>
+          <p data-zh="后来为了公司沙龙展出，我们又加了 PCA9685 驱动的两只舵机耳朵，摸它时耳朵也会动。<span class='emph'>最后整只机器人完全无线。</span>">For a company salon later, we added two servo ears on a PCA9685 board, so a touch moves the ears too. <span class="emph">In the end the whole robot ran fully wireless.</span></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="film" class="wide">
+      <span class="eyebrow ok" data-zh="影片">Film</span>
+      <h2 data-zh="看它动起来。">See it move.</h2>
+      <p data-zh="在 NYU DocLab 拍摄。">Shot at NYU DocLab.</p>
+      <div class="clips">
+        <figure><video data-src="images/nuzzlebot/roam.mp4" poster="images/nuzzlebot/roam-poster.webp" muted loop playsinline preload="none"></video><figcaption><b data-zh="闲逛">Wander</b><span data-zh="自己到处走，找点事做。">It roams on its own, looking for something to do.</span></figcaption></figure>
+        <figure><video data-src="images/nuzzlebot/head.mp4" poster="images/nuzzlebot/head-poster.webp" muted loop playsinline preload="none"></video><figcaption><b data-zh="摸摸头">Pet its head</b><span data-zh="手轻轻放在头顶：它停下来，眼睛变成爱心。">A light hand on top: it stops and the hearts come up.</span></figcaption></figure>
+        <figure><video data-src="images/nuzzlebot/screen.mp4" poster="images/nuzzlebot/screen-poster.webp" muted loop playsinline preload="none"></video><figcaption><b data-zh="爱心眼">Heart eyes</b><span data-zh="顺着摸，屏幕在好奇和开心之间切换。">The screen flips between curious and happy as you stroke.</span></figcaption></figure>
+        <figure><video data-src="images/nuzzlebot/back.mp4" poster="images/nuzzlebot/back-poster.webp" muted loop playsinline preload="none"></video><figcaption><b data-zh="顺背">Stroke its back</b><span data-zh="摸够了，它就自己溜走。">Long strokes, then it decides it’s had enough and scoots off.</span></figcaption></figure>
+        <figure><video data-src="images/nuzzlebot/angry.mp4" poster="images/nuzzlebot/angry-poster.webp" muted loop playsinline preload="none"></video><figcaption><b data-zh="按太重">Too hard</b><span data-zh="用力按，它就皱起眉。">Press hard and the brows come down.</span></figcaption></figure>
+        <figure><video data-src="images/nuzzlebot/ear.mp4" poster="images/nuzzlebot/ear-poster.webp" muted loop playsinline preload="none"></video><figcaption><b data-zh="耳朵">Ears</b><span data-zh="耳朵也是能摸的地方。">The ears are part of the touch too.</span></figcaption></figure>
+      </div>
+    </section>
+
+    <section id="reflection" class="wide">
+      <span class="eyebrow" data-zh="反思">Reflection</span>
+      <h2 data-zh="触感，是最快建立感情的界面。">Touch is the fastest way to build a bond.</h2>
+      <div class="refl">
+        <div><b data-zh="形状就是说明书">Shape is the manual</b><span data-zh="没人需要教，路人一看外形就知道该拍还是该摸。">Nobody needed instructions. People read the shape and knew whether to tap or stroke.</span></div>
+        <div><b data-zh="空间比代码难">Space is harder than code</b><span data-zh="H 桥、光敏电阻、供电、一大把线，好几次在 ITP 楼层短路。">H-bridges, photoresistors, power and so much wire. We shorted it on the ITP floor more than once.</span></div>
+        <div><b data-zh="一点点脾气就够了">A little temper goes a long way</b><span data-zh="会生气、会无聊，反而让人更想去哄它。">Getting angry or bored made people want to win it over.</span></div>
+      </div>
+      <div class="hmw" style="background:var(--honest)">
+        <span class="mono" data-zh="下一步">What’s next</span>
+        <p data-zh="让它记住你：把触摸记录变成长期的亲密度，而不是每次重来。">Let it remember you: turn touch history into a lasting bond instead of starting fresh every time.</p>
+        <span style="font-size:16px;line-height:1.5" data-zh="这也是我论文方向「Tangible AI」的起点。">It’s also where my thesis direction, Tangible AI, began.</span>
+      </div>
+      <a class="next" href="temu.html"><span><span class="mono" style="color:var(--dim)" data-zh="下一个项目">Next project</span><br><b>Temu</b></span><span class="mono">→</span></a>
+    </section>
+
+    <footer>NUZZLEBOT · AMANDA (YUEYAN) ZHANG &amp; SHUOYUE WU · 2025</footer>
+  </main>
+</div>
+
+<dialog class="zoom" id="zoom" aria-label="Full size"><button type="button" id="zoomClose" data-zh="关闭 ✕">Close ✕</button><img id="zoomImg" alt=""></dialog>
+
+<script src="assets/i18n.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const zh=()=>document.documentElement.lang==="zh-CN";
+
+// Touch demo. ponytail: one pressure value stands in for the 5×6 matrix; stroke = movement while hovering, hard press = holding down
+const bot=$("bot"),bar=$("bar"),mood=$("mood");
+let p=0,stroke=0,down=false,last=null,angryUntil=0;
+const MOODS={idle:["Mood: wandering","状态：闲逛中"],touch:["Mood: stopped, curious","状态：停下来，好奇"],happy:["Mood: happy ♥","状态：开心 ♥"],angry:["Mood: angry, running off!","状态：生气，跑开！"]};
+bot.addEventListener("pointerdown",e=>{down=true;bot.setPointerCapture(e.pointerId)});
+addEventListener("pointerup",()=>{down=false});
+bot.addEventListener("pointermove",e=>{if(last)stroke=Math.min(100,stroke+Math.hypot(e.clientX-last.x,e.clientY-last.y)/4);last={x:e.clientX,y:e.clientY}});
+bot.addEventListener("pointerleave",()=>{last=null});
+let tick=Date.now();
+setInterval(()=>{
+  const now=Date.now(),k=(now-tick)/80;tick=now;
+  p=down?Math.min(100,p+6*k):Math.max(0,p-8*k);
+  stroke=Math.max(0,stroke-6*k);
+  if(p>90)angryUntil=now+2000;
+  const m=now<angryUntil?"angry":stroke>55?"happy":(p>20||stroke>10)?"touch":"idle";
+  bot.className="bot "+(m==="happy"||m==="angry"?m:"");
+  bar.firstElementChild.style.width=Math.max(p,stroke*.8)+"%";
+  bar.classList.toggle("hot",p>75);
+  mood.textContent=MOODS[m][zh()?1:0];
+},80);
+setInterval(()=>{if(!bot.className.match(/happy|angry/)){bot.classList.add("blink");setTimeout(()=>bot.classList.remove("blink"),180)}},2600);
+
+// Clips load and play only while on screen
+const vio=new IntersectionObserver(es=>es.forEach(e=>{const v=e.target;if(e.isIntersecting){if(!v.src)v.src=v.dataset.src;v.play().catch(()=>{})}else v.pause()}),{threshold:.3});
+document.querySelectorAll(".clips video,.stage video").forEach(v=>vio.observe(v));
+
+// Diagrams open full size
+document.querySelectorAll(".zoomable img").forEach(img=>img.onclick=()=>{$("zoomImg").src=img.currentSrc||img.src;$("zoomImg").alt=img.alt;$("zoom").showModal()});
+$("zoomClose").onclick=()=>$("zoom").close();
+$("zoom").addEventListener("click",e=>{if(e.target===$("zoom"))$("zoom").close()});
+
+const links=[...document.querySelectorAll("#toc a")];
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)links.forEach(a=>a.classList.toggle("on",a.getAttribute("href")==="#"+e.target.id))}),{rootMargin:"-40% 0px -55% 0px"});
+links.forEach(a=>{const s=document.querySelector(a.getAttribute("href"));if(s)io.observe(s)});
+</script>
+</body>
+</html>
