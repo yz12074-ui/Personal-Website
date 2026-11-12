@@ -39,10 +39,9 @@
   <a href="index.html#projects" data-zh="← 返回作品">← Back to projects</a>
 </main>
 <script>
-// TODO(Amanda): set the password. Put the SHA-256 hex of your password here; empty = not set yet.
 // Get it in the browser console with:  await sha256('your-password')
 // This only stops casual visitors. For real protection use Vercel Password Protection.
-const PASSWORD_SHA256 = '';
+const PASSWORD_SHA256 = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92';
 
 async function sha256(s) {
   const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));

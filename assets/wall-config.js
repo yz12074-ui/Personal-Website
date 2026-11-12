@@ -1,3 +1,3 @@
 // Shared by the homepage signature intro and wall.html.
-// TODO(Amanda): paste the Apps Script web-app URL for the signature sheet here. Empty = demo mode (each browser keeps its own cards).
-window.WALL_ENDPOINT = '';
+// Apps Script web app backed by the "signature wall" Google Sheet (source: apps-script/wall.gs).
+window.WALL_ENDPOINT = 'https://script.google.com/macros/s/AKfycby4MaWLcbLvhsirF7miDAIZcMTVu1wJmmJT8ckuGIwO-2lVl_t7Lh_hyZmhuMtUkJpl/exec';

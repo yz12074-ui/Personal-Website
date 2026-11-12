@@ -189,6 +189,8 @@ async function send(body) {
 let items = [];
 const liked = new Set(store.get('wall-liked', []));
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+// Sheets hands dates back as "Thu Nov 12 2026 00:00:00 GMT-0500 …"; show YYYY-MM-DD either way
+const day = t => { t = String(t || ''); if (/^\d{4}-\d\d-\d\d/.test(t)) return t.slice(0, 10); const d = new Date(t); return isNaN(d) ? '' : d.toLocaleDateString('en-CA'); };
 const rot = id => ((([...String(id)].reduce((a, c) => a + c.charCodeAt(0), 0)) % 7) - 3) * 0.9;   // stable tilt per card
 
 function render() {
@@ -213,7 +215,7 @@ function render() {
       if (!ENDPOINT) store.set('wall-demo', items.map(({ isNew, ...x }) => x)); else send({ action: 'like', id: it.id });
       render();
     };
-    meta.append(el('span', '', String(it.time || '').slice(0, 10)), h);
+    meta.append(el('span', '', day(it.time)), h);
     c.append(meta);
     wall.append(c);
   }
