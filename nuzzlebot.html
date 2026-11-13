@@ -53,6 +53,7 @@
 .gal figure:nth-child(odd){rotate:-1deg}.gal figure:nth-child(even){rotate:1deg}
 .gal figure:hover{transform:translateY(-6px) scale(1.02)}
 .gal img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:#fff}
+.gal figure.finale{grid-column:1/-1;rotate:0deg}.gal figure.finale img{aspect-ratio:2/1;object-position:50% 30%}
 .gal figcaption{padding:10px 12px;font-family:var(--f-mono);font-size:11px;color:var(--dim)}
 .zoomable img{cursor:zoom-in}
 .moods{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
@@ -60,6 +61,8 @@
 .moods figure:hover{transform:translateY(-6px) rotate(-1deg)}
 .moods img{width:100%;aspect-ratio:3/2;object-fit:cover;display:block}
 .faces img{aspect-ratio:1}
+.faces{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:640px){.faces{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .moods figcaption{padding:10px 12px;font-family:var(--f-mono);font-size:11px;color:var(--dim)}
 .clips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 @media (max-width:760px){.clips{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -91,7 +94,7 @@
     <div class="toc-m"><a href="index.html#work" data-zh="← 全部作品">← All work</a><button class="lang-toggle" type="button"><b>EN</b> / 中文</button></div>
 
     <section class="hero" id="top">
-      <div class="stage"><video src="images/nuzzlebot/hero.mp4" poster="images/nuzzlebot/hero-poster.webp" autoplay muted loop playsinline aria-label="NuzzleBot wanders in, gets petted, shows heart eyes, gets angry when pressed and scoots off"></video><a class="pola" href="#build"><img src="images/nuzzlebot/soldered-board.webp" alt="Hand-soldered motor-driver board inside the shell" data-zh-alt="外壳里手焊的电机驱动板"><span data-zh="电路是我焊的 ✎">soldered by hand ✎</span></a></div>
+      <div class="stage"><video src="images/nuzzlebot/hero.mp4" poster="images/nuzzlebot/hero-poster.webp" autoplay muted loop playsinline aria-label="NuzzleBot wanders in, gets petted, shows heart eyes, gets angry when pressed and scoots off"></video><a class="pola" href="#build"><img src="images/nuzzlebot/initial-experiment.webp" alt="The first experiment: an Arduino Nano on a breadboard wired to a hand-made velostat pressure pad" data-zh-alt="最初的实验：面包板上的 Arduino Nano，连着手做的 velostat 压力垫"><span data-zh="来自最初的实验">from the initial experiment</span></a></div>
       <div class="tags"><span class="tag" data-zh="陪伴机器人">Companion robot</span><span class="tag" data-zh="人机交互">HRI</span><span class="tag" data-zh="物理计算">Physical computing</span><span class="tag" data-zh="交互设计">Interaction design</span></div>
       <h1><span class="star">✳</span><span data-zh="NuzzleBot：摸摸它，它会回应你">NuzzleBot: pet it, and it pets back</span></h1>
       <p class="lead" data-zh="一只会在家里闲逛的毛绒小机器人。它读得懂你怎么摸它：顺着摸会开心，用力按会生气跑开。给不能养宠物的人一点温暖的陪伴。">A furry little robot that wanders around your home. It can tell how you touch it: stroke it and it’s happy, press too hard and it huffs off. Warm company for people who can’t keep a pet.</p>
@@ -131,6 +134,7 @@
         <figure><img src="images/nuzzlebot/face-curious.webp" alt="Render: NuzzleBot with two upright blue eyes, curious" data-zh-alt="渲染图：NuzzleBot 竖着两只蓝眼睛，好奇" loading="lazy"><figcaption data-zh="好奇：东看看西看看">Curious: looking around</figcaption></figure>
         <figure><img src="images/nuzzlebot/face-happy.webp" alt="Render: NuzzleBot with smiling arc eyes and little hearts around it" data-zh-alt="渲染图：NuzzleBot 眯眼笑，周围飘着小爱心" loading="lazy"><figcaption data-zh="开心：被摸舒服了">Happy: pet just right</figcaption></figure>
         <figure><img src="images/nuzzlebot/face-sleepy.webp" alt="Render: NuzzleBot with sleepy half-closed eyes and Zzz" data-zh-alt="渲染图：NuzzleBot 半闭着眼，打瞌睡" loading="lazy"><figcaption data-zh="无聊：太久没人理">Bored: left alone too long</figcaption></figure>
+        <figure><img src="images/nuzzlebot/face-design.webp" alt="Testing the angry face on the real 1.69-inch ST7789 screen wired to a breadboard" data-zh-alt="在面包板上的 1.69 寸 ST7789 真屏上测试生气表情" loading="lazy"><figcaption data-zh="表情设计：上真屏测试">Expression design, tested on the real screen</figcaption></figure>
       </div>
       <div class="duo">
         <figure><img src="images/nuzzlebot/ref-plush.webp" alt="Reference: a round pink fluffy cat plush" data-zh-alt="参考：一只圆滚滚的粉色毛绒猫玩偶" loading="lazy">
@@ -182,8 +186,9 @@
         <figure><img src="images/nuzzlebot/wheel.webp" alt="Half shell with a wheel and yellow geared motor mounted" data-zh-alt="半个外壳里装好了轮子和黄色减速电机" loading="lazy"><figcaption data-zh="轮子和电机就位">Wheel and motor in place</figcaption></figure>
         <figure><img src="images/nuzzlebot/shell-open.webp" alt="White shell on wheels with wires sticking out" data-zh-alt="装上轮子的白色外壳，线从里面冒出来" loading="lazy"><figcaption data-zh="能跑了，线还很乱">It drives. The wires don’t behave.</figcaption></figure>
         <figure><img src="images/nuzzlebot/shell-inside.webp" alt="Inside the shell: Arduino Nano on a perfboard, motor driver and wiring" data-zh-alt="外壳内部：洞洞板上的 Arduino Nano、电机驱动和走线" loading="lazy"><figcaption data-zh="焊到洞洞板上">Soldered onto perfboard</figcaption></figure>
-        <figure><img src="images/nuzzlebot/soldered-board.webp" alt="Hand-soldered red protoboard with the motor driver, sitting in the open shell" data-zh-alt="手焊的红色洞洞板和电机驱动，放在打开的外壳里" loading="lazy"><figcaption data-zh="手焊的电机驱动板">Motor driver, hand-soldered</figcaption></figure>
-        <figure><img src="images/nuzzlebot/photo-front.webp" alt="The finished NuzzleBot in shaggy pink fur, front view" data-zh-alt="完成的 NuzzleBot，长毛粉色，正面" loading="lazy"><figcaption data-zh="穿上毛衣，完成">Fur on. Done.</figcaption></figure>
+        <figure><img src="images/nuzzlebot/playtest-first.webp" alt="A hand presses the taped velostat pad wired to the first open-shell prototype" data-zh-alt="一只手按下用胶带贴好的压力垫，线连着第一版敞开外壳的原型" loading="lazy"><figcaption data-zh="第一版原型试玩">Playtest the first prototype</figcaption></figure>
+        <figure><img src="images/nuzzlebot/fur-pattern.webp" alt="Muslin pattern pinned over the shell, marked Top and Front in pen" data-zh-alt="白布打版包在外壳上，用别针固定，笔写着 Top 和 Front" loading="lazy"><figcaption data-zh="表皮设计和制作">Designing and making the fur</figcaption></figure>
+        <figure class="finale"><img src="images/nuzzlebot/photo-front.webp" alt="The finished NuzzleBot in shaggy pink fur, front view" data-zh-alt="完成的 NuzzleBot，长毛粉色，正面" loading="lazy"><figcaption data-zh="穿上毛衣，完成">Fur on. Done.</figcaption></figure>
       </div>
     </section>
 
