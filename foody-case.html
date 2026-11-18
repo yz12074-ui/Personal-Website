@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Foody — Amanda Zhang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;600&family=Caveat:wght@600&display=swap">
+<link rel="stylesheet" href="assets/case.css">
+<style>
+/* Foody's own colours: tomato red, warm cream */
+:root{--brand:#C9372A;--brand-soft:#F6E7DA}
+:root[data-theme="dark"]{--brand-soft:#3A2420}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--brand-soft:#3A2420}}
+.stage{height:auto;aspect-ratio:16/9;background:#F1E4D6}
+.stage img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s cubic-bezier(.3,1.4,.5,1)}
+.stage:hover img{transform:scale(1.02)}
+.shotimg{display:block;width:100%;border-radius:16px;border:1px solid var(--line);background:#F1E4D6}
+.flow{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:28px;align-items:center}
+.flow:nth-of-type(even){grid-template-columns:minmax(0,1fr) minmax(0,1.35fr)}
+.flow:nth-of-type(even) .shotimg{order:2}
+@media (max-width:760px){.flow,.flow:nth-of-type(even){grid-template-columns:minmax(0,1fr)}.flow:nth-of-type(even) .shotimg{order:0}}
+.flow .txt{display:flex;flex-direction:column;gap:12px}
+.flow h3{font-size:clamp(24px,3vw,30px);font-weight:800;letter-spacing:-.02em}
+.step{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;color:var(--brand)}
+.hand{font-family:"Caveat",cursive;font-size:24px;color:var(--brand);line-height:1.2}
+
+/* live prototype: the real v0.15 in a phone frame */
+.proto{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:48px;align-items:center}
+@media (max-width:860px){.proto{grid-template-columns:minmax(0,1fr);justify-items:center}}
+.phone{position:relative;width:340px;height:736px;padding:11px;border-radius:54px;background:#111;box-shadow:0 0 0 2px #2b2b2b,0 40px 80px -30px rgba(0,0,0,.5);box-sizing:content-box}
+.phone .screen{position:relative;width:100%;height:100%;border-radius:44px;overflow:hidden;background:#F1F4EE}
+.phone iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.phone .notch{position:absolute;top:10px;left:50%;width:104px;height:30px;margin-left:-52px;border-radius:18px;background:#000;z-index:2;pointer-events:none}
+@media (max-width:420px){.phone{width:300px;height:650px}}
+.try{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:16px}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="toc">
+    <a class="home" href="index.html#work" data-zh="← 全部作品">← All work</a>
+    <button class="lang-toggle" type="button"><b>EN</b> / 中文</button>
+    <span class="meta" data-zh="目录">CONTENTS</span>
+    <nav id="toc">
+      <a href="#problem" data-zh="问题">Problem</a>
+      <a href="#goals" data-zh="设计目标">Design goals</a>
+      <a href="#flows" data-zh="用户流程">User flows</a>
+      <a href="#prototype" data-zh="可玩原型">Live prototype</a>
+      <a href="#testing" data-zh="用户测试">User testing</a>
+      <a href="#bootcamp" data-zh="创业营">Bootcamp</a>
+      <a href="#reflection" data-zh="反思">Reflection</a>
+    </nav>
+  </aside>
+
+  <main>
+    <div class="toc-m"><a href="index.html#work" data-zh="← 全部作品">← All work</a><button class="lang-toggle" type="button"><b>EN</b> / 中文</button></div>
+
+    <section class="hero" id="top">
+      <div class="stage"><img src="images/foody/banner.webp" alt="Three Foody screens: the home screen asking how hungry you are, the hand-lettered Foody logo, and a glowing reveal card for KBBQ &amp; hot pot" data-zh-alt="Foody 的三个界面：问你有多饿的首页、手写体 Foody 标志、发光揭晓卡片 KBBQ &amp; hot pot"></div>
+      <div class="tags"><span class="tag" data-zh="0→1">0→1</span><span class="tag" data-zh="移动端">Mobile</span><span class="tag" data-zh="游戏化">Gamification</span><span class="tag" data-zh="创业项目">Startup</span></div>
+      <h1><span class="star">✳</span><span data-zh="Foody：吃什么，帮你定">Foody: what to eat, decided.</span></h1>
+      <p class="lead" data-zh="选餐厅常常变成无尽地刷点评和收藏夹，直到饿得不行。Foody 只给你三个选项、三次重抽和 60 秒，然后陪你走到店里、打卡、下次再来。">Picking a place to eat turns into endless reviews and saved lists until hunger wins. Foody gives you three options, three rerolls and 60 seconds, then walks you to the door, checks you in and gives you a reason to come back.</p>
+      <!-- TODO(Amanda): confirm Role / Team / Timeline / Tools; the Framer page doesn't list them -->
+      <div class="info">
+        <div><span class="mono" data-zh="角色">Role</span><span data-zh="产品设计 · 原型开发">Product design · prototyping</span></div>
+        <div><span class="mono" data-zh="类型">Context</span><span data-zh="创业项目 · NYU Leslie 创业营">Startup · NYU Leslie Startup Bootcamp</span></div>
+        <div><span class="mono" data-zh="时间">Timeline</span><span data-zh="2026 秋">Fall 2026</span></div>
+        <div><span class="mono" data-zh="交付">Output</span><span data-zh="可玩原型 v0.15">Working prototype v0.15</span></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><strong>3</strong><span data-zh="个选项">options</span></div>
+        <div class="stat t"><strong>60s</strong><span data-zh="倒计时">timer</span></div>
+        <div class="stat"><strong>23</strong><span data-zh="枚徽章">badges</span></div>
+        <div class="stat h"><strong>5</strong><span data-zh="位测试者">testers</span></div>
+      </div>
+    </section>
+
+    <section id="problem">
+      <span class="eyebrow" data-zh="01 · 问题">01 / Problem</span>
+      <h2 data-zh="选项太多，<br>就是定不下来。">Too many options.<br>No decision.</h2>
+      <p data-zh="决定去哪吃，常常变成刷点评、翻收藏夹，直到饿得受不了。<span class='emph'>刚来纽约、还不熟悉街区的学生最头疼。</span>">Deciding where to eat turns into scrolling reviews and saved lists until hunger wins. <span class="emph">It hits hardest for students who are new to New York and don’t know the neighborhood yet.</span></p>
+      <div class="trio">
+        <div><b data-zh="推荐类 App">Recommendation apps</b><span data-zh="Yelp、Google Maps 给你更多选项，反而更难选。">Yelp and Google Maps answer with more options, which makes choosing harder.</span></div>
+        <div><b data-zh="随机类 App">Randomizer apps</b><span data-zh="结果很随意：用户说会漏店、结果奇怪、还会重复。">They feel arbitrary: users report missing places, odd results and repeat spins.</span></div>
+        <div><b data-zh="结果">The outcome</b><span data-zh="饿着肚子做决定，最后随便吃点。">Deciding while hungry, then settling for whatever is close.</span></div>
+      </div>
+    </section>
+
+    <section id="goals" class="wide">
+      <span class="eyebrow ok" data-zh="02 · 设计目标">02 / Design goals</span>
+      <h2 data-zh="把犹豫，变成一个决定。">Turn indecision into one decision.</h2>
+      <div class="rules">
+        <div class="rule" data-zh="故意少给：3 个选项、3 次重抽、60 秒">Limit choice on purpose: 3 options, 3 rerolls, 60 seconds</div>
+        <div class="rule" data-zh="把决定一路带到吃饭：路线、打卡、下次再来的理由">Carry the decision to the meal: a route, a check-in, a reason to return</div>
+      </div>
+      <img class="shotimg" src="images/foody/direction.webp" alt="The core flow: home, spin the wheel, the chosen place with a route, then the badge album" data-zh-alt="核心流程：首页、转盘、选中的餐厅和路线、徽章收集册" loading="lazy">
+    </section>
+
+    <section id="flows" class="wide">
+      <span class="eyebrow ok" data-zh="设计细节 · 用户流程">Design details / User flows</span>
+      <h2 data-zh="从口味，到走进店里。">From taste to the front door.</h2>
+
+      <div class="flow">
+        <img class="shotimg" src="images/foody/flow-profile.webp" alt="Onboarding: taste cards and the food profile The Adventurous Seafood Lover" data-zh-alt="新手引导：口味卡片和饮食画像「爱冒险的海鲜控」" loading="lazy">
+        <div class="txt"><span class="step" data-zh="流程 01">FLOW 01</span><h3 data-zh="从你爱吃什么开始">Start with what you like</h3>
+          <p data-zh="手写的 Foody 自己画出来，然后六张横向卡片问你怎么吃：新口味还是老味道、海鲜、饮食限制、辣度、口味和菜系。">A hand-lettered Foody draws itself in, then six sideways cards ask how you eat: new or familiar, seafood, diet, spice, flavors and cuisines.</p>
+          <p data-zh="答案变成一个有趣的饮食画像，比如「爱冒险的海鲜控」，之后每次抽签都往你的口味倾斜。">The answers become a playful food profile, like “The Adventurous Seafood Lover,” and tilt every draw toward your taste.</p></div>
+      </div>
+
+      <div class="flow">
+        <img class="shotimg" src="images/foody/flow-draw.webp" alt="Three ways to draw: swipe cards, spin the wheel, open a mystery box" data-zh-alt="三种抽法：滑卡片、转转盘、开盲盒" loading="lazy">
+        <div class="txt"><span class="step" data-zh="流程 02">FLOW 02</span><h3 data-zh="三种抽法">Three ways to draw</h3>
+          <p data-zh="首页先问一个问题：你有多饿？饿到 4 或 5 级，Foody 直接帮你决定。">Home asks one question first: how hungry are you? At 4 or 5, Foody offers to decide for you.</p>
+          <p data-zh="不然就滑三张卡片留或划、转转盘、或开一个藏着一家餐厅的盲盒。<span class='hl-o'>60 秒和 3 次重抽，用完就由 Foody 拍板。</span>">Otherwise swipe three cards, spin a wheel or open a mystery box. <span class="hl-o">60 seconds and three rerolls; when either runs out, Foody makes the call.</span></p></div>
+      </div>
+
+      <div class="flow">
+        <img class="shotimg" src="images/foody/flow-reveal.webp" alt="Game-style reveal: a glowing card with stars, gold, purple or blue by rarity" data-zh-alt="游戏式揭晓：带星星的发光卡片，按稀有度分金、紫、蓝" loading="lazy">
+        <div class="txt"><span class="step" data-zh="流程 03">FLOW 03</span><h3 data-zh="值得等的揭晓">A reveal worth waiting for</h3>
+          <p data-zh="每个结果都像抽卡一样揭晓：一道光、一张旋转的卡、一串星星。">Every result lands with a game-style reveal: a beam of light, a spinning card and a burst of stars.</p>
+          <p data-zh="稀有度跟你有关：金色是完全对口味，紫色是没吃过的新东西，蓝色是稳妥之选。">Rarity reflects you: gold for a perfect match, purple for something new, blue for a solid pick.</p></div>
+      </div>
+
+      <div class="flow">
+        <img class="shotimg" src="images/foody/flow-results.webp" alt="Results nearest first; a card flips to details and an in-app route" data-zh-alt="结果按距离排序；卡片翻面显示详情和应用内路线" loading="lazy">
+        <div class="txt"><span class="step" data-zh="流程 04">FLOW 04</span><h3 data-zh="从选项到一家店">From options to one place</h3>
+          <p data-zh="结果按距离排，最近且在营业的排第一。卡片一翻就是详情：推荐菜、步行时间、营业时间和停车。">Results show the closest places, nearest open one first. A card flips into details: dishes to try, walking time, hours and parking.</p>
+          <p data-zh="点「Eat here」撒彩带，并在应用里打开路线，决定不会停在一张列表上。">“Eat here” fires confetti and opens a route in the app, so the decision doesn’t end at a list.</p></div>
+      </div>
+
+      <div class="flow">
+        <img class="shotimg" src="images/foody/flow-checkin.webp" alt="Check in with a visit code, the badge album and a how-was-it prompt" data-zh-alt="用到店码打卡、徽章收集册和「吃得怎么样」的提问" loading="lazy">
+        <div class="txt"><span class="step" data-zh="流程 05">FLOW 05</span><h3 data-zh="打卡、收集、再回来">Check in, collect, come back</h3>
+          <p data-zh="到店扫餐厅的二维码或用定位打卡。<span class='emph'>到店码证明是 Foody 带你来的，这次真实到店就是餐厅付费的地方。</span>">Scan the restaurant’s QR code or check in by location. <span class="emph">A visit code proves Foody sent you, and that verified visit is what restaurants pay for.</span></p>
+          <p data-zh="每次打卡点亮 23 枚徽章中的一枚；几小时后问你一句吃得怎么样，答案影响下次抽签。">Each check-in lights up one of 23 badges. A few hours later, one tap asks how it was, and the answer shapes your next draw.</p></div>
+      </div>
+
+      <div class="flow">
+        <img class="shotimg" src="images/foody/flow-menu.webp" alt="Low-fidelity concept: an AI menu helper chat" data-zh-alt="低保真概念：AI 菜单助手对话" loading="lazy">
+        <div class="txt"><span class="step" data-zh="流程 06 · 开发中">FLOW 06 · IN DEVELOPMENT</span><h3 data-zh="下一步：点菜也有底">Next: order with confidence</h3>
+          <p data-zh="拍下菜单或黑板，AI 菜单助手用大白话解释每道菜。">Snap the menu or the chalkboard, and an AI menu helper explains every dish in plain words.</p>
+          <p data-zh="告诉它今天的心情，比如清淡点、20 美元以内，它会标出合适的、过滤掉不合适的。这里是低保真概念。">Tell it today’s mood, like something light or under $20, and it highlights what fits. Shown as a low-fidelity concept.</p></div>
+      </div>
+    </section>
+
+    <section id="prototype" class="wide">
+      <span class="eyebrow ok" data-zh="可玩原型">Live prototype</span>
+      <h2 data-zh="自己试试。">Try it yourself.</h2>
+      <div class="proto">
+        <div class="txt" style="display:flex;flex-direction:column;gap:16px">
+          <p data-zh="这是正在运行的原型 v0.15，就在这个页面里。餐厅是布鲁克林市中心真实店铺的固定快照。">This is the working prototype (v0.15), running right on this page. The restaurants are a fixed snapshot of real places in Downtown Brooklyn.</p>
+          <span class="mono" data-zh="可以试试">Things to try</span>
+          <ol class="try">
+            <li data-zh="看标志自己画出来，然后回答六张口味卡">Watch the logo draw in, then answer the six taste cards.</li>
+            <li data-zh="在首页选你有多饿，再点「What to eat」">On Home, pick how hungry you are, then open “What to eat.”</li>
+            <li data-zh="滑卡片、转转盘或开盲盒">Swipe the cards, spin the wheel or open a mystery box.</li>
+            <li data-zh="点结果卡片翻面，再试试「Eat here」">Tap a result card to flip it, then try “Eat here.”</li>
+            <li data-zh="用「Demo: simulate a scan」打卡，点亮一枚徽章">Use “Demo: simulate a scan” to check in and light up a badge.</li>
+          </ol>
+          <div class="btns"><button class="b" type="button" id="restart" data-zh="↺ 重新开始">↺ Restart demo</button><a class="b solid" href="foody.html" target="_blank" rel="noopener" data-zh="全屏打开 ↗">Open full screen ↗</a></div>
+          <p class="cap" data-zh="原型。距离从 370 Jay St 算起，打卡是模拟扫码。进度只存在你这个浏览器里。">Prototype. Distances are from 370 Jay St and check-in uses a simulated scan. Progress stays in this browser.</p>
+        </div>
+        <div class="phone"><div class="screen"><div class="notch"></div><iframe id="proto" title="Foody prototype" loading="lazy" allow="geolocation; clipboard-write" src="foody.html?bare=1"></iframe></div></div>
+      </div>
+    </section>
+
+    <section id="testing">
+      <span class="eyebrow" data-zh="用户测试">User testing</span>
+      <h2 data-zh="测试者塑造了它。">Shaped by testers.</h2>
+      <p data-zh="我们访谈了五位 NYU 学生，并当面看他们玩原型。第一轮测试里，大家只看最近的选项，而且<span class='hl-o'>一选完店，就觉得流程结束了。</span>">We interviewed five NYU students and watched them play the prototype in person. In the first test, people only looked at the closest option and <span class="hl-o">felt the flow ended the moment a place was chosen.</span></p>
+      <div class="trio ok">
+        <div><b data-zh="最近的优先">Nearest first</b><span data-zh="既然只看最近的，就把最近且在营业的放第一。">They only looked at the closest, so the nearest open place leads.</span></div>
+        <div><b data-zh="应用内路线">In-app route</b><span data-zh="选完不是终点，直接带路过去。">Choosing isn’t the end; the route starts right there.</span></div>
+        <div><b data-zh="打卡闭环">Check-in loop</b><span data-zh="到店打卡和回访，让决定一直走到吃完。">Check-in and the follow-up carry the decision through the meal.</span></div>
+      </div>
+      <!-- TODO(Amanda): the Framer page has placeholders for testing photos 2 and 3; add real ones here -->
+    </section>
+
+    <section id="bootcamp" class="wide">
+      <span class="eyebrow ok" data-zh="下一站">What happened next</span>
+      <h2 data-zh="我们入选了。">We’re in.</h2>
+      <p data-zh="Foody 从数百份申请中入选 <span class='emph'>NYU Leslie 创业营</span>。下一站：真实的餐厅。">Foody was accepted into the <span class="emph">NYU Leslie Startup Bootcamp</span>, chosen from hundreds of applications. Next stop: real restaurants.</p>
+      <img class="shotimg" src="images/foody/bootcamp.webp" alt="We’re in! Accepted into the NYU Leslie Startup Bootcamp, with the acceptance email" data-zh-alt="我们入选了！NYU Leslie 创业营录取，附录取邮件" loading="lazy">
+    </section>
+
+    <section id="reflection" class="wide">
+      <span class="eyebrow" data-zh="反思 · 下一步">Reflection / What comes next</span>
+      <h2 data-zh="更好的问题，更好的下一步。">Better questions. Better next steps.</h2>
+      <div class="refl">
+        <div><b data-zh="限制本身就是设计">Constraint does the work</b><span data-zh="更少的选项、一个倒计时和一点仪式感，让选择变得轻松。">Fewer options, a timer and a little ceremony make choosing feel easy.</span></div>
+        <div><b data-zh="Beta 测试">Beta</b><span data-zh="找 20–30 位 NYU 学生做 beta 测试。">A beta with 20–30 NYU students.</span></div>
+        <div><b data-zh="餐厅试点">Restaurant pilot</b><span data-zh="和五家餐厅免费试点，之后按每次真实到店收 2 美元。">A free pilot with five restaurants that converts to $2 per verified visit.</span></div>
+      </div>
+      <div class="hmw" style="background:var(--honest)">
+        <span class="mono" data-zh="同时在做">Alongside</span>
+        <p data-zh="做出 AI 菜单助手，并通过 Google Places API 接入实时评分。">Build the AI menu helper and connect live ratings through the Google Places API.</p>
+      </div>
+      <a class="next" href="temu.html"><span><span class="mono" style="color:var(--dim)" data-zh="下一个项目">Next project</span><br><b data-zh="礼品卡陷阱">The Gift Card Trap</b></span><span class="mono">→</span></a>
+    </section>
+
+    <footer>FOODY · AMANDA (YUEYAN) ZHANG · 2026</footer>
+  </main>
+</div>
+
+<script src="assets/i18n.js"></script>
+<script>
+// Restart the embedded prototype: clear only Foody's own keys, never the rest of the site's storage
+document.getElementById("restart").onclick=()=>{
+  try{["dtbk-user-en-v1","dtbk-roll-log-en-v1"].forEach(k=>localStorage.removeItem(k))}catch(e){}
+  const f=document.getElementById("proto");f.src="foody.html?bare=1&r="+Date.now();
+};
+const links=[...document.querySelectorAll("#toc a")];
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)links.forEach(a=>a.classList.toggle("on",a.getAttribute("href")==="#"+e.target.id))}),{rootMargin:"-40% 0px -55% 0px"});
+links.forEach(a=>{const s=document.querySelector(a.getAttribute("href"));if(s)io.observe(s)});
+</script>
+</body>
+</html>

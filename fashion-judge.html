@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fashion Judge — Amanda Zhang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="assets/case.css">
+<link rel="stylesheet" href="assets/mini.css">
+<style>
+/* Try it: webcam with a head guide on the left; the cardboard judge on the right flips its sign up or down.
+   How it decides is deliberately not explained on the page (black box). */
+.judge{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:18px;align-items:center}
+@media (max-width:640px){.judge{grid-template-columns:minmax(0,1fr)}}
+.cam{position:relative;aspect-ratio:4/3;border-radius:16px;overflow:hidden;background:#1D1B19;display:grid;place-items:center}
+.cam video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.cam .off{color:#B9B4A8;font:13px var(--f-mono);text-align:center;padding:20px}
+/* head guide: dashed oval where the head should go */
+.head{position:absolute;left:50%;top:6%;width:30%;height:52%;translate:-50% 0;border:3px dashed rgba(255,255,255,.85);border-radius:50%;box-shadow:0 0 0 999px rgba(0,0,0,.28);transition:border-color .25s}
+.head.in{border-color:#FFE15A;border-style:solid}
+.cam .say{position:absolute;left:50%;bottom:6%;translate:-50% 0;background:rgba(29,27,25,.82);color:#fff;font:600 13px var(--f-mono);padding:7px 12px;border-radius:99px;white-space:nowrap}
+
+/* the judge: a box with an arm; a card hinged on the arm flips up (approve) or down (unmoved) */
+.rig{perspective:700px;padding:70px 0}
+.box{position:relative;margin:0 0 0 6%;width:min(190px,56%);aspect-ratio:3/2;background:#C9A274;border-radius:6px;box-shadow:inset 0 -10px 0 rgba(0,0,0,.08),0 14px 28px rgba(0,0,0,.18)}
+.box i{position:absolute;top:28%;width:7%;height:26%;background:#3A3733;border-radius:2px}.box i:nth-child(1){left:28%}.box i:nth-child(2){right:28%}
+.box b{position:absolute;left:50%;top:44%;width:16%;aspect-ratio:1;translate:-50% 0;background:#1D1B19;border-radius:50%}
+.arm{position:absolute;left:100%;top:48%;width:52%;height:6px;background:#1D1B19;border-radius:3px;transform-style:preserve-3d}
+.card{position:absolute;left:30%;width:130%;aspect-ratio:4/3;background:#fff;border-radius:4px;display:grid;place-items:center;font:600 clamp(18px,3vw,26px) var(--f-mono);color:#1D1B19;box-shadow:0 6px 14px rgba(0,0,0,.18);backface-visibility:hidden;transition:transform .55s cubic-bezier(.3,1.5,.5,1)}
+.card.up{bottom:3px;transform-origin:50% 100%;transform:rotateX(-90deg)}
+.card.down{top:3px;transform-origin:50% 0;transform:rotateX(90deg)}
+.rig[data-v="up"] .card.up,.rig[data-v="down"] .card.down{transform:rotateX(0)}
+.verdict{text-align:center;font:600 15px var(--f-mono);min-height:1.5em}
+@media (prefers-reduced-motion:reduce){.card{transition:none}}
+</style>
+</head>
+<body>
+<div class="mini">
+  <div class="mini-top"><a href="index.html#playground" data-zh="← 实验">← Playground</a><button class="lang-toggle" type="button"><b>EN</b> / 中文</button></div>
+
+  <figure class="mini-hero"><img src="images/playground/fashion-judge.webp" alt="Fashion Judge: a cardboard robot with a camera nose, holding up a ^o^ score card" data-zh-alt="穿搭评委：鼻子是摄像头的纸板机器人，举着 ^o^ 评分牌"></figure>
+
+  <h1 data-zh="穿搭评委">Fashion Judge</h1>
+  <p class="sum" data-zh="一个给你的穿搭打分的纸板机器人。站到它面前，它看你一眼，舵机就把评分牌翻上来或翻下去。它怎么打分是个黑箱，而且是故意的：好玩的地方，就是猜一台机器到底怎么「审美」。">A cardboard robot that scores your outfit. Stand in front of it, it takes one look, and a servo flips the score card up or down. How it decides is a black box, on purpose: the fun is guessing how a machine “judges” taste.</p>
+  <div class="mini-tags"><span data-zh="交互设计">Interactive design</span><span data-zh="视觉机器学习">Visual machine learning</span><span data-zh="物理计算">Physical computing</span></div>
+  <p class="meta" data-zh="OK Robot · NYU ITP · 2026 · 双人合作">OK Robot · NYU ITP · 2026 · duo project</p>
+
+  <section class="try" aria-labelledby="try-h">
+    <h2 id="try-h" data-zh="站到它面前试试">Stand in front of it</h2>
+    <div class="judge">
+      <div class="cam" id="cam"><p class="off" id="off" data-zh="打开摄像头，让评委看看你今天穿了什么。<br>画面只在你的浏览器里处理，不会上传。">Turn on your camera and let the judge see today’s outfit.<br>Everything stays in your browser. Nothing is uploaded.</p></div>
+      <div>
+        <div class="rig" id="rig" aria-hidden="true"><div class="box"><i></i><i></i><b></b><div class="arm"><div class="card up">^o^</div><div class="card down">-_-</div></div></div></div>
+        <p class="verdict" id="verdict" aria-live="polite"></p>
+      </div>
+    </div>
+    <div><button class="btn go" id="start" type="button" data-zh="打开摄像头">Turn on camera</button></div>
+  </section>
+
+  <div class="vids">
+    <figure><video src="images/playground/fashion-judge-color.mp4" poster="images/playground/fashion-judge-color-poster.webp" muted loop playsinline autoplay preload="metadata" aria-label="Testing the real robot: the servo turns one way"></video><figcaption data-zh="真机测试 · 第一轮">Testing the real robot · round 1</figcaption></figure>
+    <figure><video src="images/playground/fashion-judge-mono.mp4" poster="images/playground/fashion-judge-mono-poster.webp" muted loop playsinline autoplay preload="metadata" aria-label="Testing the real robot: the servo turns the other way"></video><figcaption data-zh="真机测试 · 第二轮">Testing the real robot · round 2</figcaption></figure>
+  </div>
+
+  <div class="duo2">
+    <figure><img src="assets/fashion-judge-cover.webp" alt="The judge on a workbench, sign up" data-zh-alt="工作台上的评委，牌子举着" loading="lazy"><figcaption data-zh="一个舵机，两张评分牌">One servo, two score cards</figcaption></figure>
+    <figure><img src="images/playground/fashion-judge-build.webp" alt="The box opened up: servo on the side, camera module and Arduino Uno" data-zh-alt="拆开的盒子：侧面的舵机、摄像头模块和 Arduino Uno" loading="lazy"><figcaption data-zh="拆开看：摄像头、舵机、Arduino">Inside: camera, servo, Arduino</figcaption></figure>
+  </div>
+</div>
+
+<script type="module">
+const zh = () => document.documentElement.lang === 'zh-CN';
+const tr = (en, z) => zh() ? z : en;
+const $ = s => document.querySelector(s);
+const rig = $('#rig'), verdict = $('#verdict');
+
+// Face finder: only used to know when a head sits inside the guide.
+let faces = null;
+async function loadFaces() {
+  try {
+    const { FaceDetector, FilesetResolver } = await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14');
+    const fs = await FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm');
+    faces = await FaceDetector.createFromOptions(fs, {
+      baseOptions: { modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite' },
+      runningMode: 'VIDEO'
+    });
+  } catch { faces = false; }   // ponytail: without the face model, judge after a short countdown instead
+}
+
+// guide oval in frame fractions (same numbers as .head in the CSS)
+const OVAL = { cx: .5, cy: .32, rx: .15, ry: .26 };
+function headInOval(v, t) {
+  if (!faces) return null;
+  const f = faces.detectForVideo(v, t).detections[0];
+  if (!f) return false;
+  const b = f.boundingBox, w = v.videoWidth, h = v.videoHeight;
+  const cx = 1 - (b.originX + b.width / 2) / w, cy = (b.originY + b.height / 2) / h;   // mirrored, like the preview
+  const dx = (cx - OVAL.cx) / OVAL.rx, dy = (cy - OVAL.cy) / OVAL.ry;
+  return dx * dx + dy * dy < .5 && b.width / w > .14;
+}
+
+const c = document.createElement('canvas'), g = c.getContext('2d', { willReadFrequently: true });
+c.width = 48; c.height = 36;
+function score(v) {
+  g.drawImage(v, v.videoWidth * .3, v.videoHeight * .62, v.videoWidth * .4, v.videoHeight * .38, 0, 0, 48, 36);
+  const d = g.getImageData(0, 0, 48, 36).data;
+  let n = 0;
+  for (let i = 0; i < d.length; i += 4) {
+    const mx = Math.max(d[i], d[i + 1], d[i + 2]), mn = Math.min(d[i], d[i + 1], d[i + 2]);
+    if (mx > 50 && (mx - mn) / mx > .35) n++;
+  }
+  return n / (48 * 36) > .18 ? 'up' : 'down';   // ponytail: one fixed threshold; room lighting nudges it
+}
+
+function show(state) {
+  rig.dataset.v = state === 'up' || state === 'down' ? state : '';
+  $('#head')?.classList.toggle('in', state !== 'wait');
+  $('#say').textContent = {
+    wait: tr('Put your head in the circle', '把头放进圈里'),
+    hold: tr('Hold still…', '别动……'),
+    up: tr('Done! Step out to try again', '好了！走开再来一次'),
+    down: tr('Done! Step out to try again', '好了！走开再来一次')
+  }[state];
+  verdict.textContent = { up: tr('The judge approves.', '评委很满意。'), down: tr('The judge is… unmoved.', '评委……没什么表情。') }[state] || '';
+}
+
+$('#start').onclick = async () => {
+  let stream;
+  try { stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } }); }
+  catch { $('#off').textContent = tr('No camera access. The videos below show the real robot.', '没有摄像头权限。可以看下面的视频，了解真机怎么工作。'); return; }
+  $('#start').hidden = true;
+  $('#off').textContent = tr('Waking up the judge…', '评委正在醒来……');
+  await loadFaces();
+  const v = document.createElement('video'); v.muted = true; v.playsInline = true; v.srcObject = stream; await v.play();
+  const head = document.createElement('div'); head.className = 'head'; head.id = 'head';
+  const say = document.createElement('p'); say.className = 'say'; say.id = 'say';
+  $('#cam').replaceChildren(v, head, say);
+
+  let state = 'wait', since = performance.now(), last = 0;
+  show(state);
+  const loop = t => {
+    requestAnimationFrame(loop);
+    if (t - last < 120) return; last = t;
+    const inside = headInOval(v, t);
+    const present = inside ?? (state === 'wait' ? t - since > 2500 : true);   // no face model: judge every few seconds
+    if (state === 'wait' && present) { state = 'hold'; since = t; }
+    else if (state === 'hold' && !present) { state = 'wait'; since = t; }
+    else if (state === 'hold' && t - since > 1200) { state = score(v); since = t; }
+    else if ((state === 'up' || state === 'down') && (inside === false || (inside === null && t - since > 4000))) { state = 'wait'; since = t; }
+    else return;
+    show(state);
+  };
+  requestAnimationFrame(loop);
+};
+</script>
+<script src="assets/i18n.js"></script>
+</body>
+</html>

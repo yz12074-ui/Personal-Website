@@ -1,0 +1,29 @@
+/* Small Playground project pages (Fashion Judge, Turtle Soup BOT): one column,
+   hero photo, a short summary, three tags, then a "Try it" demo and real footage. Tokens come from case.css. */
+.mini{max-width:880px;margin:0 auto;padding-block:28px 80px;display:flex;flex-direction:column;gap:28px}
+.mini-top{display:flex;justify-content:space-between;align-items:center}
+.mini-top a{font-family:var(--f-mono);font-size:12px;color:var(--dim);text-decoration:none}
+.mini-top a:hover{color:var(--ink)}
+.lang-toggle{font:12px var(--f-mono);color:var(--dim);background:var(--surface);border:1px solid var(--line);border-radius:99px;padding:5px 12px}
+.lang-toggle b{color:var(--ink);font-weight:600}
+.mini-hero{margin:0;border-radius:22px;overflow:hidden;background:var(--sunk)}
+.mini-hero img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
+.mini h1{font-size:clamp(34px,5vw,54px);font-weight:800;letter-spacing:-.03em}
+.mini .sum{font-size:clamp(18px,1.8vw,21px);line-height:1.55;max-width:62ch}
+.mini .meta{font:12px var(--f-mono);color:var(--dim);letter-spacing:.04em}
+.mini-tags{display:flex;flex-wrap:wrap;gap:8px}
+.mini-tags span{font:12px var(--f-mono);background:var(--surface);border:1px solid var(--line);border-radius:99px;padding:5px 12px}
+.btn{display:inline-block;text-decoration:none;font:13px var(--f-mono);border:1px solid var(--line);background:var(--bg);border-radius:99px;padding:10px 16px}
+.btn.go{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.duo2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.duo2 figure{margin:0;border-radius:16px;overflow:hidden;background:var(--sunk)}
+.duo2 img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}
+.duo2 figcaption{font:11px var(--f-mono);color:var(--dim);padding:8px 10px;background:var(--surface)}
+@media (max-width:640px){.duo2{grid-template-columns:minmax(0,1fr)}}
+.try{max-width:none;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:clamp(18px,3vw,32px);display:flex;flex-direction:column;gap:18px}
+.try h2{font-size:clamp(24px,3vw,32px);font-weight:800;letter-spacing:-.02em}
+.try .hint{font:12px var(--f-mono);color:var(--dim)}
+.vids{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.vids figure{margin:0;border-radius:16px;overflow:hidden;background:#1D1B19}
+.vids video{display:block;width:100%;aspect-ratio:9/16;max-height:620px;object-fit:cover}
+.vids figcaption{font:11px var(--f-mono);color:var(--dim);padding:8px 10px;background:var(--surface)}

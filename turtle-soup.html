@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Turtle Soup BOT — Amanda Zhang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="assets/case.css">
+<link rel="stylesheet" href="assets/mini.css">
+<style>
+/* Try it: the puzzle on the left, a paper lamp on the right that answers in light */
+.soup{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:22px;align-items:start}
+@media (max-width:640px){.soup{grid-template-columns:minmax(0,1fr)}}
+.story{background:#203D57;color:#F8E2BF;border-radius:16px;padding:18px 20px;font-size:17px;line-height:1.5}
+.story b{color:#FBCB3E;font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;display:block;margin-bottom:6px}
+.ask{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.ask input{flex:1 1 220px;min-width:0;font:15px var(--f-body);border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:99px;padding:10px 16px}
+.log{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:6px;max-height:220px;overflow:auto;font:13px var(--f-mono)}
+.log li{display:flex;justify-content:space-between;gap:12px;border-bottom:1px dashed var(--line);padding-bottom:6px}
+.log em{font-style:normal;font-weight:600}
+.lamp-wrap{display:grid;justify-items:center;gap:10px;padding:20px 0;background:#1D1B19;border-radius:16px}
+.lamp{--c:255,190,90;--a:.25;position:relative;width:96px;height:180px;border-radius:4px 4px 2px 2px;
+  background:linear-gradient(#F6EBD8,#EADCC3);box-shadow:0 0 calc(70px*var(--a)) calc(26px*var(--a)) rgba(var(--c),var(--a)),inset 0 0 40px rgba(var(--c),calc(var(--a)*1.4));transition:box-shadow .35s,background .35s}
+.lamp::before,.lamp::after{content:"";position:absolute;left:-4px;right:-4px;height:26px;background:repeating-linear-gradient(45deg,#8C7253 0 3px,#A88A64 3px 6px);border-radius:3px}
+.lamp::before{top:-14px;clip-path:polygon(50% 0,100% 100%,0 100%);height:22px}
+.lamp::after{bottom:-6px}
+.lamp.think{animation:think 1.2s ease-in-out infinite}
+@keyframes think{50%{filter:brightness(1.4)}}
+.lamp.solved{animation:solved .5s steps(2) 6}
+@keyframes solved{50%{box-shadow:0 0 0 0 transparent;background:#3A3733}}
+.lamp-state{font:600 13px var(--f-mono);color:#F8E2BF;min-height:1.4em}
+@media (prefers-reduced-motion:reduce){.lamp.think,.lamp.solved{animation:none}}
+</style>
+</head>
+<body>
+<div class="mini">
+  <div class="mini-top"><a href="index.html#playground" data-zh="← 实验">← Playground</a><button class="lang-toggle" type="button"><b>EN</b> / 中文</button></div>
+
+  <figure class="mini-hero"><img src="images/playground/turtle-soup-lamp.webp" alt="Turtle Soup BOT: a paper and burlap lamp glowing warm, throwing flower shadows on the wall" data-zh-alt="海龟汤机器人：纸和麻布做的灯，发着暖光，在墙上投出花形影子"></figure>
+
+  <h1 data-zh="海龟汤机器人">Turtle Soup BOT</h1>
+  <p class="sum" data-zh="我们把一盏台灯变成了「海龟汤」推理游戏的主持人。玩家只能问是或否的问题，LLM 判断每个问题，台灯用光回答：绿灯是「是」，红灯是「否」，不亮是「无关」，猜出真相时白光闪烁。摄像头看到有人走近，它就亮起来邀请你玩。">We turned a desk lamp into the host of a Turtle Soup puzzle, a lateral-thinking game where you can only ask yes/no questions. An LLM judges each question and the lamp answers in light: green for yes, red for no, dark for irrelevant, and a white blink when you crack the case. A camera wakes it up when someone walks by.</p>
+  <div class="mini-tags"><span data-zh="游戏设计">Game design</span><span data-zh="AI 嵌入">AI-embedded</span><span data-zh="光作为界面">Light as interface</span></div>
+  <p class="meta" data-zh="OK Robot · NYU ITP · 2026 · 双人合作">OK Robot · NYU ITP · 2026 · duo project</p>
+
+  <section class="try" aria-labelledby="try-h">
+    <h2 id="try-h" data-zh="来喝一碗汤">Have a bowl of soup</h2>
+    <div class="soup">
+      <div>
+        <div class="story"><b data-zh="汤面">THE SURFACE</b><span data-zh="一个男人死在一片田野中央。他身边有一个没打开的包裹。周围没有别人。发生了什么？">A man is found dead in the middle of a field. Next to him lies an unopened package. There are no other people around. What happened?</span></div>
+        <form class="ask" id="ask">
+          <input id="q" autocomplete="off" placeholder="Ask a yes/no question, or type your final guess…" aria-label="Your question or guess">
+          <button class="btn go" type="submit" data-zh="提问">Ask</button>
+          <button class="btn" type="button" id="guess" data-zh="我猜到了">Final guess</button>
+        </form>
+        <ul class="log" id="log" aria-live="polite"></ul>
+      </div>
+      <div class="lamp-wrap"><div class="lamp" id="lamp" aria-hidden="true"></div><p class="lamp-state" id="state"></p></div>
+    </div>
+    <p class="hint" data-zh="网页版用关键词代替 LLM 来判断，所以请用英文提问，比如 “Did he fall?”。真机用 GPT-4o-mini 判断，再通过串口让 Arduino 控制 WS2812B 灯带。">Web version: keyword rules stand in for the LLM, so ask in English, e.g. “Did he fall?”. The real lamp asks GPT-4o-mini, then an Arduino drives a WS2812B LED strip over serial.</p>
+  </section>
+
+  <div class="duo2">
+    <figure><img src="images/playground/turtle-soup-playtest.webp" alt="A player typing questions on a laptop while the lamp glows beside it" data-zh-alt="玩家在笔记本上打字提问，旁边的灯亮着" loading="lazy"><figcaption data-zh="试玩：边问边看灯">Playtest: ask, then watch the lamp</figcaption></figure>
+    <figure><img src="images/playground/turtle-soup-ui.webp" alt="The web interface: the puzzle, a photo of the field, Ask and Guess buttons" data-zh-alt="网页界面：谜题、田野照片、提问和猜答案按钮" loading="lazy" style="object-position:50% 30%"><figcaption data-zh="网页：电脑视觉 + 对话">Web page: computer vision + dialog</figcaption></figure>
+  </div>
+</div>
+
+<script>
+const zh = () => document.documentElement.lang === 'zh-CN';
+const tr = (en, z) => zh() ? z : en;
+const $ = s => document.querySelector(s);
+const lamp = $('#lamp'), state = $('#state'), log = $('#log'), q = $('#q');
+
+// ponytail: keyword rules stand in for the LLM judge on a static site; unknown questions read as irrelevant
+const NO = /murder|kill|shot|shoot|stab|poison|heart attack|sick|\bill\b|disease|animal|suicide|someone else|another person|starv|thirst|hit by|\bcar\b|robbed|attack/;
+const YES = /skydiv|parachute|plane|aircraft|airplane|helicopter|jump|fell|fall|from the sky|from above|high up|height|package.*(important|related|cause|matter|reason)|accident|did not open|didn.?t open|fail/;
+const judge = t => NO.test(t) ? 'NO' : YES.test(t) ? 'YES' : 'IRRELEVANT';
+// same idea as the real robot: all four parts of the story must show up
+const KEYS = [/skydiv|parachute|jump/, /parachute|package|pack/, /fail|did not open|didn.?t open|not open|never opened/, /fell|fall|died|dead|crash/];
+const solved = t => KEYS.every(k => k.test(t));
+
+const LOOK = { YES: ['80,220,120', .85], NO: ['235,70,60', .85], IRRELEVANT: ['0,0,0', 0], SOLVED: ['255,240,220', 1] };
+function light(kind) {
+  lamp.className = 'lamp';
+  const [c, a] = LOOK[kind]; lamp.style.setProperty('--c', c); lamp.style.setProperty('--a', a);
+  if (kind === 'SOLVED') lamp.classList.add('solved');
+}
+function think() { lamp.className = 'lamp think'; lamp.style.setProperty('--c', '255,200,60'); lamp.style.setProperty('--a', .35); state.textContent = tr('thinking…', '想一想……'); }
+function say(text, kind) {
+  const li = document.createElement('li'), s = document.createElement('span'), e = document.createElement('em');
+  s.textContent = text;   // visitor text only ever goes in via textContent
+  const words = { YES: tr('Yes', '是'), NO: tr('No', '否'), IRRELEVANT: tr('Irrelevant', '无关'), SOLVED: tr('Solved!', '答对了！'), MISS: tr('Not quite', '还差一点') };
+  e.textContent = words[kind];
+  e.style.color = { YES: '#0B7A66', NO: '#E8590C', SOLVED: '#2F6BFF' }[kind] || 'var(--dim)';
+  li.append(s, e); log.prepend(li);
+  state.textContent = words[kind];
+}
+
+$('#ask').onsubmit = e => {
+  e.preventDefault();
+  const text = q.value.trim(); if (!text) return;
+  const t = text.toLowerCase(); q.value = '';
+  think();
+  setTimeout(() => { const k = judge(t); light(k); say(text, k); }, 700);
+};
+$('#guess').onclick = () => {
+  const text = q.value.trim(); if (!text) { q.focus(); return; }
+  const t = text.toLowerCase(); q.value = '';
+  think();
+  setTimeout(() => {
+    if (solved(t)) { light('SOLVED'); say(text, 'SOLVED'); }
+    else { light('NO'); say(text, 'MISS'); }
+  }, 900);
+};
+think(); state.textContent = tr('waiting for a question', '等你提问');
+</script>
+<script src="assets/i18n.js"></script>
+</body>
+</html>
