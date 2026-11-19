@@ -281,6 +281,7 @@ a.m:hover, a.m:focus-visible { background: var(--ink); color: var(--bg); }
 .door-card .mono { color: var(--dim); }
 .door-card h2 { font-size: clamp(32px, 5.2vw, 56px); font-weight: 800; letter-spacing: -.03em; margin-bottom: 14px; }
 .door-card h2 em { font-family: var(--f-body); font-weight: 400; }
+[hidden] { display: none !important; }
 .pad-frame { position: relative; background: #fff; border-radius: 6px; }
 .pad-frame::before { content: "Frame / Signature"; position: absolute; left: 0; top: -20px; font: 11px var(--f-mono); color: var(--sel); }
 .pad-frame::after { content: ""; position: absolute; inset: -5px; border: 1.5px solid var(--sel); border-radius: 4px; pointer-events: none;
@@ -384,7 +385,7 @@ a.m:hover, a.m:focus-visible { background: var(--ink); color: var(--bg); }
         <div class="card-body"><h3>VIVA TOY</h3><p data-zh="修好你的童年回忆。">Repair your childhood memories.</p>
           <ul class="metrics"><li><b>3</b><span data-zh="类用户">user groups</span></li><li><b>7</b><span data-zh="个品牌分析">brands analyzed</span></li><li><b>1</b><span data-zh="条完整服务流程">full service flow</span></li></ul></div>
       </a>
-      <a class="card frame" data-frame="Aban" href="aban.html">
+      <a class="card frame" data-frame="Aban" href="aban.html" hidden>
         <div class="shot blue"><img class="mock" src="images/home/aban-card.webp" alt="Aban AI music website on a desktop monitor" data-zh-alt="阿伴 AI 音乐创作网站，显示在台式显示器上" loading="lazy"><div class="details"><dl><div><dt class="ic ic-time" title="Timeline"><span class="sr-only">Timeline</span></dt><dd data-zh="2025.12 – 2026.01">Dec 2025 – Jan 2026</dd></div><div><dt class="ic ic-role" title="Role"><span class="sr-only">Role</span></dt><dd data-zh="UX/UI 设计">UX/UI design</dd></div></dl><div class="tagrow"><span class="k" data-zh="#完整设计">#End-to-end</span><span data-zh="#网页">#Web</span><span data-zh="#AI 音乐">#AI music</span></div></div></div>
         <div class="card-body"><h3><span data-zh="阿伴 Aban">Aban</span><svg viewBox="0 0 24 24" role="img" aria-label="Password protected"><rect x="5" y="11" width="14" height="10" rx="2" fill="currentColor"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></svg></h3><p data-zh="AI 音乐教育平台。">AI music education platform.</p>
           <ul class="metrics"><li><b>AI</b><span data-zh="音乐创作">music creation</span></li><li><b data-zh="密码">Locked</b><span data-zh="找我要访问权限">ask for access</span></li></ul></div>
@@ -405,8 +406,8 @@ a.m:hover, a.m:focus-visible { background: var(--ink); color: var(--bg); }
       <a class="play frame" data-frame="Turtle Soup BOT" href="turtle-soup.html"><div class="tile"><img src="images/playground/turtle-soup-lamp.webp" alt="Turtle Soup BOT: a paper lamp glowing warm in the dark" data-zh-alt="海龟汤机器人：在暗处发着暖光的纸灯" loading="lazy" style="object-fit:cover"></div><b data-zh="海龟汤机器人">Turtle Soup BOT</b><span class="d" data-zh="一盏用灯光回答是或否的谜题灯">a lamp that answers yes / no in light</span></a>
       <a class="play frame" data-frame="Fashion Judge" href="fashion-judge.html"><div class="tile"><img src="images/playground/fashion-judge.webp" alt="A cardboard robot holding up a ^o^ score sign" data-zh-alt="举着 ^o^ 评分牌的纸板机器人" loading="lazy" style="object-fit:cover"></div><b data-zh="穿搭评委">Fashion Judge</b><span class="d" data-zh="看你穿得彩不彩，举牌打分">scores your outfit with a flip sign</span></a>
       <a class="play frame" data-frame="The Uncertain Robot" href="https://editor.p5js.org/yueyanZ/full/yOwZjNkkK" target="_blank" rel="noopener"><div class="tile" style="background:#0E1A14"><span style="font:600 15px/1.35 var(--f-mono);color:#3CF5A6;text-align:center;padding:14px" data-zh="「你说错了？」&lt;br&gt;……那你真好看。">“You’re wrong?”<br>…fine, you look stunning.</span></div><b data-zh="不确定机器人">The Uncertain Robot</b><span class="d" data-zh="被纠正就开始嘴硬的说话 AI">a talking AI that sulks when corrected</span></a>
-      <a class="play frame" data-frame="Fashion" href="fashion.html"><div class="tile gingham"><span class="sewn" style="font-size:24px" data-zh="做衣服">makes clothes</span></div><b data-zh="服装设计">Fashion design</b><span class="d" data-zh="本科作品">undergrad work</span></a>
-      <a class="play frame" data-frame="Wall" href="wall.html"><div class="tile"><span style="font:italic 400 26px var(--f-body);rotate:-4deg" data-zh="签个名 ✎">sign here ✎</span></div><b data-zh="签名墙">Signature wall</b><span class="d" data-zh="每位访客一张卡">one card per visitor</span></a>
+      <a class="play frame" data-frame="Fashion" href="fashion.html" hidden><div class="tile gingham"><span class="sewn" style="font-size:24px" data-zh="做衣服">makes clothes</span></div><b data-zh="服装设计">Fashion design</b><span class="d" data-zh="本科作品">undergrad work</span></a>
+      <a class="play frame" data-frame="Wall" href="wall.html" hidden><div class="tile"><span style="font:italic 400 26px var(--f-body);rotate:-4deg" data-zh="签个名 ✎">sign here ✎</span></div><b data-zh="签名墙">Signature wall</b><span class="d" data-zh="每位访客一张卡">one card per visitor</span></a>
     </div>
   </section>
 
@@ -435,7 +436,7 @@ a.m:hover, a.m:focus-visible { background: var(--ink); color: var(--bg); }
       <a class="c-row" href="https://www.linkedin.com/in/yueyan-zhang-32a800358" target="_blank" rel="noopener"><span class="k">LinkedIn</span><b>Yueyan (Amanda) Zhang</b><i aria-hidden="true">↗</i></a>
       <a class="c-row" href="https://drive.google.com/file/d/1B6-i2RoIu8FqGo9C3Kq7dGXys6Rky79E/view?usp=sharing" target="_blank" rel="noopener"><span class="k" data-zh="简历">Resume</span><b>CV (EN)</b><i aria-hidden="true">↗</i></a>
       <a class="c-row" href="https://drive.google.com/file/d/184YV-w04FZQ7mF_kf7-CJkpLy2x_W0DA/view?usp=sharing" target="_blank" rel="noopener"><span class="k" data-zh="简历">Resume</span><b>简历（中文）</b><i aria-hidden="true">↗</i></a>
-      <a class="c-row" href="wall.html"><span class="k" data-zh="签名墙">Signature wall</span><b data-zh="留个签名 ✎">Leave a signature ✎</b><i aria-hidden="true">→</i></a>
+      <a class="c-row" href="wall.html" hidden><span class="k" data-zh="签名墙">Signature wall</span><b data-zh="留个签名 ✎">Leave a signature ✎</b><i aria-hidden="true">→</i></a>
     </aside>
   </section>
 
