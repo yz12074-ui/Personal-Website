@@ -490,6 +490,19 @@
         else spawnGlassWord(manualWords[Math.floor(Math.random() * manualWords.length)], 16, x, y, false);
     });
 
+    // ?auto: drop a heart or word on its own every ~1.6s (for the case-study context card); keep at most 14 extras
+    if (new URLSearchParams(location.search).has('auto') && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const extras = [];
+        setInterval(() => {
+            if (document.hidden) return;
+            const x = 70 + Math.random() * 253, before = new Set(physicsMap.keys());
+            if (Math.random() > 0.5) spawnGlassHeart(x, -40);
+            else spawnGlassWord(manualWords[Math.floor(Math.random() * manualWords.length)], 16, x, -40, false);
+            for (const b of physicsMap.keys()) if (!before.has(b)) extras.push(b);
+            while (extras.length > 14) { const b = extras.shift(); Composite.remove(engine.world, b); physicsMap.get(b)?.remove(); physicsMap.delete(b); }
+        }, 1600);
+    }
+
     // 运行引擎
     const runner = Runner.create();
     Runner.run(runner, engine);

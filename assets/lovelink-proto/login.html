@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LoveLink · Sign in</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:transparent;font-family:"PingFang HK","PingFang SC",-apple-system,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+/* the 2026 "Welcome Back!" frame, rebuilt at 393×852 and scaled to fit */
+.app{position:absolute;left:0;top:0;width:393px;height:852px;transform-origin:0 0;overflow:hidden;
+  background:linear-gradient(180deg,#8f86dc 0%,#b3a8e0 30%,#cbc2e2 60%,#d3cbe0 100%)}
+.blob{position:absolute;border-radius:50%;filter:blur(40px);pointer-events:none;animation:float 7s ease-in-out infinite alternate}
+.b1{width:150px;height:110px;left:120px;top:20px;background:#5f4fd8;opacity:.75}
+.b2{width:170px;height:130px;left:40px;top:90px;background:#e7b9e8;opacity:.8;animation-delay:-3s}
+@keyframes float{to{transform:translate(24px,12px) scale(1.08)}}
+.sheet{position:absolute;left:0;right:0;top:134px;bottom:0;border-radius:28px 28px 0 0;
+  background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,.12) 40%,rgba(255,255,255,.08));
+  border-top:1px solid rgba(255,255,255,.7);backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px)}
+h1{position:absolute;top:44px;left:0;right:0;margin:0;text-align:center;color:#fff;font-weight:500;font-size:36px;letter-spacing:.5px}
+.field{position:absolute;left:44px;right:40px;height:38px;border-radius:19px;border:1px solid rgba(255,255,255,.75);
+  background:rgba(255,255,255,.12);display:flex;align-items:center;padding:0 16px;font-size:15px;color:#fff;transition:background .3s,box-shadow .3s}
+.field.focus{background:rgba(255,255,255,.28);box-shadow:0 0 0 3px rgba(255,255,255,.25)}
+.field .ph{color:rgba(255,255,255,.6)}
+.field .caret{display:none;width:1.5px;height:18px;background:#fff;margin-left:1px;animation:blink 1s steps(1) infinite}
+.field.focus .caret{display:inline-block}
+.f1{top:156px}.f2{top:213px}
+.pw{letter-spacing:3px}
+.btn{position:absolute;left:44px;right:40px;top:271px;height:38px;border-radius:19px;border:1px solid rgba(255,255,255,.7);
+  background:linear-gradient(90deg,#a99ee6,#cdbde9);color:#fff;font-size:19px;display:grid;place-items:center;overflow:hidden;transition:transform .15s,filter .3s}
+.btn.press{transform:scale(.96);filter:brightness(1.08)}
+.btn.load::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);animation:shine 1s linear infinite}
+.btn.ok{background:linear-gradient(90deg,#8177e0,#ff95c3)}
+@keyframes shine{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.terms{position:absolute;left:44px;top:336px;display:flex;align-items:center;gap:12px;font-size:11.5px;color:#4a4560}
+.box{width:15px;height:15px;border:1.3px solid #8a86a0;border-radius:2px;background:rgba(255,255,255,.6);display:grid;place-items:center;transition:background .2s,border-color .2s}
+.box.on{background:#8177e0;border-color:#8177e0}
+.box.on::after{content:"";width:7px;height:4px;border:2px solid #fff;border-top:0;border-right:0;rotate:-45deg;translate:0 -1px}
+.cw{position:absolute;top:592px;left:0;right:0;text-align:center;font-size:12px;color:#5a5570}
+.social{position:absolute;top:618px;left:0;right:0;display:flex;justify-content:center;gap:18px}
+.social i{width:46px;height:46px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 4px 12px rgba(80,60,160,.15)}
+.social svg{width:24px;height:24px;fill:#8177e0}
+.toast{position:absolute;left:50%;top:388px;translate:-50% 0;background:rgba(255,255,255,.9);color:#5a4f8f;font-size:13px;font-weight:600;padding:8px 16px;border-radius:99px;opacity:0;transition:opacity .4s,translate .4s}
+.toast.on{opacity:1;translate:-50% -6px}
+@keyframes blink{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.blob,.caret,.btn.load::after{animation:none}}
+</style>
+</head>
+<body>
+<div class="app" id="app" role="img" aria-label="Sign-in screen: email and password are typed in, terms ticked, Sign In pressed">
+  <div class="blob b1"></div><div class="blob b2"></div>
+  <div class="sheet">
+    <h1>Welcome Back!</h1>
+    <div class="field f1" id="f1"><span id="email"></span><span class="caret"></span><span class="ph" id="ph1">Email</span></div>
+    <div class="field f2" id="f2"><span id="pw" class="pw"></span><span class="caret"></span><span class="ph pw" id="ph2">*******</span></div>
+    <div class="btn" id="btn">Sign In</div>
+    <div class="terms"><span class="box" id="box"></span>I agree to the Terms of Service and Privacy Policy.</div>
+    <div class="toast" id="toast">💜 Linked with Rick</div>
+    <div class="cw">continue with</div>
+    <div class="social">
+      <i><svg viewBox="0 0 24 24"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7zm5 3.5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9zm0 2a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM17.3 5.5a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4z"/></svg></i>
+      <i><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-1.6 19.9V14.9H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.3v7A10 10 0 0 0 12 2z"/></svg></i>
+      <i><svg viewBox="0 0 24 24"><path d="M22 5.9c-.7.3-1.5.5-2.3.6.8-.5 1.5-1.3 1.8-2.2-.8.5-1.7.8-2.6 1a4 4 0 0 0-6.9 3.7A11.4 11.4 0 0 1 3.7 4.8a4 4 0 0 0 1.2 5.4c-.7 0-1.3-.2-1.8-.5 0 2 1.4 3.6 3.2 4a4 4 0 0 1-1.8.1 4 4 0 0 0 3.8 2.8A8 8 0 0 1 2 18.2 11.4 11.4 0 0 0 8.3 20c7.4 0 11.5-6.2 11.5-11.5v-.5c.8-.6 1.5-1.3 2.2-2.1z"/></svg></i>
+    </div>
+  </div>
+</div>
+<script>
+const $=id=>document.getElementById(id), app=$("app");
+const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
+function fit(){app.style.transform=`scale(${Math.min(innerWidth/393,innerHeight/852)})`}
+fit();addEventListener("resize",fit);
+const wait=ms=>new Promise(r=>setTimeout(r,RM?Math.min(ms,200):ms));
+async function type(el,ph,text,ms){ph.hidden=true;for(const c of text){el.textContent+=c;await wait(ms)}}
+async function loop(){
+  for(;;){
+    $("email").textContent="";$("pw").textContent="";$("ph1").hidden=$("ph2").hidden=false;
+    ["f1","f2"].forEach(f=>$(f).classList.remove("focus"));$("box").classList.remove("on");
+    $("btn").className="btn";$("btn").textContent="Sign In";$("toast").classList.remove("on");
+    await wait(900);
+    $("f1").classList.add("focus");await wait(300);
+    await type($("email"),$("ph1"),"helen@lovelink.app",75);await wait(350);
+    $("f1").classList.remove("focus");$("f2").classList.add("focus");await wait(300);
+    await type($("pw"),$("ph2"),"••••••••",110);await wait(350);
+    $("f2").classList.remove("focus");await wait(250);
+    $("box").classList.add("on");await wait(600);
+    $("btn").classList.add("press");await wait(160);$("btn").classList.remove("press");
+    $("btn").classList.add("load");$("btn").textContent="Signing in…";await wait(1300);
+    $("btn").className="btn ok";$("btn").textContent="✓ Welcome back, Helen";$("toast").classList.add("on");
+    await wait(2800);
+  }
+}
+loop();
+</script>
+</body>
+</html>

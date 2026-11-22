@@ -19,8 +19,16 @@
 .ba-pill{align-self:flex-start;font:600 13px/1 var(--f-mono);letter-spacing:.08em;padding:7px 13px;border-radius:99px;background:#4b5563;color:#f9fafb}
 .ba-pill.now{background:linear-gradient(90deg,#8177E0,#FF95C3)}
 .ba-step{text-align:center;max-width:none;color:#e5e7eb;font:13px var(--f-mono);margin:22px 0 0}
-/* motion: three live phones */
-.moves{display:grid;grid-template-columns:repeat(3,minmax(0,230px));justify-content:center;gap:40px;margin-top:24px}
+/* context: opening + sign-in, side by side */
+.ctx{grid-template-columns:minmax(0,1fr) 400px}
+.ctx-duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;width:100%}
+.ctx-duo figure{margin:0;display:flex;flex-direction:column;gap:10px}
+.ctx-duo .ph{aspect-ratio:393/852;border-radius:28px;overflow:hidden;background:#221d36;box-shadow:0 0 0 5px #3b3360,0 18px 40px rgba(129,119,224,.22)}
+.ctx-duo iframe{width:100%;height:100%;border:0;display:block}
+.ctx-duo figcaption{font:13px var(--f-mono);color:var(--dim);text-align:center}
+@media (max-width:760px){.ctx-duo{max-width:400px}}
+/* motion: live phones */
+.moves{display:grid;grid-template-columns:repeat(2,minmax(0,230px));justify-content:center;gap:40px;margin-top:24px}
 .moves figure{margin:0;display:flex;flex-direction:column;gap:10px}
 .moves .ph{aspect-ratio:393/852;border-radius:30px;overflow:hidden;background:#221d36;box-shadow:0 0 0 5px #3b3360;display:flex;align-items:center}
 .moves iframe{width:100%;height:100%;border:0;display:block}
@@ -94,13 +102,11 @@
           <p data-zh="我问到的每一对都有聊天、通话和照片。但仍有 <span class=&quot;num&quot;>75%</span> 的人说，感情不顺会影响正常生活；大多数人说最多只能 <span class=&quot;num&quot;>3 个月</span>不见面。">Every couple I asked already had chat, calls and photos. Still, <span class="num">75%</span> said a struggling relationship disrupted their normal life, and most said <span class="num">3 months</span> was the longest they could go without meeting.</p>
           <p data-zh="难的不是少了某个功能，而是一个城市的凌晨三点，你想说话的人在另一个城市睡着了。">The hard moment isn’t a missing feature. It’s 3 a.m. in one city, and the person you want to talk to is asleep in the other.</p>
           <p data-zh="<span class=&quot;emph&quot;>所以我设计的是消息之间的空白，而不是消息本身。</span>"><span class="emph">So I designed for the gaps between messages, not the messages themselves.</span></p>
-          <div class="meters">
-            <div class="meter"><span data-zh="界面">Screen</span><strong id="mScr">1/9</strong></div>
-            <div class="meter"><span data-zh="Tab">Tab</span><strong id="mTab">—</strong></div>
-          </div>
-          <span class="chip none" id="mFeat" data-zh="打开 App">Opening the app</span>
         </div>
-        <div class="device" id="loopApp"></div>
+        <div class="ctx-duo">
+          <figure><div class="ph"><iframe src="assets/lovelink-proto/splash.html?auto" title="Opening screen: glass words and hearts fall onto the LoveLink ID field. Click to drop more."></iframe></div><figcaption data-zh="开屏 · 点一下掉爱心">Opening · tap to drop hearts</figcaption></figure>
+          <figure><div class="ph"><iframe src="assets/lovelink-proto/login.html" title="Sign in: email and password are typed in, then Sign In"></iframe></div><figcaption data-zh="登录">Sign in</figcaption></figure>
+        </div>
       </div>
     </section>
 
@@ -219,10 +225,9 @@
 
     <section id="motion" class="wide">
       <span class="eyebrow ok" data-zh="动效">In motion</span>
-      <h2 data-zh="三个会动的瞬间。">Three moments, moving.</h2>
-      <p data-zh="点第一个屏幕会掉下爱心；在第三个里输入你自己的吵架问题。">Tap the first screen to drop hearts. Type your own fight into the third.</p>
+      <h2 data-zh="两个会动的瞬间。">Two moments, moving.</h2>
+      <p data-zh="在右边输入你自己的吵架问题，看 ELVO 和 VELO 替你吵。">Type your own fight on the right and watch ELVO and VELO argue it out.</p>
       <div class="moves">
-        <figure><div class="ph"><iframe src="assets/lovelink-proto/splash.html" title="Link Your Love: glass words fall and pile up on the LoveLink ID field" loading="lazy"></iframe></div><figcaption data-zh="<b>Link Your Love</b> · 玻璃字落下，堆在 ID 输入框上。"><b>Link Your Love</b> · glass words fall and pile on the ID field.</figcaption></figure>
         <figure><div class="ph"><video src="images/lovelink/lovelink-voice.mp4" poster="images/lovelink/lovelink-voice.webp" muted loop playsinline autoplay aria-label="Voice input: a sound wave moves while the AI friend listens"></video></div><figcaption data-zh="<b>我在听</b> · 说给 AI 朋友，声波跟着你的声音动。"><b>I’m listening</b> · speak to an AI friend, the wave follows your voice.</figcaption></figure>
         <figure><div class="ph"><iframe src="assets/lovelink-proto/argue.html" title="Argue mode: type a fight, ELVO and VELO argue it out for you" loading="lazy"></iframe></div><figcaption data-zh="<b>吵架模式</b> · 你说一句，ELVO 和 VELO 替你吵。"><b>Argue mode</b> · you say it once, ELVO and VELO argue it for you.</figcaption></figure>
       </div>
@@ -306,22 +311,6 @@ function player(el,frames,onFrame){
   new IntersectionObserver(([e])=>{seen=e.isIntersecting;seen?show(i):clearTimeout(timer)}).observe(el);
   return {show,goto(name){const k=frames.findIndex(f=>f.n===name);if(k>=0)show(k)},pause(){paused=true;el.classList.add("paused");clearTimeout(timer)},play(){paused=false;el.classList.remove("paused");show(i)}};
 }
-
-// Context: the whole app, looping
-const APP=[
-  {n:"lovelink-splash",tab:"—",feat:null,alt:"Splash screen"},
-  {n:"lovelink-link",tab:"Me",feat:"Pair with your partner",alt:"Pairing screen"},
-  {n:"lovelink-home",tab:"Home",feat:"Countdown + their local time",alt:"Home"},
-  {n:"lovelink-chat",tab:"Chat",feat:"SOS when emotions run high",alt:"Chat with SOS menu"},
-  {n:"lovelink-ai",tab:"Chat",feat:"An AI friend who listens",alt:"AI friend"},
-  {n:"lovelink-aipk",tab:"Chat",feat:"Argue mode: both sides",alt:"Argue mode"},
-  {n:"lovelink-room",tab:"Room",feat:"Decorate a room together",alt:"Design room"},
-  {n:"lovelink-store",tab:"Room",feat:"Credits → mystery boxes",alt:"Store"},
-  {n:"lovelink-phono",tab:"Home",feat:"A voice message for later",alt:"Phonograph"}];
-player($("loopApp"),APP,(f,i)=>{
-  $("mScr").textContent=(i+1)+"/"+APP.length;$("mTab").textContent=f.tab;
-  const c=$("mFeat");c.textContent=f.feat||"Opening the app";c.classList.toggle("none",!f.feat);
-});
 
 // Fix phones: pins jump the phone to that screen and pause; leaving resumes
 document.querySelectorAll(".pins").forEach(box=>{
