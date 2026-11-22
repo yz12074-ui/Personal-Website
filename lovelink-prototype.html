@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LoveLink prototype — Amanda Zhang</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{--bg:#EEEBF7;--ink:#1D1B19;--dim:#6A655E;--brand:#8177E0;--pink:#FF95C3;--bezel:#1d1a2b}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17151f;--ink:#EEEAE2;--dim:#A39D93}}
+:root[data-theme="dark"]{--bg:#17151f;--ink:#EEEAE2;--dim:#A39D93}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,sans-serif}
+.wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;gap:56px;padding:24px 16px}
+.rail{width:200px;display:flex;flex-direction:column;gap:4px}
+.rail h1{font-size:22px;margin:0 0 2px}
+.rail p{margin:0 0 14px;font:13px/1.5 "JetBrains Mono",monospace;color:var(--dim)}
+.rail span{font:600 11px "JetBrains Mono",monospace;letter-spacing:.08em;color:var(--dim);margin:12px 0 2px}
+.rail button{all:unset;cursor:pointer;padding:6px 10px;border-radius:8px;font-size:15px}
+.rail button:hover{background:rgba(129,119,224,.12)}
+.rail button.on{background:var(--brand);color:#fff}
+.rail a{margin-top:16px;font:12px "JetBrains Mono",monospace;color:var(--dim)}
+.phone{position:relative;width:var(--w,360px);aspect-ratio:716/1551;border-radius:calc(var(--w,360px)*.13);border:10px solid var(--bezel);background:var(--bezel);
+  box-shadow:0 30px 70px -20px rgba(60,40,140,.45);overflow:hidden;flex:none;container-type:inline-size}
+.screen{position:absolute;inset:0;overflow:hidden;border-radius:calc(var(--w,360px)*.11)}
+.screen img,.screen iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;object-fit:cover;object-position:top}
+.screen img{animation:in .3s ease}
+@keyframes in{from{opacity:.4;transform:scale(1.015)}}
+.hot{position:absolute;all:unset;position:absolute;cursor:pointer;border-radius:10px}
+.hot:focus-visible{outline:2px solid #fff;outline-offset:1px}
+.debug .hot{background:rgba(255,0,120,.25);outline:1px solid #ff0078}
+/* tap hint: one pulsing dot on the next thing to tap */
+.tap{position:absolute;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;background:var(--pink);pointer-events:none;z-index:5;box-shadow:0 0 0 0 rgba(255,149,195,.7);animation:pulse 1.6s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 16px rgba(255,149,195,0)}100%{box-shadow:0 0 0 0 rgba(255,149,195,0)}}
+.toast{position:absolute;left:50%;bottom:13%;translate:-50% 0;background:rgba(29,26,43,.88);color:#fff;font:13px system-ui,sans-serif;padding:8px 14px;border-radius:99px;white-space:nowrap;z-index:6;opacity:0;transition:opacity .25s;pointer-events:none}
+.toast.on{opacity:1}
+/* embed mode: just the phone, sized to the iframe */
+.embed body{background:transparent;min-height:0}
+.embed .wrap{padding:0;min-height:100vh}
+.embed .rail{display:none}
+.embed .phone{box-shadow:none}
+@media (max-width:640px){.rail{display:none}}
+@media (prefers-reduced-motion:reduce){.screen img{animation:none}.tap{animation:none}}
+</style>
+<script>if(new URLSearchParams(location.search).has("embed"))document.documentElement.classList.add("embed")</script>
+</head>
+<body>
+<div class="wrap">
+  <nav class="rail" id="rail" aria-label="Screens">
+    <h1>LoveLink</h1>
+    <p>2026 redesign. Tap around, or jump to a screen.</p>
+  </nav>
+  <div class="phone" id="phone"><div class="screen" id="screen"></div><div class="toast" id="toast"></div></div>
+</div>
+<script>
+// Screens are the 2026 Figma frames (Portfolio2026 › _assets). Hotspots are [x%, y%, w%, h%, target].
+// Add ?debug to see them, ?nohint to hide the pulsing dot.
+const TAB_A=[21.5,34.5,48.5,62.5,75], TAB_B=[21.5,34.5,47.5,59.5,71.5], TAB_T=[26,38,49,63,74];
+const TABS=["chat","room","home","test","me"];
+const tabs=(xs,y=93.2)=>xs.map((x,i)=>[x-5,y-3.2,10,6.4,TABS[i]]);
+const S={
+  landing: {img:"register",group:"Start",label:"Welcome",hot:[[19,88,62,5,"signup"],[60,92.8,16,3.8,"login"]],hint:0},
+  signup:  {img:"signin",group:"Start",label:"Sign up",hot:[[11,64.5,78,4.6,"link"]],hint:0},
+  login:   {img:"welcome",group:"Start",label:"Sign in",hot:[[11,47,78,5,"link"]],hint:0},
+  link:    {live:"assets/lovelink-proto/splash.html",group:"Start",label:"Link your love",hot:[],tap:[72,67.5]},
+  home:    {img:"home",group:"Home",label:"Home",hot:[...tabs(TAB_A,93.5),[4,58,91,8,"phono"],[52.5,29,45,21,"album"]],hint:0},
+  phono:   {img:"phono",group:"Home",label:"Phonograph",hot:[[3,7,12,6,"home"],...tabs(TAB_B)],hint:0},
+  album:   {img:"album",group:"Home",label:"Memory wall",hot:[[3,3.5,12,6,"home"]],hint:0},
+  chat:    {img:"chat",group:"Chat",label:"Chat · SOS",hot:[[0,4,26,7,"home"],[50,44,20,11,"aipk"],[70,35,20,11,"ai"],[58,56,20,10,"phono"]],hint:1},
+  ai:      {img:"ai",group:"Chat",label:"AI friend",hot:[[3,7,12,6,"chat"],...tabs(TAB_B)],hint:2},
+  aipk:    {live:"assets/lovelink-proto/argue.html",group:"Chat",label:"Argue mode",hot:[],tap:[50,19.5]},
+  room:    {img:"room",group:"Room",label:"Design room",hot:[[3,7,12,6,"home"],[5,83,90,5.4,"store"],...tabs(TAB_B)],hint:1},
+  store:   {img:"store",group:"Room",label:"Store",hot:[[3,7,12,6,"room"],...tabs(TAB_B)],hint:3},
+  fridge:  {img:"fridge",group:"Room",label:"Shared fridge",hot:[[3,4.5,14,6,"room"]],hint:0},
+  test:    {img:"test",group:"Test",label:"Personality test",hot:tabs(TAB_T,94)},
+};
+const $=id=>document.getElementById(id), screen=$("screen"), phone=$("phone");
+const qs=new URLSearchParams(location.search);
+if(qs.has("debug"))document.documentElement.classList.add("debug");
+let hintOn=!qs.has("nohint"), cur=null, toastT;
+
+// rail
+let g="";for(const [id,s] of Object.entries(S)){if(s.group!==g){g=s.group;$("rail").insertAdjacentHTML("beforeend",`<span>${g.toUpperCase()}</span>`)}
+  $("rail").insertAdjacentHTML("beforeend",`<button data-go="${id}">${s.label}</button>`)}
+$("rail").insertAdjacentHTML("beforeend",'<a href="lovelink.html">← Case study</a>');
+$("rail").onclick=e=>{const b=e.target.closest("[data-go]");if(b)go(b.dataset.go)};
+
+function toast(t){const el=$("toast");el.textContent=t;el.classList.add("on");clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove("on"),1600)}
+function go(id){
+  if(id==="me")return toast("Profile isn’t in this prototype");
+  const s=S[id];if(!s)return;cur=id;
+  screen.innerHTML=s.live?`<iframe src="${s.live}" title="${s.label}"></iframe>`:`<img src="assets/lovelink-proto/${s.img}.webp" alt="${s.label}">`;
+  s.hot.forEach(([x,y,w,h,to])=>{const b=document.createElement("button");b.className="hot";b.style.cssText=`left:${x}%;top:${y}%;width:${w}%;height:${h}%`;
+    b.setAttribute("aria-label",to==="me"?"Me":(S[to]?.label||to));b.onclick=()=>go(to);screen.append(b)});
+  placeHint();
+  document.querySelectorAll("#rail [data-go]").forEach(b=>b.classList.toggle("on",b.dataset.go===id));
+  parent!==window&&parent.postMessage({screen:id},location.origin);
+}
+function placeHint(){
+  screen.querySelector(".tap")?.remove();
+  const s=S[cur];if(!hintOn||!s)return;
+  let p=s.tap;if(!p&&s.hint!=null){const [x,y,w,h]=s.hot[s.hint];p=[x+w/2,y+h/2]}
+  if(p)screen.insertAdjacentHTML("beforeend",`<i class="tap" style="left:${p[0]}%;top:${p[1]}%"></i>`);
+}
+// fit the phone to the window (embed: fill the iframe)
+function fit(){const emb=document.documentElement.classList.contains("embed");
+  const h=emb?innerHeight:Math.min(860,innerHeight-48), w=emb?innerWidth:Math.min(400,innerWidth-32);
+  phone.style.setProperty("--w",Math.floor(Math.min(w,h*716/1551))+"px")}
+fit();addEventListener("resize",fit);
+// messages: live screens ask to move on ({go}); the case study can drive it ({jump}, {hint})
+addEventListener("message",e=>{if(e.origin!==location.origin||!e.data)return;
+  if(e.data.go)go(e.data.go);
+  if(e.data.jump&&e.data.jump!==cur)go(e.data.jump);
+  if("hint" in e.data){hintOn=!!e.data.hint;placeHint()}});
+go(S[location.hash.slice(1)]?location.hash.slice(1):"landing");
+</script>
+</body>
+</html>

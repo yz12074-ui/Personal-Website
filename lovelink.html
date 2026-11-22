@@ -7,6 +7,28 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;600&display=swap">
 <link rel="stylesheet" href="assets/case.css">
+<style>
+/* 2024 → 2026: two synced phones on a dark panel */
+.ba-panel{background:#221d36;border-radius:20px;padding:40px 24px;margin-top:24px}
+.ba{display:grid;grid-template-columns:repeat(2,minmax(0,250px));justify-content:center;gap:64px}
+.ba figure{margin:0;display:flex;flex-direction:column;gap:30px}
+.ba .device{width:100%}
+.ba .device .host{aspect-ratio:716/1551;border-radius:28px;overflow:hidden;box-shadow:0 0 0 5px #3b3360,0 18px 48px rgba(129,119,224,.25)}
+.ba .device .host img{object-fit:cover}
+.ba .device .stories i b{background:#fff}
+.ba-pill{align-self:flex-start;font:600 13px/1 var(--f-mono);letter-spacing:.08em;padding:7px 13px;border-radius:99px;background:#4b5563;color:#f9fafb}
+.ba-pill.now{background:linear-gradient(90deg,#8177E0,#FF95C3)}
+.ba-step{text-align:center;max-width:none;color:#e5e7eb;font:13px var(--f-mono);margin:22px 0 0}
+/* motion: three live phones */
+.moves{display:grid;grid-template-columns:repeat(3,minmax(0,230px));justify-content:center;gap:40px;margin-top:24px}
+.moves figure{margin:0;display:flex;flex-direction:column;gap:10px}
+.moves .ph{aspect-ratio:393/852;border-radius:30px;overflow:hidden;background:#221d36;box-shadow:0 0 0 5px #3b3360;display:flex;align-items:center}
+.moves iframe{width:100%;height:100%;border:0;display:block}
+.moves video{width:100%;display:block}
+.moves figcaption,.try p.cap{font-size:15px;color:var(--dim);line-height:1.45}
+.try iframe{display:block;width:100%;height:760px;border:0;margin-top:20px}
+@media (max-width:720px){.ba{gap:16px;grid-template-columns:repeat(2,minmax(0,1fr))}.ba-panel{padding:28px 12px}.moves{grid-template-columns:minmax(0,230px)}.try iframe{height:640px}}
+</style>
 </head>
 <body>
 <div class="shell">
@@ -16,11 +38,14 @@
     <span class="meta" data-zh="目录">CONTENTS</span>
     <nav id="toc">
       <a href="#context" data-zh="背景">Context</a>
+      <a href="#redesign" data-zh="2024 → 2026 改版">2024 → 2026</a>
       <a href="#findings" data-zh="调研发现">What I found</a>
       <a href="#pare" data-zh="收敛">Pare it down</a>
       <a href="#fix1" data-zh="方案 1 · AI 朋友">Fix 1 · AI friends</a>
       <a href="#fix2" data-zh="方案 2 · 共建房间">Fix 2 · Shared room</a>
       <a href="#fix3" data-zh="方案 3 · 首页">Fix 3 · Home</a>
+      <a href="#motion" data-zh="动效">In motion</a>
+      <a href="#try" data-zh="试一试">Try it</a>
       <a href="#system" data-zh="视觉规范">Visual system</a>
       <a href="#tradeoffs" data-zh="取舍">Trade-offs</a>
       <a href="#reflection" data-zh="反思">Reflection</a>
@@ -76,6 +101,20 @@
           <span class="chip none" id="mFeat" data-zh="打开 App">Opening the app</span>
         </div>
         <div class="device" id="loopApp"></div>
+      </div>
+    </section>
+
+    <!-- TODO(Amanda): the "what changed" line describes what's visible in the two Figma files; add the reason in your own words if you have one -->
+    <section id="redesign" class="wide">
+      <span class="eyebrow ok" data-zh="2024 → 2026">2024 → 2026</span>
+      <h2 data-zh="同一个想法，重新做了一遍。">Same idea, redrawn.</h2>
+      <p data-zh="2024 版是平铺的淡紫卡片。2026 版换成了叠在照片上的毛玻璃：见面倒计时和对方时间合进一张卡，吵架模式换成深色玻璃界面。">The 2024 version was flat lilac cards. In 2026 it became frosted glass over your photos: the reunion countdown and their local time share one card, and Argue mode moved to a dark glass screen.</p>
+      <div class="ba-panel">
+        <div class="ba">
+          <figure><span class="ba-pill" data-zh="2024 · 改版前">2024 · Before</span><div class="device" id="baBefore"></div></figure>
+          <figure><span class="ba-pill now" data-zh="2026 · 改版后">2026 · After</span><div class="device" id="baAfter"></div></figure>
+        </div>
+        <p class="ba-step" id="baStep">Link your partner</p>
       </div>
     </section>
 
@@ -144,11 +183,6 @@
           <button class="pin" data-shot="lovelink-aipk"><em>3</em><div data-zh="<b>吵架模式</b>先说给 AI 听。一个站你这边，一个帮你理解对方。"><b>Argue mode</b>Say it to the AI first. One friend takes your side, the other explains theirs.</div></button>
         </div>
       </div>
-      <div class="chat" id="chat" aria-label="Argue mode example">
-        <div class="bub me" data-zh="<b>你</b>「他忘了我的生日！」"><b>You</b>“He forgot my birthday!”</div>
-        <div class="bub" data-zh="<b>ELVO · 站你这边</b>「Rick 怎么能忘了 Helen 的生日？太过分了！」"><b>ELVO · on your side</b>“How could Rick forget Helen’s birthday? That’s just unforgivable!”</div>
-        <div class="bub" data-zh="<b>VELO · 站他那边</b>「Rick 可能工作太忙了。这不是借口，但他也许只是一时忘了日子。」"><b>VELO · on his side</b>“Rick might have been overwhelmed with work. It’s not an excuse, but the date may have just slipped his mind.”</div>
-      </div>
     </section>
 
     <section id="fix2" class="wide">
@@ -181,6 +215,25 @@
           <button class="pin" data-shot="lovelink-phono"><em>3</em><div data-zh="<b>错过电话的留声机</b>留一段语音，对方醒来就能听。"><b>A phonograph for missed calls</b>Leave a voice message they can play when they wake up.</div></button>
         </div>
       </div>
+    </section>
+
+    <section id="motion" class="wide">
+      <span class="eyebrow ok" data-zh="动效">In motion</span>
+      <h2 data-zh="三个会动的瞬间。">Three moments, moving.</h2>
+      <p data-zh="点第一个屏幕会掉下爱心；在第三个里输入你自己的吵架问题。">Tap the first screen to drop hearts. Type your own fight into the third.</p>
+      <div class="moves">
+        <figure><div class="ph"><iframe src="assets/lovelink-proto/splash.html" title="Link Your Love: glass words fall and pile up on the LoveLink ID field" loading="lazy"></iframe></div><figcaption data-zh="<b>Link Your Love</b> · 玻璃字落下，堆在 ID 输入框上。"><b>Link Your Love</b> · glass words fall and pile on the ID field.</figcaption></figure>
+        <figure><div class="ph"><video src="images/lovelink/lovelink-voice.mp4" poster="images/lovelink/lovelink-voice.webp" muted loop playsinline autoplay aria-label="Voice input: a sound wave moves while the AI friend listens"></video></div><figcaption data-zh="<b>我在听</b> · 说给 AI 朋友，声波跟着你的声音动。"><b>I’m listening</b> · speak to an AI friend, the wave follows your voice.</figcaption></figure>
+        <figure><div class="ph"><iframe src="assets/lovelink-proto/argue.html" title="Argue mode: type a fight, ELVO and VELO argue it out for you" loading="lazy"></iframe></div><figcaption data-zh="<b>吵架模式</b> · 你说一句，ELVO 和 VELO 替你吵。"><b>Argue mode</b> · you say it once, ELVO and VELO argue it for you.</figcaption></figure>
+      </div>
+    </section>
+
+    <section id="try" class="wide try">
+      <span class="eyebrow ok" data-zh="试一试">Try it</span>
+      <h2 data-zh="整个 App，都能点。">The whole app, tappable.</h2>
+      <p data-zh="从注册开始，绑定伴侣，然后进聊天点「吵架模式」。粉色圆点提示下一步。">Start at sign-up, link with your partner, then open Chat and tap Argue mode. The pink dot shows where to tap next.</p>
+      <iframe src="lovelink-prototype.html?embed" title="LoveLink 2026 interactive prototype" loading="lazy"></iframe>
+      <p class="cap"><a href="lovelink-prototype.html" data-zh="全屏打开 →">Open full screen →</a></p>
     </section>
 
     <section id="system" class="wide">
@@ -233,7 +286,7 @@
 <script>
 const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
 const $=id=>document.getElementById(id);
-const src=n=>`images/lovelink/${n}.webp`;
+const src=n=>n.includes("/")?`${n}.webp`:`images/lovelink/${n}.webp`;
 
 // ---------- Story-bar phone loop (same pattern as my other case studies) ----------
 function player(el,frames,onFrame){
@@ -278,8 +331,12 @@ document.querySelectorAll(".pins").forEach(box=>{
   box.addEventListener("mouseleave",()=>ph.play());
 });
 
-// Argue mode chat plays in when it scrolls into view
-new IntersectionObserver(([e],o)=>{if(!e.isIntersecting)return;o.disconnect();[...$("chat").children].forEach((b,k)=>setTimeout(()=>b.classList.add("in"),RM?0:k*900))},{threshold:.4}).observe($("chat"));
+// 2024 → 2026: the 2026 phone drives, the 2024 phone follows the same step
+const P26="assets/lovelink-proto/";
+const BA=[["v24-link",P26+"link","Link your partner","绑定伴侣"],["v24-home",P26+"home","Home","首页"],["v24-aipk",P26+"aipk","Argue mode","吵架模式"]];
+const before=player($("baBefore"),BA.map(b=>({n:b[0],ms:3000,alt:"2024: "+b[2]})));before.pause();
+player($("baAfter"),BA.map(b=>({n:b[1],ms:3000,alt:"2026: "+b[2]})),(f,i)=>{before.show(i);$("baStep").textContent=BA[i][document.documentElement.lang==="zh-CN"?3:2]});
+$("baBefore").querySelector(".host").onclick=null;
 
 // Wireframe zoom
 $("wire").onclick=()=>$("zoom").showModal();

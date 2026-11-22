@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LoveLink 智能缘分版</title>
+    <!-- 引入 Matter.js 提供物理引擎支持 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+        body {
+            background: transparent;
+            margin: 0;
+            overflow: hidden;
+            font-family: 'PingFang HK', 'Inter', -apple-system, sans-serif;
+        }
+
+        /* 手机框背景 */
+        .phone-container {
+            width: 393px;
+            height: 852px;
+            border-radius: 40px; 
+            background: linear-gradient(180deg, rgba(122, 115, 223, 0.78) 0%, rgba(214, 178, 232, 0.45) 72.8%), #FFF;
+            box-shadow: 0px 1px 1px 0 rgba(0, 0, 0, 0.30), 0px 40px 80px -20px rgba(0,0,0,0.25);
+            position: relative;
+            overflow: hidden;
+            transform-origin: 0 0;
+        }
+
+        /* --- 动态渐变色块 (Blobs) --- */
+        .mesh-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            overflow: hidden;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 9999px;
+            filter: blur(60px);
+            animation: float 10s infinite alternate ease-in-out;
+        }
+
+        .blob-1 {
+            width: 380px; height: 380px;
+            left: -50px; top: 120px;
+            background: linear-gradient(180deg, rgba(255, 240, 205, 0.9) 0%, rgba(255, 180, 200, 0.3) 100%);
+        }
+
+        .blob-2 {
+            width: 300px; height: 300px;
+            right: -80px; top: 350px;
+            background: linear-gradient(180deg, rgba(205, 104, 255, 0.5) 0%, rgba(122, 115, 223, 0.8) 100%);
+            animation-delay: -3s;
+        }
+
+        .blob-3 {
+            width: 250px; height: 250px;
+            left: -40px; top: 500px;
+            background: linear-gradient(193deg, #FB8787 0%, rgba(242, 178, 234, 0.84) 70%, #FFFAD3 100%);
+            animation-delay: -6s;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, -30px) scale(1.1); }
+        }
+
+        /* --- UI 图层 --- */
+        .content-layer {
+            position: absolute;
+            inset: 0;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .interactive-el { pointer-events: auto; }
+
+        /* --- 加宽的 Input Bar --- */
+        .input-wrapper {
+            position: absolute;
+            top: 550px; 
+            left: 50%;
+            transform: translateX(-50%);
+            width: 280px; 
+            height: 46px; 
+            background: rgba(255, 255, 255, 0.10);
+            border: none;
+            box-shadow: 
+                inset 1px 1px 2px rgba(255, 255, 255, 0.65),
+                inset -1px -1px 2px rgba(255, 255, 255, 0.05),
+                0 4px 15px rgba(0,0,0,0.05);
+            border-radius: 23px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 20;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+        }
+
+        .glass-input {
+            width: 70%;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px; 
+            font-family: 'PingFang HK', sans-serif;
+            font-weight: 500;
+            text-align: right;
+            outline: none;
+            padding-right: 8px;
+        }
+        
+        .glass-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+        }
+
+        .input-icon {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* --- 性别选择器 --- */
+        .gender-selector {
+            position: absolute;
+            bottom: 60px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            z-index: 20;
+        }
+
+        .gender-btn {
+            width: 44px; 
+            height: 44px;
+            border-radius: 9999px;
+            background: rgba(255, 255, 255, 0.10);
+            border: none;
+            box-shadow: inset 1px 1px 2px rgba(255,255,255,0.55), 0 4px 10px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: rgba(255,255,255,0.9);
+            backdrop-filter: blur(12px);
+        }
+
+        .gender-btn svg { width: 22px; height: 22px; stroke: currentColor; stroke-width: 1.5; fill: none; }
+        
+        .gender-btn.active {
+            background: rgba(255, 255, 255, 0.95); 
+            color: #b388ff; 
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* --- 新增：AI 预测按钮 --- */
+        .ai-btn {
+            position: absolute;
+            bottom: 130px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 24px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            box-shadow: 
+                inset 1px 1px 2px rgba(255, 255, 255, 0.8),
+                inset -1px -1px 2px rgba(255, 255, 255, 0.05),
+                0 8px 20px rgba(0,0,0,0.1);
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 20;
+            backdrop-filter: blur(15px);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .ai-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateX(-50%) scale(1.05);
+        }
+
+        .ai-btn:active {
+            transform: translateX(-50%) scale(0.95);
+        }
+
+        /* --- 新增：AI 结果弹窗 --- */
+        .fortune-modal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 300px;
+            padding: 30px 20px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px) saturate(150%);
+            -webkit-backdrop-filter: blur(25px) saturate(150%);
+            box-shadow: 
+                inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.9),
+                inset -1.5px -1.5px 4px rgba(255, 255, 255, 0.05),
+                0 30px 40px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+            text-align: center;
+            color: white;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .fortune-modal.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .fortune-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .fortune-text {
+            font-size: 15px;
+            font-weight: 400;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .close-btn {
+            padding: 8px 20px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+
+        /* --- 物理碰撞掉落物层 --- */
+        #physics-layer {
+            position: absolute;
+            inset: 0;
+            z-index: 15;
+            pointer-events: none;
+        }
+
+        .physics-item {
+            position: absolute;
+            top: 0; left: 0;
+            will-change: transform;
+            pointer-events: none;
+        }
+
+        /* 玻璃爱心的专属样式 */
+        .glass-heart {
+            background: rgba(255, 255, 255, 0.0);
+            backdrop-filter: blur(20px) saturate(120%);
+            -webkit-backdrop-filter: blur(20px) saturate(120%);
+            border: none;
+            box-shadow: 
+                inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.85),
+                inset -1.5px -1.5px 4px rgba(255, 255, 255, 0.05),
+                0 20px 30px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .glass-heart svg {
+            width: 22px;
+            height: 22px;
+            fill: rgba(255, 255, 255, 0.2);
+            stroke: rgba(255, 255, 255, 0.9);
+            stroke-width: 1.5;
+        }
+
+        /* 完美玻璃药丸文字样式 */
+        .glass-pill {
+            background: rgba(255, 255, 255, 0.0);
+            backdrop-filter: blur(20px) saturate(120%);
+            -webkit-backdrop-filter: blur(20px) saturate(120%);
+            border: none;
+            box-shadow: 
+                inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.85),
+                inset -1.5px -1.5px 4px rgba(255, 255, 255, 0.05),
+                0 20px 30px rgba(0, 0, 0, 0.15);
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 600;
+            font-family: 'PingFang HK', sans-serif;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="phone-container" id="app-area">
+    
+    <!-- 动态渐变背景块 -->
+    <div class="mesh-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- 物理粒子渲染层：标题文字将在这里通过 JS 生成并掉落 -->
+    <div id="physics-layer"></div>
+
+    <!-- UI 内容层 -->
+    <div class="content-layer">
+        
+        <!-- 加宽的 Figma 输入框 (作为物理碰撞挡板) -->
+        <div class="input-wrapper interactive-el" id="input-shelf">
+            <input type="text" id="love-id" class="glass-input" placeholder="输入神秘代码...">
+            <span class="input-icon">↗</span>
+        </div>
+
+        <!-- AI 预测按钮 -->
+        <button id="ai-predict-btn" class="ai-btn interactive-el">
+            ✨ 预见命中注定
+        </button>
+
+        <!-- 底部图标组 -->
+        <div class="gender-selector">
+            <button class="gender-btn interactive-el" data-gender="男" aria-label="Male">
+                <svg viewBox="0 0 24 24"><circle cx="10" cy="14" r="5"></circle><line x1="13.5" y1="10.5" x2="19" y2="5"></line><polyline points="15 5 19 5 19 9"></polyline></svg>
+            </button>
+            <button class="gender-btn interactive-el active" data-gender="女" aria-label="Female">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="5"></circle><line x1="12" y1="15" x2="12" y2="21"></line><line x1="9" y1="18" x2="15" y2="18"></line></svg>
+            </button>
+            <button class="gender-btn interactive-el" data-gender="保密" aria-label="Other">
+                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="6" cy="12" r="1.5" fill="currentColor"></circle>
+                    <circle cx="12" cy="12" r="1.5" fill="currentColor"></circle>
+                    <circle cx="18" cy="12" r="1.5" fill="currentColor"></circle>
+                </svg>
+            </button>
+        </div>
+
+        <!-- 缘分揭晓弹窗 -->
+        <div id="fortune-modal" class="fortune-modal interactive-el">
+            <div class="fortune-title">✨ 爱情占卜 ✨</div>
+            <div id="fortune-text" class="fortune-text">
+                正在连接红线，解读你的专属缘分密码...
+            </div>
+            <button id="close-modal-btn" class="close-btn">收起</button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Fit the 393×852 phone to whatever frame this page is shown in (prototype screen or case-study card)
+    const app = document.getElementById('app-area');
+    let S = 1;
+    function fit(){ S = Math.min(innerWidth/393, innerHeight/852); app.style.transform = `scale(${S})`; }
+    fit(); addEventListener('resize', fit);
+    // ↗ / Enter: tell the prototype to go to Home (no-op when shown on its own)
+    const goHome = () => parent !== window && parent.postMessage({go:'home'}, location.origin);
+    document.querySelector('.input-icon').addEventListener('click', goHome);
+    document.getElementById('love-id').addEventListener('keydown', e => { if (e.key === 'Enter') goHome(); });
+
+    // --- UI 交互逻辑 ---
+    let selectedGender = "女"; // 默认选项
+    const genderBtns = document.querySelectorAll('.gender-btn');
+    genderBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            genderBtns.forEach(b => b.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+            selectedGender = e.currentTarget.dataset.gender;
+            e.stopPropagation(); 
+        });
+    });
+
+    document.querySelector('.input-wrapper').addEventListener('click', (e) => {
+        e.stopPropagation(); 
+    });
+
+    // --- Matter.js 物理引擎核心设置 ---
+    const Engine = Matter.Engine,
+          Runner = Matter.Runner,
+          Bodies = Matter.Bodies,
+          Composite = Matter.Composite;
+
+    const engine = Engine.create();
+    
+    // 物理边界 (基于手机屏幕 393x852)
+    const floor = Bodies.rectangle(196.5, 872, 393, 40, { isStatic: true }); 
+    const leftWall = Bodies.rectangle(-20, 426, 40, 852, { isStatic: true }); 
+    const rightWall = Bodies.rectangle(413, 426, 40, 852, { isStatic: true }); 
+    
+    // 真实的输入框挡板
+    const inputShelf = Bodies.rectangle(196.5, 573, 280, 46, { 
+        isStatic: true,
+        chamfer: { radius: 23 } 
+    });
+
+    Composite.add(engine.world, [floor, leftWall, rightWall, inputShelf]);
+
+    const physicsMap = new Map();
+    const physicsLayer = document.getElementById('physics-layer');
+    const heartSvg = `<svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`;
+
+    function spawnGlassHeart(x, y) {
+        const domEl = document.createElement('div');
+        domEl.className = 'physics-item glass-heart';
+        domEl.innerHTML = heartSvg;
+        const size = 36;
+        domEl.style.width = size + 'px';
+        domEl.style.height = size + 'px';
+        physicsLayer.appendChild(domEl);
+        
+        const body = Bodies.circle(x, y, size / 2, { 
+            restitution: 0.5, friction: 0.5, density: 0.001
+        });
+
+        Matter.Body.setAngularVelocity(body, (Math.random() - 0.5) * 0.2);
+        Composite.add(engine.world, body);
+        physicsMap.set(body, domEl);
+    }
+
+    function spawnGlassWord(text, fontSize, x, y, isBigTitle = false) {
+        const domEl = document.createElement('div');
+        domEl.className = 'physics-item glass-pill';
+        domEl.innerText = text;
+        domEl.style.fontSize = fontSize + 'px';
+        
+        if (isBigTitle) {
+            domEl.style.padding = '12px 30px';
+        } else {
+            domEl.style.padding = '8px 20px';
+        }
+
+        physicsLayer.appendChild(domEl);
+        
+        const width = domEl.offsetWidth;
+        const height = domEl.offsetHeight;
+        const radius = height / 2;
+        domEl.style.borderRadius = radius + 'px';
+        
+        const body = Bodies.rectangle(x, y, width, height, { 
+            restitution: 0.3, friction: 0.6, density: isBigTitle ? 0.05 : 0.001,
+            chamfer: { radius: radius } 
+        });
+
+        Matter.Body.setAngularVelocity(body, (Math.random() - 0.5) * 0.15);
+        Composite.add(engine.world, body);
+        physicsMap.set(body, domEl);
+    }
+
+    // --- 初始化入场动画 ---
+    setTimeout(() => spawnGlassWord("Link", 64, 130, -50, true), 100);
+    setTimeout(() => spawnGlassWord("Your", 56, 260, -50, true), 500);
+    setTimeout(() => spawnGlassWord("Love", 86, 196, -50, true), 1100);
+
+    // --- 手动点击掉落 ---
+    const manualWords = ["Soul", "Match", "Vibe", "Fate", "心动"];
+    document.getElementById('app-area').addEventListener('click', (e) => {
+        if (e.target.closest('.interactive-el')) return; // 防止点击UI元素时掉落
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / S;
+        const y = (e.clientY - rect.top) / S;
+        
+        if (Math.random() > 0.5) spawnGlassHeart(x, y);
+        else spawnGlassWord(manualWords[Math.floor(Math.random() * manualWords.length)], 16, x, y, false);
+    });
+
+    // 运行引擎
+    const runner = Runner.create();
+    Runner.run(runner, engine);
+
+    function syncDOM() {
+        for (let [body, el] of physicsMap) {
+            if (body.position.y > 900) {
+                Composite.remove(engine.world, body);
+                physicsMap.delete(body);
+                el.remove();
+                continue;
+            }
+            el.style.transform = `translate(calc(${body.position.x}px - 50%), calc(${body.position.y}px - 50%)) rotate(${body.angle}rad)`;
+        }
+        requestAnimationFrame(syncDOM);
+    }
+    syncDOM();
+
+
+    // --- Gemini API 集成部分 ---
+    const aiBtn = document.getElementById('ai-predict-btn');
+    const modal = document.getElementById('fortune-modal');
+    const fortuneTextEl = document.getElementById('fortune-text');
+    const closeBtn = document.getElementById('close-modal-btn');
+
+    closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        modal.classList.remove('visible');
+    });
+
+    async function fetchGeminiLoveFortune() {
+        const inputId = document.getElementById('love-id').value || "未知旅人";
+        
+        aiBtn.innerHTML = "✨ 正在祈求神明...";
+        aiBtn.disabled = true;
+        modal.classList.add('visible');
+        fortuneTextEl.innerHTML = "✨ 正在连接红线，解读你的专属缘分密码...";
+
+        // ponytail: canned fortunes instead of the Gemini call (no API key on a static site); wire a proxy back in if it needs to be live
+        const FORTUNES = [
+            {fortune: "时差隔不开想念，下一次见面已在路上。", keywords: ["想念", "重逢", "心动"]},
+            {fortune: "你的晚安，正好是 TA 的早安。", keywords: ["晚安", "时差", "陪伴"]},
+            {fortune: "一起装修的小屋，会等到你们都回家。", keywords: ["小屋", "回家", "约定"]},
+            {fortune: "红线很长，但两端一直握得很紧。", keywords: ["红线", "信任", "偏爱"]}];
+        await new Promise(res => setTimeout(res, 900));
+        const success = true;
+        const result = FORTUNES[[...inputId].reduce((n, c) => n + c.charCodeAt(0), 0) % FORTUNES.length];
+        aiBtn.innerHTML = "✨ 预见命中注定";
+        aiBtn.disabled = false;
+
+        if (success) {
+            try {
+
+                // 1. 显示运势
+                fortuneTextEl.innerHTML = `"${result.fortune}"`;
+                
+                // 2. 将提取出的关键词化作玻璃碎片砸落！
+                if (result.keywords && result.keywords.length > 0) {
+                    result.keywords.forEach((word, index) => {
+                        setTimeout(() => {
+                            // 错开掉落的横坐标和时间
+                            const randomX = 100 + Math.random() * 200;
+                            spawnGlassWord(word, 20, randomX, -20, false);
+                            // 同时掉落一个爱心作为陪伴
+                            spawnGlassHeart(randomX + 30, -50);
+                        }, index * 400); // 每个相隔400ms掉落
+                    });
+                }
+            } catch (e) {
+                fortuneTextEl.innerHTML = "红线似乎纠缠在了一起，请再试一次吧。";
+            }
+        } else {
+            fortuneTextEl.innerHTML = "时空信号微弱，暂时无法预见未来。请稍后再试。";
+        }
+    }
+
+    aiBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        fetchGeminiLoveFortune();
+    });
+
+</script>
+
+</body>
+</html>

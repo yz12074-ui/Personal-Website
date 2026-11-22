@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LoveLink · Argue mode</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:transparent;font-family:"PingFang HK","PingFang SC",-apple-system,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+/* designed at 393×852 (same as the Figma frame), scaled to fit */
+.app{position:absolute;left:0;top:0;width:393px;height:852px;transform-origin:0 0;overflow:hidden;color:#fff;
+  background:linear-gradient(180deg,#5a4f8f 0%,#3b3360 38%,#2b2545 70%,#221d36 100%)}
+.blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;pointer-events:none}
+.b1{width:300px;height:300px;left:-90px;top:120px;background:#ff95c3}
+.b2{width:260px;height:260px;right:-90px;top:420px;background:#8177e0}
+.b3{width:220px;height:220px;left:40px;bottom:-60px;background:#feef8c;opacity:.25}
+.status{position:absolute;top:18px;left:32px;right:26px;display:flex;justify-content:space-between;font-weight:600;font-size:16px}
+.status i{font-style:normal;letter-spacing:2px;font-size:12px;opacity:.9}
+header{position:absolute;top:62px;left:0;right:0;text-align:center}
+header b{display:block;font-size:20px;font-weight:600}
+header small{font-size:11px;opacity:.65}
+.round{position:absolute;top:66px;width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.16);color:#fff;font-size:16px;cursor:pointer;display:grid;place-items:center}
+.back{left:22px}.more{right:22px;letter-spacing:1px}
+.glass{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-radius:18px}
+.ask{position:absolute;top:122px;left:18px;right:18px;padding:14px 16px}
+.ask span{font-size:10px;letter-spacing:.08em;color:#ff95c3;font-weight:600}
+.ask .row{display:flex;align-items:center;gap:10px;margin-top:6px}
+.ask input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:#fff;font:600 18px/1.3 inherit;font-family:inherit;padding:0}
+.ask input::placeholder{color:rgba(255,255,255,.45);font-weight:500}
+.mood{font-size:11px;padding:5px 12px;border-radius:99px;background:rgba(255,255,255,.85);color:#5a4f8f;font-weight:600;opacity:0;transition:opacity .3s}
+.mood.on{opacity:1}
+.send{width:32px;height:32px;border-radius:50%;border:0;flex:none;background:linear-gradient(135deg,#8177e0,#ff95c3);color:#fff;font-size:15px;cursor:pointer}
+.caret{display:inline-block;width:2px;height:20px;background:#fff;vertical-align:-3px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.feed{position:absolute;top:214px;left:18px;right:18px;bottom:110px;display:flex;flex-direction:column;gap:12px;overflow:hidden;justify-content:flex-end}
+.msg{position:relative;max-width:78%;padding:10px 14px;font-size:13px;line-height:1.45;animation:pop .35s cubic-bezier(.3,1.4,.5,1) both}
+.msg em{display:block;font-style:normal;font-size:10px;font-weight:700;letter-spacing:.06em;margin-bottom:3px}
+.msg.elvo{align-self:flex-end;margin-right:14px}.msg.elvo em{color:#ff95c3}
+.msg.velo{align-self:flex-start;margin-left:14px}.msg.velo em{color:#feef8c}
+.msg::after{content:"";position:absolute;bottom:-6px;width:18px;height:18px;border-radius:50%}
+.msg.elvo::after{right:-14px;background:radial-gradient(circle at 35% 35%,#ffc2dc,#ff6fa8)}
+.msg.velo::after{left:-14px;background:radial-gradient(circle at 35% 35%,#fff7c2,#f5d64a)}
+.msg.rick{align-self:stretch;max-width:none;background:rgba(255,255,255,.92);color:#2b2545;border-radius:16px}
+.msg.rick em{color:#e0457b}.msg.rick em::before{content:"● ";color:#e0457b}
+.dots{display:flex;gap:4px;padding:4px 2px}.dots i{width:6px;height:6px;border-radius:50%;background:#fff;opacity:.5;animation:dot 1s infinite}
+.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+@keyframes dot{40%{opacity:1;transform:translateY(-3px)}}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.96)}}
+.stop{position:absolute;left:50%;bottom:52px;translate:-50% 0;border:0;border-radius:99px;padding:11px 26px;color:#fff;font:600 14px inherit;font-family:inherit;cursor:pointer;
+  background:linear-gradient(90deg,#8177e0,#ff95c3);box-shadow:0 8px 20px rgba(255,149,195,.3);opacity:0;transition:opacity .4s}
+.stop.on{opacity:1}
+.stop::before{content:"";display:inline-block;width:9px;height:9px;border-radius:2px;background:#fff;margin-right:8px}
+.fade{transition:opacity .5s}.fade.out{opacity:0}
+@media (prefers-reduced-motion:reduce){.msg{animation:none}.caret,.dots i{animation:none}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <div class="status"><span>9:41</span><i>●●● ◔ ▮</i></div>
+  <button class="round back" id="back" aria-label="Back">‹</button>
+  <header><b>Argue Mode</b><small>ELVO &amp; VELO are mediating</small></header>
+  <button class="round more" aria-label="More">···</button>
+  <div class="ask glass">
+    <span>WHAT'S WRONG?</span>
+    <form class="row" id="form"><input id="q" placeholder="Tell them what happened…" autocomplete="off" aria-label="What's wrong?"><span class="mood" id="mood">Upset</span><button class="send" aria-label="Send">↑</button></form>
+  </div>
+  <div class="feed fade" id="feed" aria-live="polite"></div>
+  <button class="stop" id="stop">Stop argument</button>
+</div>
+<script>
+const $=id=>document.getElementById(id), app=$("app"), feed=$("feed"), q=$("q");
+const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
+function fit(){app.style.transform=`scale(${Math.min(innerWidth/393,innerHeight/852)})`}
+fit();addEventListener("resize",fit);
+const wait=ms=>new Promise(r=>setTimeout(r,RM?Math.min(ms,300):ms));
+let run=0; // bumping this cancels whatever script is playing
+
+const DEMO={q:"He forgot my birthday!",lines:[
+  ["elvo","How could Rick forget Helen's birthday? That's just unforgivable!"],
+  ["velo","He might have been overwhelmed with work. It's not an excuse, but the date may have just slipped his mind."],
+  ["elvo","This is his chance to show you're a priority. So, Rick — how are you going to make it right?"],
+  ["velo","A real sorry and a plan for this weekend would go a long way."],
+  ["rick","Sorry, darling… I swear I'll make it up to you. Please forgive me."]]};
+const yours=t=>[
+  ["elvo",`“${t}” — anyone would be hurt by that. Your feelings make sense.`],
+  ["velo","Maybe Rick didn't realise how much it mattered to you. Has he heard it in these words?"],
+  ["elvo","Then say it plainly: what do you need from him next time?"],
+  ["velo","Rick, listen first, explain second."],
+  ["rick","I hear you. I'm sorry — can we talk tonight, just us?"]];
+
+function bubble(who,text){
+  const d=document.createElement("div");d.className="msg glass "+who;
+  d.innerHTML=`<em>${{elvo:"ELVO · on your side",velo:"VELO · on his side",rick:"Rick"}[who]}</em>`;
+  if(text===null)d.insertAdjacentHTML("beforeend",'<div class="dots"><i></i><i></i><i></i></div>');
+  else d.append(text);
+  feed.append(d);return d;
+}
+async function play(question,lines,typeIt,loop){
+  const me=++run;
+  feed.innerHTML="";feed.classList.remove("out");$("mood").classList.remove("on");$("stop").classList.remove("on");
+  if(typeIt){q.value="";for(const ch of question){if(me!==run)return;q.value+=ch;await wait(70)}await wait(500)}
+  $("mood").classList.add("on");
+  for(const [who,text] of lines){
+    if(me!==run)return;
+    const d=bubble(who,null);await wait(who==="rick"?1300:1000);if(me!==run)return;
+    d.remove();bubble(who,text);await wait(1500+text.length*18);
+  }
+  $("stop").classList.add("on");
+  if(!loop)return;
+  await wait(2600);if(me!==run)return;
+  feed.classList.add("out");await wait(600);if(me!==run)return;
+  play(DEMO.q,DEMO.lines,true,true);
+}
+// Demo loops by itself; typing your own fight takes over and the loop stops
+q.addEventListener("focus",()=>{if(q.value===DEMO.q||!q.value){run++;q.value=""}});
+$("form").onsubmit=e=>{e.preventDefault();const t=q.value.trim();if(t){q.blur();play(t,yours(t),false,false)}};
+const toChat=()=>parent!==window&&parent.postMessage({go:"chat"},location.origin);
+$("stop").onclick=toChat;$("back").onclick=toChat;
+play(DEMO.q,DEMO.lines,true,true);
+</script>
+</body>
+</html>
