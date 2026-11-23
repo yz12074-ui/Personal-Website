@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LoveLink · Argue mode</title>
+<title>LoveLink argue mode</title>
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;overflow:hidden;background:transparent;font-family:"PingFang HK","PingFang SC",-apple-system,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
@@ -60,7 +60,7 @@ header small{font-size:11px;opacity:.65}
   <div class="status"><span>9:41</span><i>●●● ◔ ▮</i></div>
   <button class="round back" id="back" aria-label="Back">‹</button>
   <header><b>Argue Mode</b><small>ELVO &amp; VELO are mediating</small></header>
-  <button class="round more" aria-label="More">···</button>
+  <button class="round more" aria-label="More">⋯</button>
   <div class="ask glass">
     <span>WHAT'S WRONG?</span>
     <form class="row" id="form"><input id="q" placeholder="Tell them what happened…" autocomplete="off" aria-label="What's wrong?"><span class="mood" id="mood">Upset</span><button class="send" aria-label="Send">↑</button></form>
@@ -71,7 +71,8 @@ header small{font-size:11px;opacity:.65}
 <script>
 const $=id=>document.getElementById(id), app=$("app"), feed=$("feed"), q=$("q");
 const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
-function fit(){app.style.transform=`scale(${Math.min(innerWidth/393,innerHeight/852)})`}
+// fill the frame (cover) and centre it; trims a few px off the sides on taller screens
+function fit(){const s=Math.max(innerWidth/393,innerHeight/852);app.style.transform=`translate(${(innerWidth-393*s)/2}px,${(innerHeight-852*s)/2}px) scale(${s})`}
 fit();addEventListener("resize",fit);
 const wait=ms=>new Promise(r=>setTimeout(r,RM?Math.min(ms,300):ms));
 let run=0; // bumping this cancels whatever script is playing
@@ -91,7 +92,7 @@ const yours=t=>[
 
 function bubble(who,text){
   const d=document.createElement("div");d.className="msg glass "+who;
-  d.innerHTML=`<em>${{elvo:"ELVO · on your side",velo:"VELO · on his side",rick:"Rick"}[who]}</em>`;
+  d.innerHTML=`<em>${{elvo:"ELVO, on your side",velo:"VELO, on his side",rick:"Rick"}[who]}</em>`;
   if(text===null)d.insertAdjacentHTML("beforeend",'<div class="dots"><i></i><i></i><i></i></div>');
   else d.append(text);
   feed.append(d);return d;

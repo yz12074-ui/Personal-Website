@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LoveLink 智能缘分版</title>
+    <title>LoveLink onboarding</title>
     <!-- 引入 Matter.js 提供物理引擎支持 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
     <style>
@@ -336,24 +336,24 @@
         
         <!-- 加宽的 Figma 输入框 (作为物理碰撞挡板) -->
         <div class="input-wrapper interactive-el" id="input-shelf">
-            <input type="text" id="love-id" class="glass-input" placeholder="输入神秘代码...">
+            <input type="text" id="love-id" class="glass-input" placeholder="Enter your LoveLink ID">
             <span class="input-icon">↗</span>
         </div>
 
         <!-- AI 预测按钮 -->
         <button id="ai-predict-btn" class="ai-btn interactive-el">
-            ✨ 预见命中注定
+            ✨ Read our fate
         </button>
 
         <!-- 底部图标组 -->
         <div class="gender-selector">
-            <button class="gender-btn interactive-el" data-gender="男" aria-label="Male">
+            <button class="gender-btn interactive-el" data-gender="male" aria-label="Male">
                 <svg viewBox="0 0 24 24"><circle cx="10" cy="14" r="5"></circle><line x1="13.5" y1="10.5" x2="19" y2="5"></line><polyline points="15 5 19 5 19 9"></polyline></svg>
             </button>
-            <button class="gender-btn interactive-el active" data-gender="女" aria-label="Female">
+            <button class="gender-btn interactive-el active" data-gender="female" aria-label="Female">
                 <svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="5"></circle><line x1="12" y1="15" x2="12" y2="21"></line><line x1="9" y1="18" x2="15" y2="18"></line></svg>
             </button>
-            <button class="gender-btn interactive-el" data-gender="保密" aria-label="Other">
+            <button class="gender-btn interactive-el" data-gender="private" aria-label="Other">
                 <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="6" cy="12" r="1.5" fill="currentColor"></circle>
                     <circle cx="12" cy="12" r="1.5" fill="currentColor"></circle>
@@ -364,11 +364,11 @@
 
         <!-- 缘分揭晓弹窗 -->
         <div id="fortune-modal" class="fortune-modal interactive-el">
-            <div class="fortune-title">✨ 爱情占卜 ✨</div>
+            <div class="fortune-title">✨ Love reading ✨</div>
             <div id="fortune-text" class="fortune-text">
-                正在连接红线，解读你的专属缘分密码...
+                Tying the red thread, reading your code…
             </div>
-            <button id="close-modal-btn" class="close-btn">收起</button>
+            <button id="close-modal-btn" class="close-btn">Close</button>
         </div>
 
     </div>
@@ -378,7 +378,7 @@
     // Fit the 393×852 phone to whatever frame this page is shown in (prototype screen or case-study card)
     const app = document.getElementById('app-area');
     let S = 1;
-    function fit(){ S = Math.min(innerWidth/393, innerHeight/852); app.style.transform = `scale(${S})`; }
+    function fit(){ S = Math.max(innerWidth/393, innerHeight/852); app.style.transform = `translate(${(innerWidth-393*S)/2}px,${(innerHeight-852*S)/2}px) scale(${S})`; } // cover + centre
     fit(); addEventListener('resize', fit);
     // ↗ / Enter: tell the prototype to go to Home (no-op when shown on its own)
     const goHome = () => parent !== window && parent.postMessage({go:'home'}, location.origin);
@@ -386,7 +386,7 @@
     document.getElementById('love-id').addEventListener('keydown', e => { if (e.key === 'Enter') goHome(); });
 
     // --- UI 交互逻辑 ---
-    let selectedGender = "女"; // 默认选项
+    let selectedGender = "female"; // 默认选项
     const genderBtns = document.querySelectorAll('.gender-btn');
     genderBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -479,7 +479,7 @@
     setTimeout(() => spawnGlassWord("Love", 86, 196, -50, true), 1100);
 
     // --- 手动点击掉落 ---
-    const manualWords = ["Soul", "Match", "Vibe", "Fate", "心动"];
+    const manualWords = ["Soul", "Match", "Vibe", "Fate", "Crush"];
     document.getElementById('app-area').addEventListener('click', (e) => {
         if (e.target.closest('.interactive-el')) return; // 防止点击UI元素时掉落
         const rect = e.currentTarget.getBoundingClientRect();
@@ -534,23 +534,23 @@
     });
 
     async function fetchGeminiLoveFortune() {
-        const inputId = document.getElementById('love-id').value || "未知旅人";
+        const inputId = document.getElementById('love-id').value || "a traveller";
         
-        aiBtn.innerHTML = "✨ 正在祈求神明...";
+        aiBtn.innerHTML = "✨ Reading the stars…";
         aiBtn.disabled = true;
         modal.classList.add('visible');
-        fortuneTextEl.innerHTML = "✨ 正在连接红线，解读你的专属缘分密码...";
+        fortuneTextEl.innerHTML = "✨ Tying the red thread, reading your code…";
 
         // ponytail: canned fortunes instead of the Gemini call (no API key on a static site); wire a proxy back in if it needs to be live
         const FORTUNES = [
-            {fortune: "时差隔不开想念，下一次见面已在路上。", keywords: ["想念", "重逢", "心动"]},
-            {fortune: "你的晚安，正好是 TA 的早安。", keywords: ["晚安", "时差", "陪伴"]},
-            {fortune: "一起装修的小屋，会等到你们都回家。", keywords: ["小屋", "回家", "约定"]},
-            {fortune: "红线很长，但两端一直握得很紧。", keywords: ["红线", "信任", "偏爱"]}];
+            {fortune: "No time zone can keep you apart. The next visit is already on its way.", keywords: ["Miss you", "Reunion", "Crush"]},
+            {fortune: "Your good night is their good morning.", keywords: ["Good night", "Time zone", "Company"]},
+            {fortune: "The little room you built together will wait until you are both home.", keywords: ["Home", "Room", "Promise"]},
+            {fortune: "The red thread is long, but both ends are held tight.", keywords: ["Red thread", "Trust", "Yours"]}];
         await new Promise(res => setTimeout(res, 900));
         const success = true;
         const result = FORTUNES[[...inputId].reduce((n, c) => n + c.charCodeAt(0), 0) % FORTUNES.length];
-        aiBtn.innerHTML = "✨ 预见命中注定";
+        aiBtn.innerHTML = "✨ Read our fate";
         aiBtn.disabled = false;
 
         if (success) {
@@ -572,10 +572,10 @@
                     });
                 }
             } catch (e) {
-                fortuneTextEl.innerHTML = "红线似乎纠缠在了一起，请再试一次吧。";
+                fortuneTextEl.innerHTML = "The red thread got tangled. Try again?";
             }
         } else {
-            fortuneTextEl.innerHTML = "时空信号微弱，暂时无法预见未来。请稍后再试。";
+            fortuneTextEl.innerHTML = "The signal is weak right now. Try again soon.";
         }
     }
 

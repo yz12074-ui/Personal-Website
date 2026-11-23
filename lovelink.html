@@ -8,6 +8,32 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;600&display=swap">
 <link rel="stylesheet" href="assets/case.css">
 <style>
+/* hero: first screen says the name and what it's for (dark panel, the six-screen fan, a drifting glow) */
+.lh{position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);align-items:center;min-height:500px;border-radius:28px;overflow:hidden;padding:48px 56px;background:#17132a}
+.lh::before,.lh::after{content:"";position:absolute;z-index:-1;border-radius:50%;filter:blur(70px);pointer-events:none}
+.lh::before{width:560px;height:560px;left:38%;top:-12%;background:radial-gradient(circle,#8177E0 0%,rgba(129,119,224,0) 68%);opacity:.85;animation:glowA 16s ease-in-out infinite alternate}
+.lh::after{width:420px;height:420px;right:-6%;top:-20%;background:radial-gradient(circle,#FF95C3 0%,rgba(255,149,195,0) 68%);opacity:.55;animation:glowB 12s ease-in-out infinite alternate}
+@keyframes glowA{0%{transform:translate(0,0) scale(1)}50%{transform:translate(-140px,90px) scale(1.18)}100%{transform:translate(70px,150px) scale(.9)}}
+@keyframes glowB{0%{transform:translate(0,0) scale(1)}50%{transform:translate(-90px,160px) scale(1.25)}100%{transform:translate(-260px,40px) scale(.95)}}
+.lh-fan{position:relative;align-self:stretch;margin:-48px -56px -48px 0;min-height:500px}
+.lh-fan .fan{left:44%;bottom:-70px}
+.lh-fan .fan img{width:175px}
+.lh:hover .fan img{rotate:var(--rh);translate:var(--xh) -40px}
+.lh-copy{position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;gap:22px}
+.lh-icon{width:84px;height:84px;filter:drop-shadow(0 0 24px rgba(255,149,195,.45))}
+.lh h1{display:block;color:#fff;font-size:clamp(34px,4.6vw,58px);font-weight:800;line-height:1.02;letter-spacing:-.025em}
+.lh h1 span{background:linear-gradient(90deg,#FF95C3,#B9AEFF);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lh-cta{font:600 15px var(--f-display);color:#17132a;background:#fff;padding:11px 20px;border-radius:12px;text-decoration:none;transition:transform .2s}
+.lh-cta:hover{transform:translateY(-2px)}
+.lh-brand{display:flex;align-items:center;gap:28px;margin-top:12px}
+.lh-bicon{width:120px;height:120px;flex:none;border-radius:28px}
+.lh-word{height:clamp(40px,6vw,70px);width:auto;display:block}
+.lh-brand p{margin:10px 0 0;font-size:20px;color:var(--dim);max-width:640px}
+.stats.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:860px){.lh{grid-template-columns:minmax(0,1fr);padding:32px 24px 0}.lh-fan{margin:0 -24px;min-height:320px}.lh-fan .fan{left:50%;bottom:-90px}.lh-fan .fan img{width:130px}
+  .lh:hover .fan img{translate:calc(var(--xh) * .6) -30px}
+  .lh-brand{gap:16px}.lh-bicon{width:72px;height:72px;border-radius:18px}.lh-brand p{font-size:17px}}
+@media (prefers-reduced-motion:reduce){.lh::before,.lh::after{animation:none}}
 /* 2024 → 2026: two synced phones on a dark panel */
 .ba-panel{background:#221d36;border-radius:20px;padding:40px 24px;margin-top:24px}
 .ba{display:grid;grid-template-columns:repeat(2,minmax(0,250px));justify-content:center;gap:64px}
@@ -27,12 +53,28 @@
 .ctx-duo iframe{width:100%;height:100%;border:0;display:block}
 .ctx-duo figcaption{font:13px var(--f-mono);color:var(--dim);text-align:center}
 @media (max-width:760px){.ctx-duo{max-width:400px}}
+/* findings: friend quote + the one survey chart */
+.quote{font-size:clamp(34px,5vw,56px);letter-spacing:-.02em}
+.quote-by{margin:-6px 0 0;font:13px var(--f-mono);color:var(--dim);letter-spacing:.04em}
+.q-panel{margin:8px 0 0;padding:36px 40px;border-radius:24px;background:#221d36;color:#f2efff}
+.q-panel h3{font-size:clamp(20px,2.4vw,26px);font-weight:600;margin:0}
+.q-panel small{display:block;margin:6px 0 26px;font-size:14px;color:#a9a3c8}
+.qbars{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px 18px;align-items:center}
+.qbars span{font-size:15px;color:#e5e1ff}
+.qb{display:flex;align-items:center;gap:12px}
+.qb i{display:block;height:34px;width:var(--v);min-width:6px;border-radius:9px;background:#5b5199;transform-origin:left;animation:grow 1s cubic-bezier(.2,.8,.2,1) both;animation-play-state:paused}
+.qb.top i{background:linear-gradient(90deg,#8177E0,#FF95C3)}
+.q-panel.seen .qb i{animation-play-state:running}
+.qb b{font:600 15px var(--f-mono)}
+@keyframes grow{from{transform:scaleX(0)}}
+@media (max-width:640px){.q-panel{padding:24px 18px}.qbars{grid-template-columns:minmax(0,1fr)}.qbars span{margin-bottom:-8px}}
+@media (prefers-reduced-motion:reduce){.qb i{animation:none}}
 /* motion: live phones */
 .moves{display:grid;grid-template-columns:repeat(2,minmax(0,230px));justify-content:center;gap:40px;margin-top:24px}
 .moves figure{margin:0;display:flex;flex-direction:column;gap:10px}
 .moves .ph{aspect-ratio:393/852;border-radius:30px;overflow:hidden;background:#221d36;box-shadow:0 0 0 5px #3b3360;display:flex;align-items:center}
 .moves iframe{width:100%;height:100%;border:0;display:block}
-.moves video{width:100%;display:block}
+.moves video{width:100%;height:100%;object-fit:cover;display:block}
 .moves figcaption,.try p.cap{font-size:15px;color:var(--dim);line-height:1.45}
 .try iframe{display:block;width:100%;height:760px;border:0;margin-top:20px}
 @media (max-width:720px){.ba{gap:16px;grid-template-columns:repeat(2,minmax(0,1fr))}.ba-panel{padding:28px 12px}.moves{grid-template-columns:minmax(0,230px)}.try iframe{height:640px}}
@@ -49,9 +91,9 @@
       <a href="#redesign" data-zh="2024 → 2026 改版">2024 → 2026</a>
       <a href="#findings" data-zh="调研发现">What I found</a>
       <a href="#pare" data-zh="收敛">Pare it down</a>
-      <a href="#fix1" data-zh="方案 1 · AI 朋友">Fix 1 · AI friends</a>
-      <a href="#fix2" data-zh="方案 2 · 共建房间">Fix 2 · Shared room</a>
-      <a href="#fix3" data-zh="方案 3 · 首页">Fix 3 · Home</a>
+      <a href="#fix1" data-zh="方案 1：AI 朋友">Fix 1: AI friends</a>
+      <a href="#fix2" data-zh="方案 2：共建房间">Fix 2: Shared room</a>
+      <a href="#fix3" data-zh="方案 3：首页">Fix 3: Home</a>
       <a href="#motion" data-zh="动效">In motion</a>
       <a href="#try" data-zh="试一试">Try it</a>
       <a href="#system" data-zh="视觉规范">Visual system</a>
@@ -63,32 +105,39 @@
   <main>
     <div class="toc-m"><a href="index.html#work" data-zh="← 全部作品">← All work</a><button class="lang-toggle" type="button"><b>EN</b> / 中文</button></div>
     <section class="hero" id="top">
-      <div class="stage" aria-label="Fan of LoveLink screens. Hover to spread them.">
-        <div class="stage-title" data-zh="想你，<br>我还在。<small>LoveLink · 异地恋情侣 iOS App</small>">Miss you.<br>Still here.<small>LoveLink · iOS app for long-distance couples</small></div>
-        <div class="counter"><span>RESEARCH</span><strong>n = 137</strong><span data-zh="问卷 · 3 位访谈">survey · 3 interviews</span></div>
-        <div class="fan">
-          <img src="images/lovelink/lovelink-splash.webp" alt="" style="--r:-30deg;--x:-60px;--rh:-40deg;--xh:-200px">
-          <img src="images/lovelink/lovelink-link.webp" alt="" style="--r:-18deg;--x:-36px;--rh:-24deg;--xh:-120px">
-          <img src="images/lovelink/lovelink-home.webp" alt="" style="--r:-6deg;--x:-12px;--rh:-8deg;--xh:-40px">
-          <img src="images/lovelink/lovelink-chat.webp" alt="" style="--r:6deg;--x:12px;--rh:8deg;--xh:40px">
-          <img src="images/lovelink/lovelink-album.webp" alt="" style="--r:18deg;--x:36px;--rh:24deg;--xh:120px">
-          <img src="images/lovelink/lovelink-room.webp" alt="" style="--r:30deg;--x:60px;--rh:40deg;--xh:200px">
+      <div class="lh">
+        <div class="lh-copy">
+          <img class="lh-icon" src="images/lovelink/lovelink-appicon.webp?v=2" alt="LoveLink app icon">
+          <h1 data-zh="给异地恋情侣的<br><span>陪伴</span>">Company for couples<br><span>who live apart</span></h1>
+          <a class="lh-cta" href="#try" data-zh="试试原型 ↓">Try the prototype ↓</a>
+        </div>
+        <div class="lh-fan" aria-label="Fan of six LoveLink screens. Hover to spread them.">
+          <div class="fan">
+            <img src="images/lovelink/lovelink-splash.webp" alt="" style="--r:-30deg;--x:-60px;--rh:-40deg;--xh:-200px">
+            <img src="images/lovelink/lovelink-link.webp" alt="" style="--r:-18deg;--x:-36px;--rh:-24deg;--xh:-120px">
+            <img src="images/lovelink/lovelink-home.webp" alt="" style="--r:-6deg;--x:-12px;--rh:-8deg;--xh:-40px">
+            <img src="images/lovelink/lovelink-chat.webp" alt="" style="--r:6deg;--x:12px;--rh:8deg;--xh:40px">
+            <img src="images/lovelink/lovelink-album.webp" alt="" style="--r:18deg;--x:36px;--rh:24deg;--xh:120px">
+            <img src="images/lovelink/lovelink-room.webp" alt="" style="--r:30deg;--x:60px;--rh:40deg;--xh:200px">
+          </div>
         </div>
       </div>
-      <div class="tags"><span class="tag" data-zh="个人项目">Personal project</span><span class="tag" data-zh="UX 研究">UX research</span><span class="tag" data-zh="AI 交互">AI interaction</span><span class="tag" data-zh="iOS App">iOS app</span></div>
-      <h1 data-zh="<span class=&quot;star&quot;>✳</span>LoveLink：让异地恋一直在线"><span class="star">✳</span>LoveLink: keeping long-distance love online</h1>
-      <p class="lead" data-zh="异地恋情侣不缺聊天工具，缺的是对方没法回复时的陪伴。我设计了一款 iOS App：AI 朋友、共建房间和见面倒计时。">Couples who live apart don’t lack ways to message. They lack company when the other one can’t answer. I designed an iOS app with AI friends, a shared room and a reunion countdown.</p>
+      <div class="lh-brand">
+        <img class="lh-bicon" src="images/lovelink/lovelink-appicon.webp?v=2" alt="">
+        <div>
+          <img class="lh-word" src="images/lovelink/lovelink-wordmark.webp" alt="LoveLink">
+          <p data-zh="一款异地恋 iOS App：对方没法回复时有 AI 朋友陪你，一起装修的房间，和见面倒计时。">An iOS app for long-distance couples: AI friends when your partner can’t answer, a room you build together, and a countdown to the next visit.</p>
+        </div>
+      </div>
       <div class="info">
-        <div><span class="mono" data-zh="角色">Role</span><span data-zh="独立完成 · 研究与设计">Solo · research &amp; design</span></div>
-        <div><span class="mono" data-zh="背景">Context</span>Personal project</div>
-        <div><span class="mono" data-zh="时间">Timeline</span><span data-zh="2024.10 – 2024.12">Oct – Dec 2024</span></div>
+        <div><span class="mono" data-zh="角色">Role</span><span data-zh="独立完成，研究与设计">Solo, research &amp; design</span></div>
+        <div><span class="mono" data-zh="背景">Context</span><span data-zh="个人项目">Personal project</span></div>
+        <div><span class="mono" data-zh="时间">Timeline</span><span data-zh="2024 设计，2026 改版">2024, redesigned 2026</span></div>
         <div><span class="mono" data-zh="工具">Tools</span><span data-zh="问卷、访谈、Figma、借助 AI 搭建的可交互原型">Survey, interviews, Figma, an AI-built tappable prototype</span></div>
       </div>
-      <div class="stats">
-        <div class="stat"><strong>137</strong><span data-zh="份问卷">survey responses</span></div>
-        <div class="stat"><strong>3</strong><span data-zh="位深度访谈">in-depth interviews</span></div>
-        <div class="stat t"><strong>48.1%</strong><span data-zh="常常或偶尔没有安全感">often or sometimes insecure</span></div>
-        <div class="stat t"><strong>13.6%</strong><span data-zh="的异地恋最终结婚">of LDRs end in marriage</span></div>
+      <div class="stats two">
+        <div class="stat t"><strong>81%</strong><span data-zh="常常或偶尔没有安全感">often or occasionally feel insecure</span></div>
+        <div class="stat t"><strong>75%</strong><span data-zh="说异地恋不顺会影响正常生活">say a struggling LDR disrupts daily life</span></div>
       </div>
     </section>
 
@@ -104,7 +153,7 @@
           <p data-zh="<span class=&quot;emph&quot;>所以我设计的是消息之间的空白，而不是消息本身。</span>"><span class="emph">So I designed for the gaps between messages, not the messages themselves.</span></p>
         </div>
         <div class="ctx-duo">
-          <figure><div class="ph"><iframe src="assets/lovelink-proto/splash.html?auto" title="Opening screen: glass words and hearts fall onto the LoveLink ID field. Click to drop more."></iframe></div><figcaption data-zh="开屏 · 点一下掉爱心">Opening · tap to drop hearts</figcaption></figure>
+          <figure><div class="ph"><iframe src="assets/lovelink-proto/splash.html?auto" title="Onboarding: glass words and hearts fall onto the LoveLink ID field. Click to drop more."></iframe></div><figcaption data-zh="引导页">Onboarding</figcaption></figure>
           <figure><div class="ph"><iframe src="assets/lovelink-proto/login.html" title="Sign in: email and password are typed in, then Sign In"></iframe></div><figcaption data-zh="登录">Sign in</figcaption></figure>
         </div>
       </div>
@@ -117,8 +166,8 @@
       <p data-zh="2024 版是平铺的淡紫卡片。2026 版换成了叠在照片上的毛玻璃：见面倒计时和对方时间合进一张卡，吵架模式换成深色玻璃界面。">The 2024 version was flat lilac cards. In 2026 it became frosted glass over your photos: the reunion countdown and their local time share one card, and Argue mode moved to a dark glass screen.</p>
       <div class="ba-panel">
         <div class="ba">
-          <figure><span class="ba-pill" data-zh="2024 · 改版前">2024 · Before</span><div class="device" id="baBefore"></div></figure>
-          <figure><span class="ba-pill now" data-zh="2026 · 改版后">2026 · After</span><div class="device" id="baAfter"></div></figure>
+          <figure><span class="ba-pill" data-zh="2024 改版前">2024 version</span><div class="device" id="baBefore"></div></figure>
+          <figure><span class="ba-pill now" data-zh="2026 改版后">2026 version</span><div class="device" id="baAfter"></div></figure>
         </div>
         <p class="ba-step" id="baStep">Link your partner</p>
       </div>
@@ -134,24 +183,32 @@
 
     <section id="findings" class="wide">
       <span class="eyebrow" data-zh="调研发现">What I found</span>
-      <h2 data-zh="四个缺口，一种感受。">Four gaps, one feeling.</h2>
-      <p data-zh="一周的问卷（137 份）和 3 位深度访谈。悬停卡片，听他们自己说。">A one-week survey (137 responses) and three interviews. Hover a card to hear it in people’s own words.</p>
+      <h2 class="quote" data-zh="「我现在就需要这个 App。」">“I need this app right now.”</h2>
+      <p class="quote-by" data-zh="一位正在异地恋的朋友">A friend in a long-distance relationship</p>
+      <p data-zh="一周的问卷（121 位 20–30 岁的年轻人）和 3 位深度访谈。">A one-week survey of 121 people aged 20 to 30, and three in-depth interviews.</p>
+      <!-- TODO(Amanda): send the Q6 percentages; bar lengths below follow the bars on your QUESTIONNAIRES board and the number slots are empty until then -->
+      <figure class="q-panel" aria-label="Survey chart: biggest difficulty in a long-distance relationship">
+        <h3 data-zh="你觉得异地恋最大的困难是什么？">What do you think is the biggest difficulty in a long-distance relationship?</h3>
+        <small data-zh="121 人">121 people</small>
+        <div class="qbars">
+          <span data-zh="缺少陪伴">Lack of companionship</span><div class="qb top"><i style="--v:100%"></i><b></b></div>
+          <span data-zh="信任问题">Trust issues</span><div class="qb"><i style="--v:55%"></i><b></b></div>
+          <span data-zh="沟通无效">Ineffective communication</span><div class="qb"><i style="--v:16%"></i><b></b></div>
+          <span data-zh="未来规划不一致">Different plans for the future</span><div class="qb"><i style="--v:5%"></i><b></b></div>
+        </div>
+      </figure>
+      <p data-zh="悬停卡片，听他们自己说。">Hover a card to hear it in people’s own words.</p>
       <div class="pgrid">
-        <div class="pcard frame" tabindex="0"><span class="mono" style="opacity:.6" data-zh="大背景 · 2,900 人的公开调查">The frame · public survey of 2,900 people</span>
-          <span class="big">13.6%</span>
-          <h3 data-zh="的异地恋最终结婚。其余的，大多在沉默中走散。">of long-distance couples end up married. The rest mostly drift apart in the silences.</h3>
-          <div class="back"><span class="mono" data-zh="为什么重要">Why it matters</span><span data-zh="大家说的问题不是距离本身，而是等待、猜测和想念。">Distance itself isn’t the problem people describe. The waiting, guessing and missing are.</span></div></div>
         <div class="pcard" tabindex="0"><h3 data-zh="沟通断裂">Broken communication</h3><p class="front" data-zh="时差和忙碌打断联系。">Time zones and busy schedules interrupt contact.</p>
-          <div class="back"><span class="mono" data-zh="Tomas Yang，26 岁 · 异地 2 年">Tomas Yang, 26 · 2-year LDR</span><span data-zh="「我们都很想对方，但线上联系永远比不上在一起。」">“We both missed each other, but virtual contact was never as good as being together.”</span></div></div>
+          <div class="back"><span class="mono" data-zh="Tomas Yang，26 岁，异地 2 年">Tomas Yang, 26, 2-year LDR</span><span data-zh="「我们都很想对方，但线上联系永远比不上在一起。」">“We both missed each other, but virtual contact was never as good as being together.”</span></div></div>
         <div class="pcard" tabindex="0"><h3 data-zh="缺少陪伴">Lack of company</h3><p class="front" data-zh="想对方的时候，得不到即时回应。">No instant response when you miss each other.</p>
-          <div class="back"><span class="mono" data-zh="问卷">Survey</span><span data-zh="75% 的人说，异地恋不顺会影响正常生活。">75% say a failing LDR disrupts their normal life.</span></div></div>
+          <div class="back"><span class="mono" data-zh="问卷结论">Survey conclusion</span><span data-zh="最大的问题：距离和时差让人缺少陪伴。">The biggest problem: distance and time difference leave people without company.</span></div></div>
         <div class="pcard" tabindex="0"><h3 data-zh="缺少共同回忆">No shared memories</h3><p class="front" data-zh="没有可以一起做的事。">Nothing to do together.</p>
-          <div class="back"><span class="mono" data-zh="Dan Martin，24 岁 · 拒绝异地">Dan Martin, 24 · no LDR</span><span data-zh="「我觉得异地恋缺少新鲜感和激情，所以搬到不同城市后就分手了。」">“I thought an LDR lacked freshness and passion, so I ended it once we moved to different cities.”</span></div></div>
+          <div class="back"><span class="mono" data-zh="Dan Martin，24 岁，拒绝异地">Dan Martin, 24, no LDR</span><span data-zh="「我觉得异地恋缺少新鲜感和激情，所以搬到不同城市后就分手了。」">“I thought an LDR lacked freshness and passion, so I ended it once we moved to different cities.”</span></div></div>
         <div class="pcard" tabindex="0"><h3 data-zh="信任与安全感">Trust &amp; security</h3><p class="front" data-zh="担心对方渐渐走远。">Anxiety that the other person will drift away.</p>
-          <div class="back"><span class="mono" data-zh="Inna，24 岁 · 正在异地">Inna, 24 · in an LDR now</span><span data-zh="「最常有的感觉是焦虑。失联的时候，我担心对方会喜欢上别人。」">“The most frequent feeling is anxiety. I worry the other person will fall for someone else when we lose contact.”</span></div></div>
+          <div class="back"><span class="mono" data-zh="Inna，24 岁，正在异地">Inna, 24, in an LDR now</span><span data-zh="「最常有的感觉是焦虑。失联的时候，我担心对方会喜欢上别人。」">“The most frequent feeling is anxiety. I worry the other person will fall for someone else when we lose contact.”</span></div></div>
       </div>
-      <!-- TODO(Amanda): "14 million couples in the US" needs a source before it goes back on the page; quotes were shortened, check them against your notes -->
-      <p class="cap" data-zh="来源：个人问卷（n = 137）、3 位访谈，以及一项 2,900 位有过异地恋经历者的公开调查。">Sources: personal survey (n = 137), 3 interviews, and a public survey of 2,900 people who had been in an LDR.</p>
+      <p class="cap" data-zh="来源：个人问卷（n = 121）和 3 位访谈。引言有删减。">Sources: my survey (n = 121) and 3 interviews. Quotes shortened.</p>
     </section>
 
     <section id="pare">
@@ -178,7 +235,7 @@
     </section>
 
     <section id="fix1" class="wide">
-      <span class="eyebrow ok" data-zh="方案 1 · 缺少陪伴">Fix 1 · Lack of company</span>
+      <span class="eyebrow ok" data-zh="方案 1：缺少陪伴">Fix 1: Lack of company</span>
       <h2 data-zh="吵架之前，先和 AI 说。">Talk to the AI before you fight.</h2>
       <p data-zh="两个 AI 朋友 <b>ELVO</b> 和 <b>VELO</b>，在对方不在时接住你的情绪。吵架模式里，它们各站一边。悬停查看。">Two AI friends, <b>ELVO</b> and <b>VELO</b>, catch your feelings when your partner can’t. In Argue mode they take both sides. Hover a pin.</p>
       <div class="fix">
@@ -192,14 +249,14 @@
     </section>
 
     <section id="fix2" class="wide">
-      <span class="eyebrow ok" data-zh="方案 2 · 缺少共同回忆">Fix 2 · No shared memories</span>
+      <span class="eyebrow ok" data-zh="方案 2：缺少共同回忆">Fix 2: No shared memories</span>
       <h2 data-zh="把想象中的家，一起装出来。">Build the home you imagine, together.</h2>
       <p data-zh="一起布置的共享卧室。完成待办赚积分，积分开家具盲盒，冰箱里能看到两边今晚吃什么。">A shared bedroom you decorate as a pair. To-dos earn credits, credits open furniture mystery boxes, and the fridge shows what’s for dinner on both sides.</p>
       <div class="ci-row">
-        <figure><img src="images/lovelink/lovelink-room.webp" alt="Design Room: a 3D bedroom with wall colour, floor and bed options" loading="lazy"><figcaption data-zh="1 · 设计房间">1 · Design the room</figcaption></figure>
-        <figure><img src="images/lovelink/lovelink-store.webp" alt="Store with a mystery box banner and furniture priced in credits" loading="lazy"><figcaption data-zh="2 · 花积分">2 · Spend credits</figcaption></figure>
-        <figure><img src="images/lovelink/lovelink-fridge.webp" alt="Shared fridge door with photos, notes and recipe stickers" loading="lazy"><figcaption data-zh="3 · 共享冰箱">3 · Share the fridge</figcaption></figure>
-        <figure><img src="images/lovelink/lovelink-album.webp" alt="Shared album: a wall of the couple's photos and places" loading="lazy"><figcaption data-zh="4 · 钉一段回忆">4 · Pin a memory</figcaption></figure>
+        <figure><img src="images/lovelink/lovelink-room.webp" alt="Design Room: a 3D bedroom with wall colour, floor and bed options" loading="lazy"><figcaption data-zh="1. 设计房间">1. Design the room</figcaption></figure>
+        <figure><img src="images/lovelink/lovelink-store.webp" alt="Store with a mystery box banner and furniture priced in credits" loading="lazy"><figcaption data-zh="2. 花积分">2. Spend credits</figcaption></figure>
+        <figure><img src="images/lovelink/lovelink-fridge.webp" alt="Shared fridge door with photos, notes and recipe stickers" loading="lazy"><figcaption data-zh="3. 共享冰箱">3. Share the fridge</figcaption></figure>
+        <figure><img src="images/lovelink/lovelink-album.webp" alt="Shared album: a wall of the couple's photos and places" loading="lazy"><figcaption data-zh="4. 钉一段回忆">4. Pin a memory</figcaption></figure>
       </div>
       <div class="ci-rules">
         <div data-zh="<b>两种品味，一个房间</b>地板、墙色和床一起挑。"><b>Two tastes, one room</b>Floor, wall colour and bed are picked together.</div>
@@ -210,7 +267,7 @@
     </section>
 
     <section id="fix3" class="wide">
-      <span class="eyebrow ok" data-zh="方案 3 · 沟通断裂与安全感">Fix 3 · Broken communication &amp; security</span>
+      <span class="eyebrow ok" data-zh="方案 3：沟通断裂与安全感">Fix 3: Broken communication &amp; security</span>
       <h2 data-zh="一眼看到彼此。">See each other at a glance.</h2>
       <p data-zh="首页回答大家最常问的三个问题：对方在哪？还好吗？什么时候见面？">Home answers the three questions people asked most: where are they, are they okay, and when do we meet?</p>
       <div class="fix">
@@ -228,8 +285,8 @@
       <h2 data-zh="两个会动的瞬间。">Two moments, moving.</h2>
       <p data-zh="在右边输入你自己的吵架问题，看 ELVO 和 VELO 替你吵。">Type your own fight on the right and watch ELVO and VELO argue it out.</p>
       <div class="moves">
-        <figure><div class="ph"><video src="images/lovelink/lovelink-voice.mp4" poster="images/lovelink/lovelink-voice.webp" muted loop playsinline autoplay aria-label="Voice input: a sound wave moves while the AI friend listens"></video></div><figcaption data-zh="<b>我在听</b> · 说给 AI 朋友，声波跟着你的声音动。"><b>I’m listening</b> · speak to an AI friend, the wave follows your voice.</figcaption></figure>
-        <figure><div class="ph"><iframe src="assets/lovelink-proto/argue.html" title="Argue mode: type a fight, ELVO and VELO argue it out for you" loading="lazy"></iframe></div><figcaption data-zh="<b>吵架模式</b> · 你说一句，ELVO 和 VELO 替你吵。"><b>Argue mode</b> · you say it once, ELVO and VELO argue it for you.</figcaption></figure>
+        <figure><div class="ph"><video src="images/lovelink/lovelink-voice.mp4?v=2" poster="images/lovelink/lovelink-voice.webp?v=2" muted loop playsinline autoplay aria-label="Voice input: a sound wave moves while the AI friend listens"></video></div><figcaption data-zh="<b>我在听。</b>说给 AI 朋友，声波跟着你的声音动。"><b>I’m listening.</b> Speak to an AI friend, the wave follows your voice.</figcaption></figure>
+        <figure><div class="ph"><iframe src="assets/lovelink-proto/argue.html" title="Argue mode: type a fight, ELVO and VELO argue it out for you" loading="lazy"></iframe></div><figcaption data-zh="<b>吵架模式。</b>你说一句，ELVO 和 VELO 替你吵。"><b>Argue mode.</b> You say it once, ELVO and VELO argue it for you.</figcaption></figure>
       </div>
     </section>
 
@@ -244,13 +301,13 @@
     <section id="system" class="wide">
       <span class="eyebrow" data-zh="视觉规范">Visual system</span>
       <h2 data-zh="浪漫的紫，温暖的粉。">Romantic purple, warm pink.</h2>
-      <div class="brandrow"><img src="images/lovelink/lovelink-appicon.webp" alt="LoveLink app icon" loading="lazy"><div><b style="font-family:var(--f-display);font-size:18px" data-zh="爱心 + 定位 = 相隔两地的爱。">A heart + a location pin = love across two places.</b><p style="font-size:16px;color:var(--dim)" data-zh="再加上 Link，就是 LoveLink。字体是苹方 HK（Semibold、Medium、Regular）。">Add “Link” and you get LoveLink. Type is PingFang HK (Semibold, Medium, Regular).</p></div></div>
+      <div class="brandrow"><img src="images/lovelink/lovelink-appicon.webp?v=2" alt="LoveLink app icon" loading="lazy"><div><b style="font-family:var(--f-display);font-size:18px" data-zh="爱心 + 定位 = 相隔两地的爱。">A heart + a location pin = love across two places.</b><p style="font-size:16px;color:var(--dim)" data-zh="再加上 Link，就是 LoveLink。字体是苹方 HK（Semibold、Medium、Regular）。">Add “Link” and you get LoveLink. Type is PingFang HK (Semibold, Medium, Regular).</p></div></div>
       <div class="swatches">
-        <div class="sw"><i style="background:#8177E0"></i><span><b>#8177E0</b><br>Primary · romantic purple</span></div>
-        <div class="sw"><i style="background:#D2AFE8"></i><span><b>#D2AFE8</b><br>Secondary · lilac</span></div>
-        <div class="sw"><i style="background:#FF95C3"></i><span><b>#FF95C3</b><br>Accent · sakura pink</span></div>
-        <div class="sw"><i style="background:#FEEF8C"></i><span><b>#FEEF8C</b><br>Highlight · warm yellow</span></div>
-        <div class="sw"><i style="background:#DFDCF7"></i><span><b>#DFDCF7</b><br>Background · mist purple</span></div>
+        <div class="sw"><i style="background:#8177E0"></i><span><b>#8177E0</b><br>Primary, romantic purple</span></div>
+        <div class="sw"><i style="background:#D2AFE8"></i><span><b>#D2AFE8</b><br>Secondary, lilac</span></div>
+        <div class="sw"><i style="background:#FF95C3"></i><span><b>#FF95C3</b><br>Accent, sakura pink</span></div>
+        <div class="sw"><i style="background:#FEEF8C"></i><span><b>#FEEF8C</b><br>Highlight, warm yellow</span></div>
+        <div class="sw"><i style="background:#DFDCF7"></i><span><b>#DFDCF7</b><br>Background, mist purple</span></div>
       </div>
       <img class="kit" src="images/lovelink/lovelink-ui-kit.webp" alt="UI kit: tab bar states, toggle interactions and the purple icon set" loading="lazy">
     </section>
@@ -274,14 +331,14 @@
         <div data-zh="<b>共同的日常，而不是更多聊天</b>待办和房间让情侣有事可做，而不只是说话。"><b>Shared routine, not more chat</b>To-dos and the room gave couples something to do, not just say.</div>
       </div>
       <div class="hmw" style="background:var(--honest)">
-        <span class="mono" data-zh="下一步 · 测试">What’s next · testing it</span>
+        <span class="mono" data-zh="下一步：测试">What’s next: testing it</span>
         <p data-zh="把可交互原型交给异地情侣，看他们最先打开哪个功能。">Put the tappable prototype in front of couples who live apart, and see which feature they open first.</p>
         <span style="font-size:16px;line-height:1.5" data-zh="记录对方离线时他们打开的频率、吵架模式是平息还是激化矛盾，以及分享聊天记录时有多安心。">Measure how often they open it when the partner is offline, whether Argue mode calms or escalates, and how safe they feel sharing chat history.</span>
       </div>
       <a class="next" href="viva-toy.html"><span><span class="mono" style="color:var(--dim)" data-zh="下一个项目">Next project</span><br><b>VIVA TOY</b></span><span class="mono">→</span></a>
     </section>
 
-    <footer>LOVELINK · AMANDA (YUEYAN) ZHANG · 2024</footer>
+    <footer>LOVELINK BY AMANDA (YUEYAN) ZHANG, 2024–2026</footer>
   </main>
 </div>
 
@@ -319,6 +376,9 @@ document.querySelectorAll(".pins").forEach(box=>{
   pins.forEach(p=>{const go=()=>{ph.pause();ph.goto(p.dataset.shot)};p.addEventListener("mouseenter",go);p.addEventListener("focus",go);p.addEventListener("click",go)});
   box.addEventListener("mouseleave",()=>ph.play());
 });
+
+// survey bars grow when the chart scrolls in
+new IntersectionObserver(([e],o)=>{if(e.isIntersecting){e.target.classList.add("seen");o.disconnect()}},{threshold:.4}).observe(document.querySelector(".q-panel"));
 
 // 2024 → 2026: the 2026 phone drives, the 2024 phone follows the same step
 const P26="assets/lovelink-proto/";

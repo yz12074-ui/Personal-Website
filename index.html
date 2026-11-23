@@ -94,6 +94,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .intro .name-zh { margin: 0; font: 800 clamp(64px, 11vw, 176px)/1 var(--f-display), "PingFang SC", "Noto Sans SC", sans-serif; letter-spacing: .04em; }
 /* name letters: plain until you touch them, then each turns into scribble, crayon or cut-paper type */
 .name { white-space: nowrap; }
+.name-link { display: block; text-decoration: none; }
 .name .L { display: inline-block; text-align: center; white-space: pre; position: relative; letter-spacing: 0; margin-right: -.045em; transition: translate .25s cubic-bezier(.3, 1.6, .5, 1); }
 .name .L:hover { translate: 0 -.04em; }
 .name .L.s-scribble { font: 400 1.04em/1 "Rubik Scribble", var(--f-display); color: #4BA3DC; letter-spacing: 0; }
@@ -356,7 +357,7 @@ a.m:hover, a.m:focus-visible { background: var(--ink); color: var(--bg); }
   <!-- ===== INTRO: first screen ===== -->
   <section class="intro" aria-label="Intro">
     <div class="tags frame quiet" data-frame="Tags"><span data-zh="NYU-ITP 硕士">Master’s @ NYU-ITP</span><span data-zh="UX 与产品设计师">UX &amp; Product Designer</span><span data-zh="0 → 1 进行中">0 → 1 in progress</span><span class="size-tag" aria-hidden="true"></span></div>
-    <div class="frame quiet" data-frame="H1 / Name"><h1 class="name" data-lang-only="en">Amanda Zhang</h1><h1 class="name-zh" data-lang-only="zh" lang="zh-CN" hidden>张玥妍</h1><span class="size-tag" aria-hidden="true"></span></div>
+    <a class="frame quiet name-link" href="#about" data-frame="H1 / Name"><h1 class="name" data-lang-only="en">Amanda Zhang</h1><h1 class="name-zh" data-lang-only="zh" lang="zh-CN" hidden>张玥妍</h1><span class="size-tag" aria-hidden="true"></span></a>
     <div class="frame quiet lines" data-frame="Text / Tagline"><p class="tagline" data-zh="先在乎，再创造">I care, then I create</p><span class="size-tag" aria-hidden="true"></span></div>
     <div class="cta frame quiet" data-frame="Buttons">
       <a class="btn solid" href="#work" data-zh="看作品 →">See the work →</a>
@@ -386,7 +387,7 @@ a.m:hover, a.m:focus-visible { background: var(--ink); color: var(--bg); }
       <a class="card frame" data-frame="LoveLink" href="lovelink.html">
         <div class="shot lavender"><img class="mock" src="images/home/lovelink-card.webp" alt="A hand holding an iPhone with the LoveLink chat screen" data-zh-alt="手持 iPhone，屏幕上是 LoveLink 聊天界面" loading="lazy"><div class="details"><dl><div><dt class="ic ic-time" title="Timeline"><span class="sr-only">Timeline</span></dt><dd data-zh="2024.10 – 2024.12">Oct – Dec 2024</dd></div><div><dt class="ic ic-role" title="Role"><span class="sr-only">Role</span></dt><dd data-zh="独立 UX 研究与 UI 设计">Solo UX research &amp; UI design</dd></div></dl><div class="tagrow"><span class="k" data-zh="#完整设计">#End-to-end</span><span data-zh="#iOS">#iOS</span><span data-zh="#AI 交互">#AI interaction</span></div></div></div>
         <div class="card-body"><h3>LoveLink</h3><p data-zh="让异地恋保持亲近">Help keep your long-distance relationship close</p>
-          <ul class="metrics"><li><b>137</b><span data-zh="份问卷">survey responses</span></li><li><b>3</b><span data-zh="位访谈">interviews</span></li><li><b data-zh="动效">Motion</b><span data-zh="动态图形">graphic</span></li></ul></div>
+          <ul class="metrics"><li><b>121</b><span data-zh="份问卷">survey responses</span></li><li><b>3</b><span data-zh="位访谈">interviews</span></li><li><b data-zh="动效">Motion</b><span data-zh="动态图形">graphic</span></li></ul></div>
       </a>
       <a class="card frame" data-frame="VIVA TOY" href="viva-toy.html">
         <div class="shot sky"><img class="mock" src="images/home/viva-card.webp" alt="VIVA TOY app screens held in hand" data-zh-alt="手持的 VIVA TOY App 界面" loading="lazy"><div class="details"><dl><div><dt class="ic ic-time" title="Timeline"><span class="sr-only">Timeline</span></dt><dd data-zh="2024.11 – 2025.01">Nov 2024 – Jan 2025</dd></div><div><dt class="ic ic-role" title="Role"><span class="sr-only">Role</span></dt><dd data-zh="独立服务设计与商业模式">Solo service design &amp; business model</dd></div></dl><div class="tagrow"><span class="k" data-zh="#系统设计">#System design</span><span data-zh="#App">#App</span><span data-zh="#商业模式">#Business model</span></div></div></div>
@@ -542,9 +543,9 @@ a.m:hover, a.m:focus-visible { background: var(--ink); color: var(--bg); }
     const tag = cur.querySelector('.tag');
     addEventListener('pointermove', e => {
       cur.style.transform = `translate3d(${e.clientX - 2}px, ${e.clientY - 2}px, 0)`; cur.classList.remove('off');
-      const card = e.target.closest('.card'), link = e.target.closest('a, button, [role="radio"], .c-row');
-      cur.classList.toggle('view', !!card); cur.classList.toggle('link', !card && !!link);
-      tag.textContent = card ? tr('view →', '看看 →') : tr('You', '你');
+      const card = e.target.closest('.card'), about = e.target.closest('.name-link'), link = e.target.closest('a, button, [role="radio"], .c-row');
+      cur.classList.toggle('view', !!(card || about)); cur.classList.toggle('link', !card && !about && !!link);
+      tag.textContent = card ? tr('view →', '看看 →') : about ? tr('About →', '关于我 →') : tr('You', '你');
     });
     document.addEventListener('pointerleave', () => cur.classList.add('off'));
     addEventListener('pointerdown', () => cur.classList.add('down'));

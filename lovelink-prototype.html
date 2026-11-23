@@ -6,42 +6,387 @@
 <title>LoveLink prototype — Amanda Zhang</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
-:root{--bg:#EEEBF7;--ink:#1D1B19;--dim:#6A655E;--brand:#8177E0;--pink:#FF95C3;--bezel:#1d1a2b}
+/* ---------- page around the phone ---------- */
+:root{--bg:#EEEBF7;--ink:#1D1B19;--dim:#6A655E;--brand:#8177E0;--pink:#FF95C3;--bezel:#1d1a2b;
+  --grad:linear-gradient(90deg,#8177E0,#FF95C3)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17151f;--ink:#EEEAE2;--dim:#A39D93}}
 :root[data-theme="dark"]{--bg:#17151f;--ink:#EEEAE2;--dim:#A39D93}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,sans-serif}
 .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;gap:56px;padding:24px 16px}
-.rail{width:200px;display:flex;flex-direction:column;gap:4px}
+.rail{width:200px;display:flex;flex-direction:column;gap:3px}
 .rail h1{font-size:22px;margin:0 0 2px}
-.rail p{margin:0 0 14px;font:13px/1.5 "JetBrains Mono",monospace;color:var(--dim)}
-.rail span{font:600 11px "JetBrains Mono",monospace;letter-spacing:.08em;color:var(--dim);margin:12px 0 2px}
-.rail button{all:unset;cursor:pointer;padding:6px 10px;border-radius:8px;font-size:15px}
+.rail p{margin:0 0 12px;font:13px/1.5 "JetBrains Mono",monospace;color:var(--dim)}
+.rail span{font:600 11px "JetBrains Mono",monospace;letter-spacing:.08em;color:var(--dim);margin:10px 0 2px}
+.rail button{all:unset;cursor:pointer;padding:5px 10px;border-radius:8px;font-size:15px}
 .rail button:hover{background:rgba(129,119,224,.12)}
 .rail button.on{background:var(--brand);color:#fff}
-.rail a{margin-top:16px;font:12px "JetBrains Mono",monospace;color:var(--dim)}
-.phone{position:relative;width:var(--w,360px);aspect-ratio:716/1551;border-radius:calc(var(--w,360px)*.13);border:10px solid var(--bezel);background:var(--bezel);
-  box-shadow:0 30px 70px -20px rgba(60,40,140,.45);overflow:hidden;flex:none;container-type:inline-size}
-.screen{position:absolute;inset:0;overflow:hidden;border-radius:calc(var(--w,360px)*.11)}
-.screen img,.screen iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;object-fit:cover;object-position:top}
-.screen img{animation:in .3s ease}
-@keyframes in{from{opacity:.4;transform:scale(1.015)}}
-.hot{position:absolute;all:unset;position:absolute;cursor:pointer;border-radius:10px}
-.hot:focus-visible{outline:2px solid #fff;outline-offset:1px}
-.debug .hot{background:rgba(255,0,120,.25);outline:1px solid #ff0078}
-/* tap hint: one pulsing dot on the next thing to tap */
-.tap{position:absolute;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;background:var(--pink);pointer-events:none;z-index:5;box-shadow:0 0 0 0 rgba(255,149,195,.7);animation:pulse 1.6s infinite}
-@keyframes pulse{70%{box-shadow:0 0 0 16px rgba(255,149,195,0)}100%{box-shadow:0 0 0 0 rgba(255,149,195,0)}}
-.toast{position:absolute;left:50%;bottom:13%;translate:-50% 0;background:rgba(29,26,43,.88);color:#fff;font:13px system-ui,sans-serif;padding:8px 14px;border-radius:99px;white-space:nowrap;z-index:6;opacity:0;transition:opacity .25s;pointer-events:none}
-.toast.on{opacity:1}
-/* embed mode: just the phone, sized to the iframe */
+.rail a{margin-top:14px;font:12px "JetBrains Mono",monospace;color:var(--dim)}
+.phone{position:relative;flex:none;border:10px solid var(--bezel);background:var(--bezel);border-radius:calc(var(--w) * .14);
+  box-shadow:0 30px 70px -20px rgba(60,40,140,.45);overflow:hidden}
+.screenbox{position:relative;width:var(--w);height:calc(var(--w) * 852 / 393);overflow:hidden;border-radius:calc(var(--w) * .12)}
 .embed body{background:transparent;min-height:0}
 .embed .wrap{padding:0;min-height:100vh}
 .embed .rail{display:none}
 .embed .phone{box-shadow:none}
 @media (max-width:640px){.rail{display:none}}
-@media (prefers-reduced-motion:reduce){.screen img{animation:none}.tap{animation:none}}
+
+/* ---------- the app, designed at 393×852 and scaled ---------- */
+#app{position:absolute;left:0;top:0;width:393px;height:852px;transform-origin:0 0;overflow:hidden;
+  font-family:"SF Pro Text","PingFang HK",-apple-system,system-ui,sans-serif;-webkit-font-smoothing:antialiased;color:#fff;background:#2b2545}
+:where(#app) button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer}
+:where(#app) input{font:inherit;color:inherit;border:0;outline:0;background:none;min-width:0}
+.scr{position:absolute;inset:0;overflow:hidden}
+.scr.in{animation:scrIn .38s cubic-bezier(.2,.8,.2,1)}
+.scr.in.back{animation-name:scrBack}
+.scr.out{animation:scrOut .3s ease forwards;pointer-events:none}
+@keyframes scrIn{from{transform:translateX(24%);opacity:0}}
+@keyframes scrBack{from{transform:translateX(-24%);opacity:0}}
+@keyframes scrOut{to{opacity:0;transform:scale(.97)}}
+.dark{background:linear-gradient(180deg,#5a4f8f 0%,#3b3360 38%,#2b2545 70%,#221d36 100%)}
+.dark::before,.dark::after{content:"";position:absolute;border-radius:50%;filter:blur(70px);pointer-events:none;z-index:0}
+.dark::before{width:300px;height:300px;left:-90px;top:140px;background:#ff95c3;opacity:.35}
+.dark::after{width:280px;height:280px;right:-100px;top:440px;background:#8177e0;opacity:.5}
+.scr>*{position:relative;z-index:1}
+.glass{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-radius:20px}
+.grad-btn{background:var(--grad);color:#fff;border-radius:99px;font-weight:600;box-shadow:0 10px 24px rgba(255,149,195,.3)}
+.sb{position:absolute;top:0;left:0;right:0;height:50px;padding:16px 30px 0 34px;display:flex;justify-content:space-between;font-weight:600;font-size:16px;z-index:5}
+.sb svg{height:12px}
+.sb.ink{color:#2b2545}
+.top{position:absolute;top:54px;left:0;right:0;height:46px;display:flex;align-items:center;justify-content:center;text-align:center;z-index:4}
+.top b{display:block;font-size:19px;font-weight:600}
+.top small{display:block;font-size:11px;opacity:.65}
+.round{position:absolute;top:6px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.16)!important;display:grid;place-items:center}
+.round.l{left:20px}.round.r{right:20px}
+.round svg{width:16px;height:16px}
+.tab{position:absolute;left:30px;right:30px;bottom:26px;height:58px;border-radius:30px;display:flex;justify-content:space-around;align-items:center;z-index:6;
+  background:rgba(40,34,62,.55);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.tab button{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;opacity:.8;transition:background .2s,opacity .2s}
+.tab button.on{background:rgba(255,255,255,.22);opacity:1}
+.tab svg{width:22px;height:22px}
+.homebar{position:absolute;bottom:8px;left:50%;translate:-50% 0;width:134px;height:5px;border-radius:3px;background:rgba(255,255,255,.7);z-index:7}
+.light .homebar{background:rgba(40,30,70,.35)}
+.toast{position:absolute;left:50%;top:70px;translate:-50% -10px;z-index:50;background:rgba(255,255,255,.95);color:#4a3f86;font-size:13px;font-weight:600;
+  padding:9px 16px;border-radius:99px;white-space:nowrap;opacity:0;transition:opacity .25s,translate .25s;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.toast.on{opacity:1;translate:-50% 0}
+.tap{position:absolute;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;background:var(--pink);pointer-events:none;z-index:40;
+  box-shadow:0 0 0 0 rgba(255,149,195,.7);animation:pulse 1.6s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 16px rgba(255,149,195,0)}100%{box-shadow:0 0 0 0 rgba(255,149,195,0)}}
+
+/* welcome: three soft blobs that drift together and melt into one */
+.welcome{background:#fff;color:#2b2545}
+.blobs{position:absolute;left:46px;top:150px;width:300px;height:300px;filter:blur(34px) saturate(1.15);animation:spin 36s linear infinite}
+.blobs i{position:absolute;width:170px;height:170px;border-radius:50%;mix-blend-mode:multiply}
+.blobs .b1{left:10px;top:0;background:radial-gradient(circle at 40% 40%,#FFE6A6,#FFD8A8 60%,rgba(255,216,168,0) 72%);animation:m1 9s ease-in-out infinite alternate}
+.blobs .b2{left:130px;top:40px;background:radial-gradient(circle at 50% 50%,#FFB3D8,#F7A6E0 55%,rgba(247,166,224,0) 72%);animation:m2 11s ease-in-out infinite alternate}
+.blobs .b3{left:60px;top:125px;background:radial-gradient(circle at 45% 45%,#7C6BFF,#B98CFF 55%,rgba(185,140,255,0) 74%);animation:m3 10s ease-in-out infinite alternate}
+@keyframes m1{0%{transform:translate(-26px,-18px) scale(.9)}100%{transform:translate(46px,58px) scale(1.12)}}
+@keyframes m2{0%{transform:translate(34px,-22px) scale(.92)}100%{transform:translate(-50px,40px) scale(1.15)}}
+@keyframes m3{0%{transform:translate(0,40px) scale(.95)}100%{transform:translate(8px,-44px) scale(1.18)}}
+@keyframes spin{to{rotate:360deg}}
+.closer{position:absolute;top:500px;left:0;right:0;text-align:center;font-size:34px;font-weight:500;margin:0;letter-spacing:.3px;
+  background:linear-gradient(90deg,#D9A9DE,#8177E0);-webkit-background-clip:text;background-clip:text;color:transparent;opacity:0;animation:rise 1.4s .6s ease forwards}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.welcome .cta{position:absolute;left:62px;right:62px;top:724px;height:44px;font-size:18px}
+.have{position:absolute;top:778px;left:0;right:0;text-align:center;font-size:12px;color:#8a86a0;margin:0}
+.have a{color:#E8B400;text-decoration:underline;cursor:pointer;font-weight:600}
+
+/* sign up / sign in (the 2026 "glass sheet" screens) */
+.auth{background:linear-gradient(180deg,#8f86dc 0%,#b3a8e0 30%,#cbc2e2 60%,#d3cbe0 100%)}
+.auth .halo{position:absolute;border-radius:50%;filter:blur(40px);animation:float 7s ease-in-out infinite alternate}
+.auth .h1{width:150px;height:110px;left:120px;top:20px;background:#5f4fd8;opacity:.75}
+.auth .h2{width:170px;height:130px;left:40px;top:90px;background:#e7b9e8;opacity:.8;animation-delay:-3s}
+@keyframes float{to{transform:translate(24px,12px) scale(1.08)}}
+.sheet{position:absolute;left:0;right:0;top:134px;bottom:0;border-radius:28px 28px 0 0;padding:44px 40px 0 44px;
+  background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,.1) 40%,rgba(255,255,255,.06));border-top:1px solid rgba(255,255,255,.7);
+  backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px)}
+.sheet h2{margin:0 0 30px;font-weight:500;font-size:32px;line-height:1.2}
+.sheet.center h2{text-align:center}
+.field{display:flex;align-items:center;height:40px;border-radius:20px;border:1px solid rgba(255,255,255,.75);background:rgba(255,255,255,.12);
+  padding:0 16px;margin-bottom:14px;transition:background .25s,box-shadow .25s}
+.field:focus-within{background:rgba(255,255,255,.26);box-shadow:0 0 0 3px rgba(255,255,255,.25)}
+.field input{flex:1;font-size:15px}
+.field input::placeholder{color:rgba(255,255,255,.65)}
+.sheet .cta{width:100%;height:42px;font-size:18px;margin-top:6px;border-radius:21px;border:1px solid rgba(255,255,255,.7);
+  background:linear-gradient(90deg,#a99ee6,#cdbde9);box-shadow:none}
+.sheet .cta.load{background:linear-gradient(90deg,#8177e0,#ff95c3)}
+.agree{display:flex;align-items:center;gap:10px;margin-top:16px;font-size:11.5px;color:#4a4560;cursor:pointer}
+.box{width:16px;height:16px;flex:none;border:1.3px solid #8a86a0;border-radius:3px;background:rgba(255,255,255,.6);display:grid;place-items:center}
+.box.on{background:#8177e0;border-color:#8177e0}
+.box.on::after{content:"";width:7px;height:4px;border:2px solid #fff;border-top:0;border-right:0;rotate:-45deg;translate:0 -1px}
+.err{color:#d8336b;font-size:12px;min-height:16px;margin:6px 0 0}
+.shake{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.social{position:absolute;bottom:58px;left:0;right:0;text-align:center;font-size:12px;color:#5a5570}
+.social div{display:flex;justify-content:center;gap:18px;margin-top:10px}
+.social i{width:46px;height:46px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 4px 12px rgba(80,60,160,.15)}
+.social svg{width:24px;height:24px;fill:#8177e0}
+.switch{font-size:12px;color:#4a4560;text-align:center;margin-top:18px}
+.switch a{color:#5a4fc8;font-weight:600;text-decoration:underline;cursor:pointer}
+.link iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+
+/* home dashboard */
+.home{background:#1f1a2c}
+.home .photo{position:absolute;inset:0;background:url(assets/lovelink-app/food.webp) center/cover;filter:blur(3px) brightness(.62) saturate(.9);transform:scale(1.06);z-index:0}
+.card{position:absolute;left:18px;right:18px}
+.meet{top:62px;height:150px;padding:14px 16px}
+.meet .lbl{display:flex;justify-content:space-between;font-size:12px;opacity:.75;padding:0 8px}
+.meet .tiles{display:flex;gap:10px;margin-top:8px}
+.tile{height:72px;border-radius:12px;background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.3);display:grid;place-items:center;font-size:48px;font-weight:300;
+  color:#2d2742;text-shadow:0 1px 0 rgba(255,255,255,.4)}
+.tile.d{width:72px}.tile.t{flex:1;font-variant-numeric:tabular-nums;letter-spacing:1px}
+.bar{height:6px;border-radius:3px;background:rgba(255,255,255,.25);margin-top:14px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:3px;background:#fff}
+.todo{top:226px;left:18px;width:170px;height:186px;padding:12px}
+.todo h4,.pc h4{margin:0 0 10px;font-size:12.5px;font-weight:500;opacity:.85}
+.check{display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12px;cursor:pointer;width:100%;text-align:left}
+.check i{width:20px;height:20px;border-radius:50%;flex:none;border:1.5px solid rgba(255,255,255,.7);display:grid;place-items:center}
+.check.on i{background:#fff}
+.check.on i::after{content:"";width:8px;height:4px;border:2px solid #4a3f86;border-top:0;border-right:0;rotate:-45deg;translate:0 -1px}
+.check span{flex:1;padding:4px 8px;border-radius:7px;background:rgba(255,255,255,.22)}
+.check.on span{text-decoration:line-through;opacity:.7}
+.pc{top:226px;right:18px;left:auto;width:172px;height:186px;padding:0;overflow:hidden;cursor:pointer}
+.pc img{width:100%;height:104px;object-fit:cover;display:block}
+.pc p{margin:6px 10px 4px;font-size:12px}
+.pc .reply{margin:0 10px;height:26px;border-radius:8px;background:rgba(255,255,255,.16);display:flex;align-items:center;padding:0 8px;font-size:11px}
+.pc .reply input{width:100%}
+.pc .reply input::placeholder{color:rgba(255,255,255,.55)}
+.voice{top:426px;height:66px;display:flex;align-items:center;justify-content:center;gap:16px;cursor:pointer}
+.voice .dots{display:flex;gap:6px}.voice .dots i{width:5px;height:5px;border-radius:50%;background:#fff;animation:wave 1.4s ease-in-out infinite}
+.voice .play{width:34px;height:34px}
+.voice .unread{position:absolute;right:-4px;top:-4px;width:14px;height:14px;border-radius:50%;background:#ff6b8a;border:2px solid rgba(255,255,255,.6)}
+@keyframes wave{50%{transform:translateY(-5px);opacity:.6}}
+.status{top:506px;height:176px;display:grid;grid-template-columns:1fr 1fr;overflow:hidden;padding:0}
+.status>button{display:flex;flex-direction:column;align-items:center;padding-top:14px;gap:2px}
+.status>button+button{border-left:1px solid rgba(255,255,255,.18)}
+.status b{font-weight:500;font-size:15px}.status small{font-size:10px;opacity:.7}
+.status .face{width:84px;height:84px;margin-top:14px;border-radius:50%;background:rgba(255,255,255,.32);display:grid;place-items:center;font-size:40px}
+.status .face svg{width:40px;height:40px}
+
+/* clock / calendar / history / album */
+.seg{position:absolute;top:112px;left:50%;translate:-50% 0;display:flex;padding:4px;border-radius:99px;background:rgba(255,255,255,.14)}
+.seg button{padding:7px 18px;border-radius:99px;font-size:13px;font-weight:600;opacity:.75}
+.seg button.on{background:#fff;color:#4a3f86;opacity:1}
+.dial{position:absolute;top:168px;left:50%;translate:-50% 0;width:230px;height:230px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#c3b8ff,#8177e0 60%,#6a5fd0);box-shadow:0 20px 50px rgba(30,20,80,.5),inset 0 0 0 10px rgba(255,255,255,.12)}
+.dial.lon{background:radial-gradient(circle at 35% 30%,#ffe2a8,#ffb08a 55%,#ff8fb0)}
+.dial i{position:absolute;left:50%;bottom:50%;transform-origin:50% 100%;border-radius:3px;background:#fff;transition:rotate .6s cubic-bezier(.3,1.4,.5,1)}
+.dial .hh{width:6px;height:62px;margin-left:-3px}.dial .mm{width:4px;height:88px;margin-left:-2px}.dial .ss{width:2px;height:96px;margin-left:-1px;background:#ffd0e2;transition:none}
+.dial::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:12px;margin:-6px;border-radius:50%;background:#fff}
+.digital{position:absolute;top:412px;left:0;right:0;text-align:center;font-size:40px;font-weight:300;font-variant-numeric:tabular-nums}
+.digital small{display:block;font-size:13px;opacity:.7;font-weight:400}
+.row{position:absolute;left:18px;right:18px;display:flex;align-items:center;justify-content:space-between;padding:14px 16px;font-size:13px}
+.flight{top:530px}.flight b{font-size:15px}.flight .line{flex:1;margin:0 10px;border-top:1.5px dashed rgba(255,255,255,.6);position:relative}
+.flight .line::after{content:"✈";position:absolute;left:50%;top:-11px;translate:-50% 0;font-size:14px}
+.weather{top:604px}
+.daysleft{top:672px;justify-content:center;gap:10px;font-size:15px}
+.daysleft b{font-size:30px;font-weight:300}
+.cal-date{position:absolute;top:108px;left:22px;font-size:15px;opacity:.75}
+.cal-date b{display:block;font-size:28px;font-weight:600;opacity:1;color:#fff}
+.plan{position:absolute;top:184px;left:18px;right:18px;height:42px;display:flex;align-items:center;padding:0 16px;border-radius:21px}
+.plan input::placeholder{color:rgba(255,255,255,.6)}
+.chips{position:absolute;top:238px;left:18px;right:18px;display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:6px 12px;border-radius:99px;font-size:12px;font-weight:600;background:rgba(255,255,255,.18)}
+.chip.p{background:#ff8fb0}.chip.y{background:#f3c64e;color:#4a3a10}.chip.v{background:#8177e0}
+.cols{position:absolute;top:318px;left:18px;right:18px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cols .glass{padding:12px}
+.cols h4{margin:0 0 10px;font-size:12.5px;font-weight:500;opacity:.85}
+.count{position:absolute;left:18px;right:18px;display:flex;align-items:center;gap:6px;padding:12px 14px;font-size:13px}
+.count .fd{width:34px;height:46px;border-radius:8px;background:rgba(255,255,255,.85);color:#4a3f86;display:grid;place-items:center;font-size:28px;font-weight:300}
+.count span{margin-left:8px;opacity:.85}
+.who{position:absolute;top:104px;left:0;right:0;text-align:center}
+.who img{width:64px;height:64px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.7)}
+.who p{margin:4px 0 0;font-size:12px;opacity:.75}
+.cloud{position:absolute;top:196px;left:18px;right:18px;height:150px;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px 12px;padding:14px;text-align:center}
+.cloud span{line-height:1.1}
+.hist{position:absolute;top:362px;left:18px;right:18px;bottom:30px;overflow:auto;scrollbar-width:none}
+.hist h4{margin:0 0 10px;font-size:13px;font-weight:500;opacity:.8;text-align:center}
+.hrow{display:flex;align-items:center;gap:10px;padding:12px 14px;margin-bottom:10px;font-size:13px}
+.hrow span{flex:1}
+.heart{width:26px;height:26px;display:grid;place-items:center;transition:transform .2s}
+.heart svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:1.8}
+.heart.on svg{fill:#ff8fb0;stroke:#ff8fb0}
+.heart.pop{transform:scale(1.35)}
+.masonry{position:absolute;top:110px;left:16px;right:16px;bottom:110px;overflow:auto;columns:2;column-gap:10px;scrollbar-width:none}
+.masonry img{width:100%;display:block;border-radius:14px;margin-bottom:10px;break-inside:avoid;cursor:pointer;animation:pop .4s cubic-bezier(.3,1.4,.5,1)}
+@keyframes pop{from{transform:scale(.85);opacity:0}}
+.upload{position:absolute;bottom:34px;left:50%;translate:-50% 0;width:64px;height:64px;border-radius:50%;display:grid;place-items:center}
+.upload svg{width:28px;height:28px}
+.big{position:absolute;top:110px;left:22px;right:22px;height:470px;border-radius:24px;overflow:hidden;background:#000}
+.big img,.big canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:filter .3s,transform .4s}
+.big .cap{position:absolute;left:0;right:0;bottom:26px;text-align:center;font-size:24px;font-weight:700;text-shadow:0 2px 8px rgba(0,0,0,.5);outline:0}
+.tools{position:absolute;top:600px;left:30px;right:30px;display:flex;justify-content:space-between}
+.tools button{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;opacity:.75}
+.tools button.on{opacity:1}
+.tools i{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.14);display:grid;place-items:center}
+.tools button.on i{background:#fff;color:#4a3f86}
+.tools svg{width:20px;height:20px}
+.save{position:absolute;left:60px;right:60px;bottom:52px;height:44px}
+
+/* chat */
+.chat .feed{position:absolute;top:110px;left:0;right:0;bottom:96px;overflow:auto;padding:8px 16px 16px;display:flex;flex-direction:column;gap:10px;scrollbar-width:none}
+.msg{display:flex;align-items:flex-end;gap:8px;max-width:84%;animation:pop .3s ease}
+.msg img{width:28px;height:28px;border-radius:50%;object-fit:cover;flex:none}
+.msg p{margin:0;padding:10px 13px;border-radius:18px 18px 18px 4px;font-size:14px;line-height:1.4;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.18)}
+.msg.me{align-self:flex-end;flex-direction:row-reverse}
+.msg.me p{border-radius:18px 18px 4px 18px;background:linear-gradient(135deg,#8177e0,#c38be8)}
+.msg .vm{display:flex;align-items:center;gap:8px;min-width:120px}
+.msg .vm svg{width:16px;height:16px}
+.typing{display:flex;gap:4px;padding:12px 14px}.typing i{width:6px;height:6px;border-radius:50%;background:#fff;opacity:.5;animation:wave 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+.composer{position:absolute;left:14px;right:14px;bottom:30px;height:52px;display:flex;align-items:center;gap:8px;padding:0 6px 0 16px;border-radius:26px}
+.composer input{flex:1;font-size:14px}
+.composer input::placeholder{color:rgba(255,255,255,.55)}
+.composer .mic{width:36px;height:36px;border-radius:50%;display:grid;place-items:center}
+.composer .mic svg{width:20px;height:20px}
+.sos{width:42px;height:42px;border-radius:50%;font-size:11px;font-weight:800;letter-spacing:.5px;
+  background:radial-gradient(circle at 35% 30%,#ffd1a8,#ff8f8f 55%,#c76bff)!important;box-shadow:0 6px 18px rgba(255,120,150,.45);position:relative;z-index:12}
+.sos.open{box-shadow:0 0 0 8px rgba(255,255,255,.18),0 6px 18px rgba(255,120,150,.45)}
+.veil{position:absolute;inset:0;z-index:10;background:rgba(30,24,50,.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .25s}
+.veil.on{opacity:1;pointer-events:auto}
+.petal{position:absolute;z-index:11;display:flex;align-items:center;gap:10px;opacity:0;transform:translate(var(--tx),var(--ty)) scale(.4);pointer-events:none;
+  transition:opacity .25s,transform .4s cubic-bezier(.3,1.5,.5,1)}
+.veil.on~.petal{opacity:1;transform:none;pointer-events:auto}
+.petal i{width:56px;height:56px;border-radius:18px 18px 18px 6px;background:#fff;display:grid;place-items:center;box-shadow:0 8px 20px rgba(0,0,0,.2);color:#8177e0}
+.petal i svg{width:26px;height:26px}
+.petal span{font-size:12px;font-weight:600;background:#fff;color:#4a3f86;padding:5px 10px;border-radius:8px}
+.hold{position:absolute;left:50%;top:560px;translate:-50% 0;width:150px;height:150px;border-radius:50%;display:grid;place-items:center;touch-action:none;user-select:none;
+  background:rgba(255,255,255,.95)!important;color:#ff8f6b;box-shadow:0 0 0 16px rgba(255,255,255,.12),0 20px 40px rgba(0,0,0,.25);transition:transform .2s,box-shadow .2s}
+.hold.rec{transform:scale(1.08);box-shadow:0 0 0 26px rgba(255,149,195,.25),0 20px 40px rgba(0,0,0,.25)}
+.hold svg{width:46px;height:46px}
+.wave{position:absolute;top:300px;left:30px;right:30px;height:120px;display:flex;align-items:center;justify-content:center;gap:4px}
+.wave i{width:4px;border-radius:2px;background:linear-gradient(#ffd1a8,#ff8fb0,#8177e0);height:6px;transition:height .12s}
+.hint-t{position:absolute;top:740px;left:0;right:0;text-align:center;font-size:13px;opacity:.75}
+.orb{position:absolute;top:150px;left:50%;translate:-50% 0;width:240px;height:240px;border-radius:50%;filter:blur(18px);
+  background:conic-gradient(from 0deg,#feef8c,#ff95c3,#8177e0,#5f4fd8,#feef8c);animation:spin 9s linear infinite,breathe 4s ease-in-out infinite}
+.orb.talk{animation-duration:3s,1.2s}
+.orb-core{position:absolute;top:222px;left:50%;translate:-50% 0;width:96px;height:96px;border-radius:50%;background:rgba(200,190,255,.55);border:1px solid rgba(255,255,255,.6);backdrop-filter:blur(6px)}
+@keyframes breathe{50%{scale:1.08}}
+.listen{position:absolute;top:420px;left:0;right:0;text-align:center}
+.listen b{font-size:26px;font-weight:600}.listen p{margin:6px 0 0;font-size:12px;opacity:.75}
+.aiwave{position:absolute;top:490px;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:3px;height:30px}
+.aiwave i{width:3px;border-radius:2px;background:#ff95c3;animation:bars 1s ease-in-out infinite}
+@keyframes bars{50%{transform:scaleY(.3)}}
+.reply{position:absolute;top:470px;left:22px;right:22px;padding:14px 16px;font-size:13.5px;line-height:1.5;min-height:60px}
+.aichips{position:absolute;top:620px;left:18px;right:18px;display:flex;gap:8px;justify-content:center}
+.aichips button{padding:8px 14px;border-radius:99px;font-size:12.5px;font-weight:600;background:rgba(255,255,255,.16)!important;border:1px solid rgba(255,255,255,.25)!important}
+.aichips button.on{background:var(--grad)!important}
+.ask{position:absolute;left:18px;right:18px;bottom:104px;height:50px;border-radius:25px;display:flex;align-items:center;padding:0 6px 0 18px}
+.ask input{flex:1;font-size:14px}.ask input::placeholder{color:rgba(255,255,255,.55)}
+.ask button{width:38px;height:38px;border-radius:50%;background:var(--grad)!important;display:grid;place-items:center}
+.ask svg{width:16px;height:16px}
+.argue iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+
+/* phonograph */
+.vinyl{position:absolute;top:150px;left:50%;margin-left:-125px;width:250px;height:250px;border-radius:50%;
+  background:repeating-radial-gradient(circle,#2a2438 0 2px,#1d1828 2px 4px);box-shadow:0 24px 50px rgba(0,0,0,.45),inset 0 0 0 6px rgba(255,255,255,.06);animation:spin 6s linear infinite;animation-play-state:paused}
+.vinyl.on{animation-play-state:running}
+.vinyl::before{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 30deg,transparent,rgba(255,255,255,.12),transparent 30%,transparent 50%,rgba(255,255,255,.1),transparent 80%)}
+.vinyl img{position:absolute;left:50%;top:50%;width:92px;height:92px;margin:-46px;border-radius:50%;object-fit:cover;border:4px solid #8177e0}
+.vinyl::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:12px;margin:-6px;border-radius:50%;background:#eee}
+.arm{position:absolute;top:118px;left:94px;width:12px;height:150px;transform-origin:50% 10px;rotate:-28deg;transition:rotate .7s cubic-bezier(.3,1.2,.5,1);z-index:3}
+.arm.on{rotate:-4deg}
+.arm::before{content:"";position:absolute;left:-14px;top:-14px;width:40px;height:40px;border-radius:50%;background:radial-gradient(circle,#fff 0 30%,#c8a7ff 32% 60%,#8177e0 62%)}
+.arm::after{content:"";position:absolute;left:3px;top:10px;width:6px;height:132px;border-radius:3px;background:linear-gradient(#e9e3ff,#b9a8f5)}
+.track{position:absolute;top:440px;left:18px;right:18px;display:flex;gap:12px;align-items:center;padding:12px}
+.track img{width:56px;height:56px;border-radius:12px;object-fit:cover}
+.track b{font-size:15px}.track small{display:block;font-size:11px;opacity:.7;margin-bottom:6px}
+.prog{height:4px;border-radius:2px;background:rgba(255,255,255,.2);overflow:hidden}.prog i{display:block;height:100%;width:0;background:var(--grad)}
+.ctrl{position:absolute;top:556px;left:0;right:0;display:flex;justify-content:center;align-items:center;gap:30px}
+.ctrl button{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.14)!important;display:grid;place-items:center}
+.ctrl .pp{width:64px;height:64px;background:var(--grad)!important}
+.ctrl svg{width:20px;height:20px}
+.ctrl .liked svg{fill:#ff8fb0;stroke:#ff8fb0}
+.leave{position:absolute;left:40px;right:40px;top:650px;height:46px;border-radius:23px;background:rgba(255,255,255,.92)!important;color:#4a3f86!important;font-weight:600;
+  display:flex;align-items:center;justify-content:center;gap:8px;touch-action:none;user-select:none}
+.leave::before{content:"";width:10px;height:10px;border-radius:50%;background:#e0457b}
+.leave.rec{background:#ffdbe6!important}
+
+/* room, design, tasks, store, fridge */
+.credits{position:absolute;top:108px;left:18px;right:18px;display:flex;align-items:center;gap:10px;font-size:12px}
+.credits .meter{flex:1;height:10px;border-radius:5px;background:rgba(255,255,255,.2);overflow:hidden}
+.credits .meter i{display:block;height:100%;background:linear-gradient(90deg,#ffd1a8,#ff95c3);transition:width .5s}
+.credits b{font-variant-numeric:tabular-nums}
+.roomimg{position:absolute;top:140px;left:8px;right:8px;height:360px;touch-action:pan-y}
+.roomimg img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 20px 30px rgba(0,0,0,.35));transition:transform .4s}
+.live{position:absolute;top:112px;right:18px;display:flex;align-items:center;gap:6px;font-size:11px;padding:5px 10px;border-radius:99px;background:rgba(255,255,255,.16)}
+.live::before{content:"";width:7px;height:7px;border-radius:50%;background:#53e08a;animation:wave 1.4s infinite}
+.grid4{position:absolute;top:520px;left:18px;right:18px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid4 button{height:92px;padding:14px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;font-size:15px;font-weight:600}
+.grid4 small{font-size:11px;font-weight:400;opacity:.75}
+.swipe{position:absolute;top:494px;left:0;right:0;text-align:center;font-size:11px;opacity:.6}
+.design .roomimg{top:104px;height:250px}
+.wash{position:absolute;inset:0;mix-blend-mode:color;opacity:.35;transition:background .4s;-webkit-mask:url(assets/lovelink-app/bedroom.webp) center/contain no-repeat;mask:url(assets/lovelink-app/bedroom.webp) center/contain no-repeat}
+.opt{position:absolute;left:18px;right:18px;padding:12px 14px}
+.opt header{display:flex;justify-content:space-between;font-size:13px;margin-bottom:10px}
+.opt header span{opacity:.6}
+.sw{display:flex;gap:14px;align-items:center}
+.sw button{width:42px;height:42px;border-radius:50%;border:3px solid transparent!important;transition:transform .2s}
+.sw button.on{border-color:#fff!important;transform:scale(1.1)}
+.beds button{width:96px;height:52px;border-radius:10px;background:#fff!important;border:2px solid transparent!important;overflow:hidden}
+.beds button.on{border-color:#ff95c3!important}
+.beds img{width:100%;height:100%;object-fit:contain}
+.done-btn{position:absolute;left:18px;right:18px;bottom:104px;height:46px;font-size:16px}
+.duo{position:absolute;top:108px;left:18px;right:18px;display:flex;align-items:center;gap:10px;padding:12px 14px}
+.duo img{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid #fff}
+.duo .meter{flex:1;height:10px;border-radius:5px;background:rgba(255,255,255,.2);overflow:hidden;display:flex}
+.duo .meter i{height:100%;background:#ff95c3;transition:width .5s}.duo .meter i+i{background:#8177e0}
+.nudge{position:absolute;top:186px;left:18px;right:18px;padding:12px 14px;display:flex;gap:12px;align-items:center;font-size:12px}
+.nudge img{width:42px;height:52px;object-fit:contain}
+.nudge b{display:block;font-size:14px}
+.tasks-list{position:absolute;top:266px;left:18px;right:18px;display:flex;flex-direction:column;gap:9px}
+.task{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;font-size:14px}
+.task em{font-style:normal;opacity:.8;margin-right:10px}
+.task i{width:24px;height:24px;border-radius:50%;border:1.5px solid rgba(255,255,255,.7);display:grid;place-items:center}
+.task.on i{background:#53e08a;border-color:#53e08a}
+.task.on i::after{content:"";width:9px;height:5px;border:2px solid #fff;border-top:0;border-right:0;rotate:-45deg;translate:0 -1px}
+.plus{position:absolute;font-weight:800;color:#ffd1a8;font-size:16px;pointer-events:none;animation:up .9s ease forwards;z-index:20}
+@keyframes up{to{transform:translateY(-40px);opacity:0}}
+.modal{position:absolute;inset:0;z-index:30;display:grid;place-items:center;background:rgba(20,16,36,.5);backdrop-filter:blur(6px);animation:fade .3s}
+@keyframes fade{from{opacity:0}}
+.modal .m{width:300px;padding:26px 22px;border-radius:24px;background:#fff;color:#2b2545;text-align:center;animation:pop .4s cubic-bezier(.3,1.4,.5,1)}
+.modal h3{margin:0 0 12px;font-size:26px}
+.modal img{width:130px;height:160px;object-fit:contain}
+.modal p{margin:8px 0 16px;font-size:14px}
+.modal .grad-btn{width:100%;height:42px}
+.pill{position:absolute;top:110px;right:18px;padding:6px 12px;border-radius:99px;background:rgba(255,255,255,.18);font-size:13px;font-weight:700}
+.mystery{position:absolute;top:150px;left:18px;right:18px;height:92px;padding:14px 16px;border-radius:20px;display:flex;align-items:center;justify-content:space-between;
+  background:linear-gradient(120deg,rgba(129,119,224,.9),rgba(255,149,195,.85));box-shadow:0 10px 30px rgba(129,119,224,.35)}
+.mystery b{font-size:18px}.mystery small{display:block;font-size:11px;opacity:.9;margin:2px 0 8px}
+.mystery .prog{width:150px;background:rgba(255,255,255,.35)}.mystery .prog i{background:#fff}
+.mystery button{padding:9px 18px;border-radius:99px;background:#fff!important;color:#7b5fd0!important;font-weight:700}
+.mystery button:disabled{opacity:.5;cursor:default}
+.tabs{position:absolute;top:258px;left:18px;right:18px;display:flex;gap:8px}
+.tabs button{padding:7px 14px;border-radius:99px;font-size:12.5px;background:rgba(255,255,255,.12)!important}
+.tabs button.on{background:#fff!important;color:#4a3f86!important;font-weight:700}
+.items{position:absolute;top:304px;left:18px;right:18px;bottom:96px;overflow:auto;display:grid;grid-template-columns:1fr 1fr;gap:10px;align-content:start;scrollbar-width:none}
+.item{padding:10px;display:flex;flex-direction:column;gap:6px}
+.item .pic{height:92px;border-radius:12px;background:#fff;display:grid;place-items:center;overflow:hidden}
+.item .pic img{max-width:90%;max-height:88px}
+.item footer{display:flex;align-items:center;justify-content:space-between;font-size:13px}
+.item footer b{display:block;font-weight:500}
+.item footer small{color:#ffb3cc;font-weight:700}
+.buy{width:28px;height:28px;border-radius:50%;background:var(--grad)!important;display:grid;place-items:center;font-size:18px;line-height:1}
+.buy.owned{background:#53e08a!important;font-size:13px}
+.empty{grid-column:1/-1;text-align:center;opacity:.7;font-size:13px;padding:40px 0}
+.fridge-door{position:absolute;top:104px;left:34px;right:34px;height:620px;border-radius:26px;
+  background:linear-gradient(105deg,#f4f1f8,#e6e1ee 60%,#d9d3e4);box-shadow:inset -6px 0 12px rgba(0,0,0,.08),0 24px 40px rgba(0,0,0,.35);overflow:hidden;color:#2b2545}
+.fridge-door::before{content:"";position:absolute;left:14px;top:300px;width:10px;height:120px;border-radius:5px;background:linear-gradient(90deg,#c9c2d6,#fff,#c9c2d6)}
+.fridge-door::after{content:"";position:absolute;left:0;right:0;top:530px;height:2px;background:rgba(0,0,0,.08)}
+.mag{position:absolute;cursor:pointer;touch-action:none;user-select:none;transition:transform .2s}
+.mag.pol{background:#fff;padding:6px 6px 18px;box-shadow:0 6px 14px rgba(0,0,0,.18)}
+.mag.pol img{width:96px;height:110px;object-fit:cover;display:block}
+.mag.note{width:130px;padding:12px;background:#fff6c9;box-shadow:0 6px 14px rgba(0,0,0,.15);font:13px/1.4 "Bradley Hand","Segoe Print",cursive}
+.mag.ticket{width:150px;height:62px;border-radius:6px;background:#2b2545;color:#ffd1a8;display:flex;align-items:center;justify-content:space-between;padding:0 12px;
+  font:700 13px/1.1 Georgia,serif;letter-spacing:1px;box-shadow:0 6px 14px rgba(0,0,0,.2)}
+.mag.ticket span{writing-mode:vertical-rl;font-size:10px;border-left:1.5px dashed #ffd1a8;padding-left:8px}
+.mag.dot{width:34px;height:34px;border-radius:50%;box-shadow:0 4px 8px rgba(0,0,0,.25)}
+.mag.bear img{width:76px}
+.edit .mag{animation:wiggle .3s ease-in-out infinite alternate}
+@keyframes wiggle{from{rotate:-2deg}to{rotate:2deg}}
+.fridge-hint{position:absolute;top:740px;left:0;right:0;text-align:center;font-size:12px;opacity:.75}
+@media (prefers-reduced-motion:reduce){.blobs,.blobs i,.vinyl,.orb,.edit .mag,.tap{animation:none!important}}
 </style>
 <script>if(new URLSearchParams(location.search).has("embed"))document.documentElement.classList.add("embed")</script>
 </head>
@@ -49,71 +394,363 @@ body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font-family
 <div class="wrap">
   <nav class="rail" id="rail" aria-label="Screens">
     <h1>LoveLink</h1>
-    <p>2026 redesign. Tap around, or jump to a screen.</p>
+    <p>2026 redesign, every screen live. Tap around, or jump to one.</p>
   </nav>
-  <div class="phone" id="phone"><div class="screen" id="screen"></div><div class="toast" id="toast"></div></div>
+  <div class="phone"><div class="screenbox" id="box"><div id="app"></div></div></div>
 </div>
 <script>
-// Screens are the 2026 Figma frames (Portfolio2026 › _assets). Hotspots are [x%, y%, w%, h%, target].
-// Add ?debug to see them, ?nohint to hide the pulsing dot.
-const TAB_A=[21.5,34.5,48.5,62.5,75], TAB_B=[21.5,34.5,47.5,59.5,71.5], TAB_T=[26,38,49,63,74];
-const TABS=["chat","room","home","test","me"];
-const tabs=(xs,y=93.2)=>xs.map((x,i)=>[x-5,y-3.2,10,6.4,TABS[i]]);
-const S={
-  landing: {img:"register",group:"Start",label:"Welcome",hot:[[19,88,62,5,"signup"],[60,92.8,16,3.8,"login"]],hint:0},
-  signup:  {img:"signin",group:"Start",label:"Sign up",hot:[[11,64.5,78,4.6,"link"]],hint:0},
-  login:   {img:"welcome",group:"Start",label:"Sign in",hot:[[11,47,78,5,"link"]],hint:0},
-  link:    {live:"assets/lovelink-proto/splash.html",group:"Start",label:"Link your love",hot:[],tap:[72,67.5]},
-  home:    {img:"home",group:"Home",label:"Home",hot:[...tabs(TAB_A,93.5),[4,58,91,8,"phono"],[52.5,29,45,21,"album"]],hint:0},
-  phono:   {img:"phono",group:"Home",label:"Phonograph",hot:[[3,7,12,6,"home"],...tabs(TAB_B)],hint:0},
-  album:   {img:"album",group:"Home",label:"Memory wall",hot:[[3,3.5,12,6,"home"]],hint:0},
-  chat:    {img:"chat",group:"Chat",label:"Chat · SOS",hot:[[0,4,26,7,"home"],[50,44,20,11,"aipk"],[70,35,20,11,"ai"],[58,56,20,10,"phono"]],hint:1},
-  ai:      {img:"ai",group:"Chat",label:"AI friend",hot:[[3,7,12,6,"chat"],...tabs(TAB_B)],hint:2},
-  aipk:    {live:"assets/lovelink-proto/argue.html",group:"Chat",label:"Argue mode",hot:[],tap:[50,19.5]},
-  room:    {img:"room",group:"Room",label:"Design room",hot:[[3,7,12,6,"home"],[5,83,90,5.4,"store"],...tabs(TAB_B)],hint:1},
-  store:   {img:"store",group:"Room",label:"Store",hot:[[3,7,12,6,"room"],...tabs(TAB_B)],hint:3},
-  fridge:  {img:"fridge",group:"Room",label:"Shared fridge",hot:[[3,4.5,14,6,"room"]],hint:0},
-  test:    {img:"test",group:"Test",label:"Personality test",hot:tabs(TAB_T,94)},
+/* ============ icons ============ */
+const I={
+  back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M15 5l-7 7 7 7"/></svg>',
+  more:'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>',
+  chat:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 12a8 7 0 1 1 4 6l-4 2 1-4a7 7 0 0 1-1-4z"/></svg>',
+  room:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M3 8l9-4 9 4v9l-9 4-9-4z"/><path d="M12 12v9M3 8l9 4 9-4"/></svg>',
+  home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M4 11l8-7 8 7v9H4z"/><path d="M10 20v-5h4v5"/></svg>',
+  test:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>',
+  me:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>',
+  play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>',
+  pause:'<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>',
+  heart:'<svg viewBox="0 0 24 24" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>',
+  heartL:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>',
+  mic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>',
+  send:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg>',
+  info:'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 10v7M12 7v.5" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>',
+  argue:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 12h2M8 8v8M12 5v14M16 8v8M20 12h-2"/></svg>',
+  voice:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="12" r="4"/><circle cx="17" cy="12" r="4"/><path d="M7 16h10"/></svg>',
+  upload:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17a5 5 0 1 1 1-9.9A6 6 0 0 1 19 9a4 4 0 0 1-1 8"/><path d="M12 12v8M9 15l3-3 3 3"/></svg>',
+  crop:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2v16h16M2 6h16v16"/></svg>',
+  pen:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 20l1-5L16 4l4 4L9 19z"/></svg>',
+  text:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 6h14M12 6v14"/></svg>',
+  filter:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="5"/><circle cx="15" cy="9" r="5"/><circle cx="12" cy="15" r="5"/></svg>',
+  replay:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 12a8 8 0 1 0 3-6.2M4 4v4h4"/></svg>',
+  status:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="13" r="7"/><path d="M9.5 12h.01M14.5 12h.01M9.5 15.5c1.4 1.2 3.6 1.2 5 0M12 2v2M5 4l1.5 1.5M19 4l-1.5 1.5"/></svg>',
 };
-const $=id=>document.getElementById(id), screen=$("screen"), phone=$("phone");
-const qs=new URLSearchParams(location.search);
-if(qs.has("debug"))document.documentElement.classList.add("debug");
-let hintOn=!qs.has("nohint"), cur=null, toastT;
+const SB=ink=>`<div class="sb${ink?' ink':''}"><span>9:41</span><svg viewBox="0 0 64 12" fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/><path d="M30 3.5a9 9 0 0 1 12 0l-1.5 1.6a7 7 0 0 0-9 0zM33 6.8a5 5 0 0 1 6 0L36 10z"/><rect x="45" y="1" width="17" height="10" rx="3" fill="none" stroke="currentColor"/><rect x="47" y="3" width="13" height="6" rx="1.5"/></svg></div>`;
+const TOP=(title,sub,back,right='')=>`<div class="top">${back?`<button class="round l" data-go="${back}" aria-label="Back">${I.back}</button>`:''}<div><b>${title}</b>${sub?`<small>${sub}</small>`:''}</div>${right}</div>`;
+const TAB=on=>`<nav class="tab">${[['chat','chat'],['room','room'],['home','home'],['test','test'],['me','me']].map(([k,ic])=>`<button data-go="${k}" class="${on===k?'on':''}" aria-label="${k}">${I[ic]}</button>`).join('')}</nav>`;
+const HB='<div class="homebar"></div>';
+const A='assets/lovelink-app/';
 
-// rail
-let g="";for(const [id,s] of Object.entries(S)){if(s.group!==g){g=s.group;$("rail").insertAdjacentHTML("beforeend",`<span>${g.toUpperCase()}</span>`)}
-  $("rail").insertAdjacentHTML("beforeend",`<button data-go="${id}">${s.label}</button>`)}
-$("rail").insertAdjacentHTML("beforeend",'<a href="lovelink.html">← Case study</a>');
-$("rail").onclick=e=>{const b=e.target.closest("[data-go]");if(b)go(b.dataset.go)};
+/* ============ shared state ============ */
+const S={credits:265, hisTodos:[['Buy grocery',1],['Call mom',1],['Finish homework',1],['Prepare for test',0]], myTodos:[['Book flight',0],['Gift for Rick',0],['Laundry',1]],
+  plans:['1000-day anniversary','Call mom','Homework','Grocery','Clean up'],
+  msgs:[['r','Guess who I met today 😝'],['m','Wait, no way... a celebrity?'],['r','Don’t laugh, but... I met Elon Musk!'],['m','Wait, what?! Elon Musk?! No way! Are you serious?']],
+  liked:new Set([0,3]), photos:['photo-palm','helen','photo-dome','photo-swirl','rick','photo-tower','photo-ink','photo-street','food-plate','photo-lines'], photo:'helen',
+  tasks:[['Have a breakfast',1],['Sleep early',0],['Get up early',0],['Work out',0],['Remember 10 words',0],['Do the laundry',0]], magnet:false,
+  owned:new Set(), wall:1, floor:0, bed:0, myStatus:null, city:'ny'};
+const tasksDone=()=>S.tasks.filter(t=>t[1]).length;
 
-function toast(t){const el=$("toast");el.textContent=t;el.classList.add("on");clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove("on"),1600)}
-function go(id){
-  if(id==="me")return toast("Profile isn’t in this prototype");
-  const s=S[id];if(!s)return;cur=id;
-  screen.innerHTML=s.live?`<iframe src="${s.live}" title="${s.label}"></iframe>`:`<img src="assets/lovelink-proto/${s.img}.webp" alt="${s.label}">`;
-  s.hot.forEach(([x,y,w,h,to])=>{const b=document.createElement("button");b.className="hot";b.style.cssText=`left:${x}%;top:${y}%;width:${w}%;height:${h}%`;
-    b.setAttribute("aria-label",to==="me"?"Me":(S[to]?.label||to));b.onclick=()=>go(to);screen.append(b)});
-  placeHint();
-  document.querySelectorAll("#rail [data-go]").forEach(b=>b.classList.toggle("on",b.dataset.go===id));
-  parent!==window&&parent.postMessage({screen:id},location.origin);
+/* ============ screens ============ */
+const V={};
+V.welcome={bg:'welcome light',hint:'.cta',html:()=>`${SB(1)}
+  <div class="blobs" aria-hidden="true"><i class="b1"></i><i class="b2"></i><i class="b3"></i></div>
+  <h1 class="closer">Let’s Get Closer.</h1>
+  <button class="cta grad-btn" data-go="signup">Sign up</button>
+  <p class="have">Already have an account? <a data-go="signin">Sign in.</a></p>${HB}`};
+
+const authForm=(kind)=>{const up=kind==='signup';return `${SB()}<i class="halo h1"></i><i class="halo h2"></i>
+  <form class="sheet${up?'':' center'}" novalidate>
+    <h2>${up?'Welcome to<br>LoveLink':'Welcome Back!'}</h2>
+    ${up?'<label class="field"><input name="user" placeholder="Username" autocomplete="off"></label>':''}
+    <label class="field"><input name="email" type="email" placeholder="Email" autocomplete="off"></label>
+    <label class="field"><input name="pw" type="password" placeholder="${up?'Set Password':'Password'}"></label>
+    ${up?'<label class="field"><input name="pw2" type="password" placeholder="Confirm Password"></label>':''}
+    <button class="cta grad-btn">${up?'Sign up':'Sign In'}</button>
+    <p class="err"></p>
+    <div class="agree"><span class="box"></span>I agree to the Terms of Service and Privacy Policy.</div>
+    <p class="switch">${up?'Already registered? <a data-go="signin">Sign in</a>':'New here? <a data-go="signup">Create an account</a>'}</p>
+  </form>
+  <div class="social">continue with<div>
+    <i><svg viewBox="0 0 24 24"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7zm5 3.5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9zm0 2a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM17.3 5.5a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4z"/></svg></i>
+    <i><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-1.6 19.9V14.9H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.3v7A10 10 0 0 0 12 2z"/></svg></i>
+    <i><svg viewBox="0 0 24 24"><path d="M22 5.9c-.7.3-1.5.5-2.3.6.8-.5 1.5-1.3 1.8-2.2-.8.5-1.7.8-2.6 1a4 4 0 0 0-6.9 3.7A11.4 11.4 0 0 1 3.7 4.8a4 4 0 0 0 1.2 5.4c-.7 0-1.3-.2-1.8-.5 0 2 1.4 3.6 3.2 4a4 4 0 0 1-1.8.1 4 4 0 0 0 3.8 2.8A8 8 0 0 1 2 18.2 11.4 11.4 0 0 0 8.3 20c7.4 0 11.5-6.2 11.5-11.5v-.5c.8-.6 1.5-1.3 2.2-2.1z"/></svg></i>
+  </div></div>${HB}`};
+const DEMO={user:'Helen',email:'helen@lovelink.app',pw:'••••••••',pw2:'••••••••'};
+function mountAuth(el){
+  const f=el.querySelector('form'), err=el.querySelector('.err'), box=el.querySelector('.box');
+  el.querySelector('.agree').onclick=()=>box.classList.toggle('on');
+  f.onsubmit=async e=>{e.preventDefault();
+    const ins=[...f.querySelectorAll('input')];
+    if(ins.every(i=>!i.value)){ // empty: type a demo account in, so a visitor can just tap through
+      for(const i of ins){i.focus();for(const c of DEMO[i.name]){i.value+=c;await sleep(45)}}
+      box.classList.add('on');await sleep(250);
+    }
+    const v=Object.fromEntries(ins.map(i=>[i.name,i.value.trim()]));
+    let msg='';
+    if(ins.some(i=>!i.value.trim()))msg='Fill in every field.';
+    else if(!/\S+@\S+\.\S+/.test(v.email))msg='That email doesn’t look right.';
+    else if(v.pw2!==undefined&&v.pw!==v.pw2)msg='The passwords don’t match.';
+    else if(!box.classList.contains('on'))msg='Please agree to the terms first.';
+    err.textContent=msg;
+    if(msg){f.classList.remove('shake');void f.offsetWidth;f.classList.add('shake');return}
+    const b=f.querySelector('.cta');b.classList.add('load');b.textContent=f.querySelector('[name=user]')?'Creating your space…':'Signing in…';
+    await sleep(900);go('link');
+  };
 }
-function placeHint(){
-  screen.querySelector(".tap")?.remove();
-  const s=S[cur];if(!hintOn||!s)return;
-  let p=s.tap;if(!p&&s.hint!=null){const [x,y,w,h]=s.hot[s.hint];p=[x+w/2,y+h/2]}
-  if(p)screen.insertAdjacentHTML("beforeend",`<i class="tap" style="left:${p[0]}%;top:${p[1]}%"></i>`);
+V.signup={bg:'auth',hint:'.cta',html:()=>authForm('signup'),mount:mountAuth};
+V.signin={bg:'auth',hint:'.cta',html:()=>authForm('signin'),mount:mountAuth};
+V.link={bg:'link',tap:[77,67.5],html:()=>`<iframe src="assets/lovelink-proto/splash.html" title="Link your love: enter your partner’s LoveLink ID"></iframe>`};
+
+V.home={bg:'home',hint:'.tab [data-go=chat]',html:()=>`<div class="photo"></div>${SB()}
+  <button class="card meet glass" data-go="clock"><div class="lbl"><span>Meet day</span><span>Time Zone (New York)</span></div>
+    <div class="tiles"><div class="tile d">6</div><div class="tile t" data-ny>--:--</div></div><div class="bar"><i style="width:72%"></i></div></button>
+  <div class="card todo glass"><h4 data-go="calendar" style="cursor:pointer">Rick’s To-do List ›</h4>${S.hisTodos.map((t,i)=>`<button class="check${t[1]?' on':''}" data-his="${i}"><i></i><span>${t[0]}</span></button>`).join('')}</div>
+  <div class="card pc glass"><img src="${A}food.webp" alt="Rick’s lunch photo" data-go="album"><p>Rick: Bistro for lunch!</p><form class="reply"><input placeholder="Type to reply…" aria-label="Reply to Rick"></form></div>
+  <button class="card voice glass" data-go="phono" aria-label="Play Rick’s voice message"><span class="dots">${'<i></i>'.repeat(10)}</span><span class="play">${I.play}</span><span class="dots">${'<i></i>'.repeat(10)}</span><span class="unread"></span></button>
+  <div class="card status glass"><button data-act="status"><b>My Status</b><small>Visible for 24 hours</small><span class="face">${S.myStatus||I.plus}</span></button>
+    <button data-go="history"><b>Rick’s Status</b><small>Studying, back at 9</small><span class="face">${I.status}</span></button></div>
+  ${TAB('home')}${HB}`,
+  mount(el){
+    el.querySelectorAll('.dots i').forEach((d,i)=>d.style.animationDelay=(i%10)*.1+'s');
+    el.querySelector('.todo').onclick=e=>{const b=e.target.closest('[data-his]');if(!b)return;const t=S.hisTodos[b.dataset.his];t[1]=!t[1];b.classList.toggle('on',!!t[1]);toast(t[1]?'Ticked off for Rick':'Back on Rick’s list')};
+    el.querySelector('.reply').onsubmit=e=>{e.preventDefault();const v=e.target[0].value.trim();if(!v)return;S.msgs.push(['m',v]);go('chat')};
+    el.querySelector('[data-act=status]').onclick=e=>{const opts=['😊','😴','📚','💪','🥺'];S.myStatus=opts[(opts.indexOf(S.myStatus)+1)%opts.length];e.currentTarget.querySelector('.face').textContent=S.myStatus;toast('Rick can see your status for 24 hours')};
+    tick(el);
+  }};
+
+V.clock={bg:'dark',html:()=>`${SB()}${TOP('Our time zones','',`home`)}
+  <div class="seg"><button data-city="ny" class="${S.city==='ny'?'on':''}">New York</button><button data-city="lon" class="${S.city==='lon'?'on':''}">London</button></div>
+  <div class="dial ${S.city}"><i class="hh"></i><i class="mm"></i><i class="ss"></i></div>
+  <div class="digital"><span data-dig>--:--</span><small data-place></small></div>
+  <div class="row flight glass"><div><b>New York</b><br><small>JFK, 5:00 PM</small></div><div class="line"></div><div style="text-align:right"><b>London</b><br><small>LHR, 5:00 AM</small></div></div>
+  <div class="row weather glass"><span>Local weather</span><b data-w></b></div>
+  <div class="row daysleft glass"><b>6</b> days till we meet.</div>${HB}`,
+  mount(el){el.querySelector('.seg').onclick=e=>{const b=e.target.closest('[data-city]');if(!b)return;S.city=b.dataset.city;
+    el.querySelectorAll('.seg button').forEach(x=>x.classList.toggle('on',x===b));el.querySelector('.dial').className='dial '+S.city;tick(el)};tick(el)}};
+
+V.calendar={bg:'dark',html:()=>{const d=new Date(), od=n=>n+(['th','st','nd','rd'][(n%100-20)%10]||['th','st','nd','rd'][n%100]||'th');
+  const days=t=>{let x=new Date(d.getFullYear(),t[0],t[1]);if(x<d)x.setFullYear(x.getFullYear()+1);return String(Math.ceil((x-d)/864e5)).padStart(3,'0')};
+  const flip=n=>[...n].map(c=>`<span class="fd">${c}</span>`).join('');
+  return `${SB()}${TOP('Calendar','','home')}
+  <div class="cal-date">${d.getFullYear()}<b>${d.toLocaleString('en',{month:'long'})} ${od(d.getDate())}</b></div>
+  <form class="plan glass"><input placeholder="What are you planning to do?" aria-label="Add a plan"></form>
+  <div class="chips">${S.plans.map((p,i)=>`<span class="chip ${'pyv'[i%3]}">${p}</span>`).join('')}</div>
+  <div class="cols"><div class="glass"><h4>My to-do list</h4>${S.myTodos.map((t,i)=>`<button class="check${t[1]?' on':''}" data-my="${i}"><i></i><span>${t[0]}</span></button>`).join('')}</div>
+    <div class="glass"><h4>His to-do list</h4>${S.hisTodos.map((t,i)=>`<button class="check${t[1]?' on':''}" data-his="${i}"><i></i><span>${t[0]}</span></button>`).join('')}</div></div>
+  <div class="count glass" style="top:560px">${flip(days([2,7]))}<span>days till our 3-year anniversary</span></div>
+  <div class="count glass" style="top:636px">${flip(days([1,14]))}<span>days till Valentine’s Day</span></div>${HB}`},
+  mount(el){
+    el.querySelector('.cols').onclick=e=>{const b=e.target.closest('[data-my],[data-his]');if(!b)return;const t=b.dataset.my!=null?S.myTodos[b.dataset.my]:S.hisTodos[b.dataset.his];t[1]=!t[1];b.classList.toggle('on',!!t[1])};
+    el.querySelector('.plan').onsubmit=e=>{e.preventDefault();const v=e.target[0].value.trim();if(!v)return;S.plans.unshift(v);S.myTodos.push([v,0]);go('calendar',{same:1});toast('Added for both of you')};
+  }};
+
+const HIST=['💗 Love your outfit today!','▶ Voice message, 0:18','Morning, sunshine ☀️','I slept well.','I had a dream about us having a picnic in a beautiful meadow. Miss you so bad 💗'];
+V.history={bg:'dark',html:()=>`${SB()}${TOP('Chat history','','home')}
+  <div class="who"><img src="${A}rick.webp" alt="Rick"><p>Monthly word cloud</p></div>
+  <div class="cloud glass">${[['I love you',26],['See ya',20],['Miss you',17],['You made my day',15],['Good night',14],['Bistro',11],['Call me?',12],['Proud of you',13],['Sleep well',11],['Elon Musk?!',10]].map(([w,s],i)=>`<span style="font-size:${s}px;opacity:${.55+s/60};color:${['#fff','#ffc4dc','#cfc8ff'][i%3]}">${w}</span>`).join('')}</div>
+  <div class="hist"><h4>History</h4>${HIST.map((h,i)=>`<div class="hrow glass"><span>${h}</span><button class="heart${S.liked.has(i)?' on':''}" data-like="${i}" aria-label="Like">${I.heart}</button></div>`).join('')}</div>${HB}`,
+  mount(el){el.querySelector('.hist').onclick=e=>{const b=e.target.closest('[data-like]');if(!b)return;const i=+b.dataset.like;S.liked.has(i)?S.liked.delete(i):S.liked.add(i);b.classList.toggle('on');b.classList.add('pop');setTimeout(()=>b.classList.remove('pop'),200)}}};
+
+V.album={bg:'dark',html:()=>`${SB()}${TOP('Our album',`${S.photos.length} memories`,'home')}
+  <div class="masonry">${S.photos.map(p=>`<img src="${A}${p}.webp" alt="" data-photo="${p}">`).join('')}</div>
+  <button class="upload grad-btn" aria-label="Upload a photo">${I.upload}</button>${HB}`,
+  mount(el){el.querySelector('.masonry').onclick=e=>{const p=e.target.dataset.photo;if(p){S.photo=p;go('photo')}};
+    el.querySelector('.upload').onclick=()=>{const pool=['kitchen','bedroom','food'],p=pool.find(x=>!S.photos.includes(x));if(!p)return toast('All caught up');S.photos.unshift(p);go('album',{same:1});toast('Uploaded, Rick will see it too')}}};
+
+V.photo={bg:'dark',html:()=>`${SB()}${TOP('Edit','','album')}
+  <div class="big"><img src="${A}${S.photo}.webp" alt=""><canvas></canvas><div class="cap" contenteditable hidden spellcheck="false">Us, someday</div></div>
+  <div class="tools">${[['crop','Crop'],['pen','Pen'],['text','Text'],['filter','Filter']].map(([k,l])=>`<button data-tool="${k}"><i>${I[k]}</i>${l}</button>`).join('')}</div>
+  <button class="save grad-btn" data-act="save">Save to album</button>${HB}`,
+  mount(el){const img=el.querySelector('.big img'),cv=el.querySelector('canvas'),cap=el.querySelector('.cap');let pen=false,fi=0;
+    cv.width=349;cv.height=470;const x=cv.getContext('2d');x.strokeStyle='#ff95c3';x.lineWidth=4;x.lineCap='round';
+    const pt=e=>{const r=cv.getBoundingClientRect();return[(e.clientX-r.left)/r.width*349,(e.clientY-r.top)/r.height*470]};
+    cv.onpointerdown=e=>{if(!pen)return;x.beginPath();x.moveTo(...pt(e));cv.onpointermove=m=>{x.lineTo(...pt(m));x.stroke()}};
+    cv.onpointerup=cv.onpointerleave=()=>cv.onpointermove=null;
+    el.querySelector('.tools').onclick=e=>{const b=e.target.closest('[data-tool]');if(!b)return;const k=b.dataset.tool;
+      if(k==='crop'){b.classList.toggle('on');img.style.transform=b.classList.contains('on')?'scale(1.35)':''}
+      if(k==='pen'){pen=!pen;b.classList.toggle('on',pen);cv.style.pointerEvents=pen?'auto':'none';if(pen)toast('Draw on the photo')}
+      if(k==='text'){cap.hidden=!cap.hidden;b.classList.toggle('on',!cap.hidden);if(!cap.hidden)cap.focus()}
+      if(k==='filter'){const F=['','sepia(.4) saturate(1.3)','hue-rotate(-20deg) saturate(1.5) brightness(1.05)','grayscale(1)'];fi=(fi+1)%F.length;img.style.filter=F[fi];b.classList.toggle('on',fi>0)}};
+    cv.style.pointerEvents='none';
+    el.querySelector('[data-act=save]').onclick=()=>{go('album');toast('Saved')}}};
+
+/* chat + SOS */
+const RICK=['Haha, I’ll tell you everything tonight 😂','Miss you. Call at 9?','Look at the photo I sent!','You’re the best part of my day 💜','Wait, let me finish this lecture first'];
+const bubble=([w,t,v])=>`<div class="msg${w==='m'?' me':''}"><img src="${A}${w==='m'?'helen':'rick'}.webp" alt=""><p>${v?`<span class="vm">${I.play} Voice message, ${t}</span>`:t}</p></div>`;
+V.chat={bg:'dark chat',hint:'.sos',html:()=>`${SB()}${TOP('Rick','Online, 2:41 AM in New York','home','<button class="round r" data-go="history" aria-label="Chat history">'+I.more+'</button>')}
+  <div class="feed">${S.msgs.map(bubble).join('')}</div>
+  <div class="veil"></div>
+  <button class="petal" data-go="ai" style="right:70px;bottom:206px;--tx:50px;--ty:110px"><span>Help &amp; Advice</span><i>${I.info}</i></button>
+  <button class="petal" data-go="argue" style="right:110px;bottom:140px;--tx:90px;--ty:50px"><span>Argue mode</span><i>${I.argue}</i></button>
+  <button class="petal" data-go="voice" style="right:64px;bottom:92px;--tx:40px;--ty:6px"><span>Voice message mode</span><i>${I.voice}</i></button>
+  <form class="composer glass"><input placeholder="Message Rick…" aria-label="Message"><button type="button" class="mic" data-go="voice" aria-label="Voice message">${I.mic}</button><button type="button" class="sos" aria-label="SOS">SOS</button></form>${HB}`,
+  mount(el){const feed=el.querySelector('.feed'),veil=el.querySelector('.veil'),sos=el.querySelector('.sos');feed.scrollTop=1e6;
+    const open=o=>{veil.classList.toggle('on',o);sos.classList.toggle('open',o);app.querySelector('.tap')?.remove();if(hintOn)setTimeout(()=>placeHint(o?'[data-go=argue].petal i':'.sos'),450)};
+    sos.onclick=()=>open(!veil.classList.contains('on'));veil.onclick=()=>open(false);
+    el.querySelector('.composer').onsubmit=async e=>{e.preventDefault();const v=e.target[0].value.trim();if(!v)return;e.target[0].value='';
+      S.msgs.push(['m',v]);feed.insertAdjacentHTML('beforeend',bubble(['m',v]));feed.scrollTop=1e6;await rickReplies(feed)};
+    if(S.msgs.at(-1)[0]==='m'&&!S.msgs.at(-1)[2]&&S.msgs.length>4)rickReplies(feed);
+  }};
+async function rickReplies(feed){await sleep(700);feed.insertAdjacentHTML('beforeend','<div class="msg typing-row"><img src="'+A+'rick.webp" alt=""><p class="typing"><i></i><i></i><i></i></p></div>');feed.scrollTop=1e6;
+  await sleep(1300);feed.querySelector('.typing-row')?.remove();const r=RICK[S.msgs.length%RICK.length];S.msgs.push(['r',r]);feed.insertAdjacentHTML('beforeend',bubble(['r',r]));feed.scrollTop=1e6}
+
+V.voice={bg:'dark',hint:'.hold',html:()=>`${SB()}${TOP('Voice message','To Rick','chat')}
+  <div class="wave">${'<i></i>'.repeat(34)}</div><div class="digital" style="top:440px"><span data-t>0:00</span><small>Hold the button and talk</small></div>
+  <button class="hold" aria-label="Hold to talk">${I.mic}</button><p class="hint-t">Long press to talk, let go to send</p>${HB}`,
+  mount(el){const bars=[...el.querySelectorAll('.wave i')],b=el.querySelector('.hold'),t=el.querySelector('[data-t]');let t0,raf;
+    const loop=()=>{const s=(Date.now()-t0)/1000;t.textContent='0:'+String(Math.floor(s)).padStart(2,'0');bars.forEach((x,i)=>x.style.height=(8+Math.abs(Math.sin(s*6+i*.6))*70*Math.random()+6)+'px');raf=requestAnimationFrame(loop)};
+    b.onpointerdown=e=>{b.setPointerCapture(e.pointerId);t0=Date.now();b.classList.add('rec');loop()};
+    b.onpointerup=b.onpointercancel=()=>{if(!t0)return;cancelAnimationFrame(raf);b.classList.remove('rec');const s=Math.max(1,Math.round((Date.now()-t0)/1000));t0=0;
+      bars.forEach(x=>x.style.height='6px');S.msgs.push(['m','0:'+String(s).padStart(2,'0'),1]);toast('Voice message sent');setTimeout(()=>go('chat'),500)}}};
+
+const AI={'Gift ideas':'He’s been talking about that bistro a lot. A cooking class for two, booked for the week you land, is a gift and a date in one.',
+  'Plan a date':'Try a “same movie, same time” night: you pick the film, he picks the snacks, and you both press play on 3.',
+  'Remind me':'Done. I’ll nudge you at 8:45 PM to call Rick before his 9 o’clock.'};
+V.ai={bg:'dark',html:()=>`${SB()}${TOP('AI Friend','ELVO, always here','chat')}
+  <div class="orb"></div><div class="orb-core"></div>
+  <div class="listen"><b>I am listening.</b><p>Tell me what’s on your mind. It stays between us.</p></div>
+  <div class="aiwave">${Array.from({length:26},(_,i)=>`<i style="height:${8+((i*7)%20)}px;animation-delay:${i*.05}s"></i>`).join('')}</div>
+  <div class="reply glass" hidden></div>
+  <div class="aichips">${Object.keys(AI).map(k=>`<button>${k}</button>`).join('')}</div>
+  <form class="ask glass"><input placeholder="Say something to ELVO…" aria-label="Message ELVO"><button aria-label="Send">${I.send}</button></form>
+  ${TAB('chat')}${HB}`,
+  mount(el){const rep=el.querySelector('.reply'),orb=el.querySelector('.orb'),listen=el.querySelector('.listen'),wave=el.querySelector('.aiwave');
+    const say=async txt=>{listen.hidden=true;wave.hidden=true;rep.hidden=false;rep.textContent='';orb.classList.add('talk');for(const c of txt){rep.textContent+=c;await sleep(14)}orb.classList.remove('talk')};
+    el.querySelector('.aichips').onclick=e=>{const b=e.target.closest('button');if(!b)return;el.querySelectorAll('.aichips button').forEach(x=>x.classList.toggle('on',x===b));say(AI[b.textContent])};
+    el.querySelector('.ask').onsubmit=e=>{e.preventDefault();const v=e.target[0].value.trim();if(!v)return;e.target[0].value='';say(`I hear you. “${v}” sounds heavy when he’s asleep and you can’t reach him. Want me to help you write it down for when he wakes up?`)}}};
+
+V.argue={bg:'argue',html:()=>`<iframe src="assets/lovelink-proto/argue.html" title="Argue mode"></iframe>`};
+
+V.phono={bg:'dark',hint:'.pp',html:()=>`${SB()}${TOP('Phonograph','','home')}
+  <div class="arm"></div><div class="vinyl"><img src="${A}rick.webp" alt=""></div>
+  <div class="track glass"><img src="${A}rick.webp" alt=""><div style="flex:1"><b>Good night, my love</b><small>From Rick, 9:12 PM New York</small><div class="prog"><i></i></div></div><span data-pt style="font-size:11px;opacity:.7">0:00</span></div>
+  <div class="ctrl"><button data-act="replay" aria-label="Replay">${I.replay}</button><button class="pp" aria-label="Play">${I.play}</button><button data-act="like" aria-label="Like">${I.heartL}</button></div>
+  <button class="leave">Hold to leave a message</button>
+  ${TAB('home')}${HB}`,
+  mount(el){const v=el.querySelector('.vinyl'),arm=el.querySelector('.arm'),pp=el.querySelector('.pp'),bar=el.querySelector('.prog i'),pt=el.querySelector('[data-pt]');let on=false,pos=0,iv;
+    const set=o=>{on=o;v.classList.toggle('on',o);arm.classList.toggle('on',o);pp.innerHTML=o?I.pause:I.play;clearInterval(iv);
+      if(o)iv=setInterval(()=>{pos=Math.min(42,pos+.25);bar.style.width=pos/42*100+'%';pt.textContent='0:'+String(Math.floor(pos)).padStart(2,'0');if(pos>=42)set(false)},250)};
+    pp.onclick=()=>set(!on);el.querySelector('[data-act=replay]').onclick=()=>{pos=0;set(true)};
+    el.querySelector('[data-act=like]').onclick=e=>{e.currentTarget.classList.toggle('liked');toast('Rick will see you loved it')};
+    const L=el.querySelector('.leave');let t0;
+    L.onpointerdown=e=>{L.setPointerCapture(e.pointerId);t0=Date.now();L.classList.add('rec');L.lastChild.textContent='Recording… let go to send'};
+    L.onpointerup=L.onpointercancel=()=>{if(!t0)return;L.classList.remove('rec');L.lastChild.textContent='Hold to leave a message';t0=0;toast('Left on Rick’s phonograph')};
+    L.textContent='';L.append(document.createTextNode('Hold to leave a message'));
+    el._cleanup=()=>clearInterval(iv)}};
+
+/* room + credits */
+const creditBar=()=>`<div class="credits"><span>Credits</span><div class="meter"><i style="width:${Math.min(100,S.credits/5)}%"></i></div><b data-cr>${S.credits}/500</b></div>`;
+V.room={bg:'dark',hint:'[data-go=tasks]',html:()=>`${SB()}${TOP('Our room','Decorated together','home')}
+  ${creditBar()}
+  <div class="roomimg"><img src="${A}bedroom.webp" alt="Your shared bedroom, decorated together"></div>
+  <p class="swipe">Swipe left to the kitchen</p>
+  <div class="grid4"><button class="glass" data-go="design">Design room<small>Walls, floor, bed</small></button>
+    <button class="glass" data-go="tasks">Tasks<small>${tasksDone()}/6 done today</small></button>
+    <button class="glass" data-go="store">Store<small>Spend credits</small></button>
+    <button class="glass" data-go="fridge">Kitchen<small>Our fridge</small></button></div>
+  ${TAB('room')}${HB}`,
+  mount(el){const r=el.querySelector('.roomimg');let x0=null;r.onpointerdown=e=>x0=e.clientX;r.onpointerup=e=>{if(x0!=null&&e.clientX-x0<-40)go('fridge');x0=null}}};
+
+const WALLS=['#bfe3ff','#f5c8e4','#5b5ba8','#fde8a8'], FLOORS=['#f3b9a3','#ffd9c2','#e8cfa0'];
+V.design={bg:'dark design',hint:'.done-btn',html:()=>`${SB()}${TOP('Design Room','','room','<span class="live" style="position:absolute;right:18px;top:12px">Rick is editing</span>')}
+  <div class="roomimg"><img src="${A}bedroom.webp" alt="Room preview"><div class="wash" style="background:${WALLS[S.wall]}"></div></div>
+  <div class="opt glass" style="top:372px"><header><b>Wall color</b><span>1/3</span></header><div class="sw" data-k="wall">${WALLS.map((c,i)=>`<button style="background:${c}" class="${S.wall===i?'on':''}" data-i="${i}" aria-label="Wall ${i+1}"></button>`).join('')}</div></div>
+  <div class="opt glass" style="top:470px"><header><b>Floor type</b><span>2/3</span></header><div class="sw" data-k="floor">${FLOORS.map((c,i)=>`<button style="background:repeating-linear-gradient(90deg,${c} 0 8px,#fff8 8px 10px)" class="${S.floor===i?'on':''}" data-i="${i}" aria-label="Floor ${i+1}"></button>`).join('')}</div></div>
+  <div class="opt glass" style="top:568px"><header><b>Bed type</b><span>3/3</span></header><div class="sw beds" data-k="bed">${['','hue-rotate(160deg) saturate(.6)','grayscale(1) brightness(1.1)'].map((f,i)=>`<button class="${S.bed===i?'on':''}" data-i="${i}" aria-label="Bed ${i+1}"><img src="${A}bed.webp" alt="" style="filter:${f}"></button>`).join('')}</div></div>
+  <button class="done-btn grad-btn" data-act="done">Complete together</button>${HB}`,
+  mount(el){el.querySelectorAll('.sw').forEach(sw=>sw.onclick=e=>{const b=e.target.closest('[data-i]');if(!b)return;S[sw.dataset.k]=+b.dataset.i;
+      sw.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));if(sw.dataset.k==='wall')el.querySelector('.wash').style.background=WALLS[S.wall]});
+    el.querySelector('[data-act=done]').onclick=()=>{go('room');toast('Saved. Rick sees the new room too')}}};
+
+V.tasks={bg:'dark',hint:'.task:not(.on)',html:()=>`${SB()}${TOP('Tasks','Credits for the room','room','<button class="pill" style="position:absolute;right:18px;top:8px" data-go="store">Store ›</button>')}
+  <div class="duo glass"><img src="${A}helen.webp" alt="Helen"><div class="meter"><i style="width:${tasksDone()/12*100}%"></i><i style="width:${4/12*100}%"></i></div><img src="${A}rick.webp" alt="Rick"></div>
+  <div class="nudge glass"><img src="${A}bear.webp" alt=""><div><b>Remember to punch in!</b>One more task and the surprise box opens today.</div></div>
+  <div class="tasks-list">${S.tasks.map((t,i)=>`<button class="task glass${t[1]?' on':''}" data-t="${i}"><span>${t[0]}</span><span style="display:flex;align-items:center"><em>+5</em><i></i></span></button>`).join('')}</div>
+  ${TAB('room')}${HB}`,
+  mount(el){el.querySelector('.tasks-list').onclick=e=>{const b=e.target.closest('[data-t]');if(!b)return;const t=S.tasks[b.dataset.t];if(t[1])return toast('Already done today');
+    t[1]=1;S.credits+=5;b.classList.add('on');el.querySelector('.duo .meter i').style.width=tasksDone()/12*100+'%';
+    const r=b.getBoundingClientRect(),a=el.getBoundingClientRect(),k=a.width/393;
+    el.insertAdjacentHTML('beforeend',`<span class="plus" style="left:${(r.right-a.left)/k-70}px;top:${(r.top-a.top)/k}px">+5</span>`);
+    placeHint();
+    if(tasksDone()===3&&!S.magnet){S.magnet=true;setTimeout(()=>el.insertAdjacentHTML('beforeend',`<div class="modal"><div class="m"><h3>Congratulations!</h3><img src="${A}bear.webp" alt="Bear magnet"><p>You got a new magnet! It’s on your fridge now.</p><button class="grad-btn" data-go="fridge">See it on the fridge</button></div></div>`),500)}}}};
+
+const ITEMS={Furniture:[['bed','Bed',100],['settee','Cloud sofa',120],['office-chair','Desk chair',75],['pink-chair','Pink chair',90],['fluffy-chair','Shell chair',100],['pink-sofa','Pink sofa',120],['white-chair','Wicker chair',80]],Decor:[],Lights:[],Wallpaper:[]};
+let storeTab='Furniture';
+V.store={bg:'dark',hint:'.buy:not(.owned)',html:()=>`${SB()}${TOP('Store','','room','<span class="pill" style="position:absolute;right:18px;top:8px">♥ <span data-cr>'+S.credits+'</span></span>')}
+  <div class="mystery"><div><b>Mystery Box</b><small>Finish 3 tasks together to unlock</small><div class="prog"><i style="width:${Math.min(3,tasksDone())/3*100}%"></i></div></div><button data-act="box" ${tasksDone()<3?'disabled':''}>${tasksDone()<3?tasksDone()+'/3':'Open'}</button></div>
+  <div class="tabs">${Object.keys(ITEMS).map(k=>`<button class="${k===storeTab?'on':''}">${k}</button>`).join('')}</div>
+  <div class="items">${ITEMS[storeTab].length?ITEMS[storeTab].map(([f,n,p])=>`<div class="item glass"><div class="pic"><img src="${A}${f}.webp" alt="${n}"></div><footer><span><b>${n}</b><small>♥ ${p}</small></span><button class="buy${S.owned.has(f)?' owned':''}" data-buy="${f}" data-p="${p}" aria-label="Buy ${n}">${S.owned.has(f)?'✓':'+'}</button></footer></div>`).join(''):'<p class="empty">New drops every Monday.</p>'}</div>
+  ${TAB('room')}${HB}`,
+  mount(el){el.querySelector('.tabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;storeTab=b.textContent;go('store',{same:1})};
+    el.querySelector('.items').onclick=e=>{const b=e.target.closest('[data-buy]');if(!b||b.classList.contains('owned'))return;const p=+b.dataset.p;
+      if(S.credits<p)return toast('Not enough credits yet. Finish a task!');S.credits-=p;S.owned.add(b.dataset.buy);b.classList.add('owned');b.textContent='✓';el.querySelector('[data-cr]').textContent=S.credits;toast('Added to your room');placeHint()};
+    el.querySelector('[data-act=box]').onclick=()=>{const left=ITEMS.Furniture.filter(i=>!S.owned.has(i[0]));if(!left.length)return toast('You own everything!');
+      const w=left[Math.floor(Math.random()*left.length)];S.owned.add(w[0]);
+      el.insertAdjacentHTML('beforeend',`<div class="modal" data-close><div class="m"><h3>Surprise!</h3><img src="${A}${w[0]}.webp" alt="" style="height:130px"><p>You both got a <b>${w[1]}</b> for the room.</p><button class="grad-btn" data-close>Lovely</button></div></div>`)}}};
+
+const MAGS=()=>[
+  ['pol',{left:60,top:40,rotate:-6},`<img src="${A}helen.webp" alt="Helen">`,'helen'],
+  ['pol',{left:180,top:70,rotate:5},`<img src="${A}rick.webp" alt="Rick">`,'rick'],
+  ['ticket',{left:40,top:220,rotate:-3},'CINEMA<br>ADMIT ONE<span>NO. 0214</span>'],
+  ['note',{left:180,top:230,rotate:4},'Recipe 🍳<br>Salmon &amp; asparagus, the bistro one. Try it together on FaceTime!'],
+  ['pol',{left:70,top:340,rotate:3},`<img src="${A}photo-dome.webp" alt="">`,'photo-dome'],
+  ['dot',{left:240,top:40,background:'#ff95c3'},''],['dot',{left:40,top:180,background:'#8177e0'},''],
+  ...(S.magnet?[['bear',{left:190,top:380,rotate:-8},`<img src="${A}bear.webp" alt="Bear magnet">`]]:[])];
+V.fridge={bg:'dark',hint:'.mag.pol',html:()=>`${SB()}${TOP('Kitchen','Our fridge','room')}
+  <div class="fridge-door">${MAGS().map(([k,st,h,ph],i)=>`<div class="mag ${k}" data-i="${i}" ${ph?`data-photo="${ph}"`:''} style="left:${st.left}px;top:${st.top}px;rotate:${st.rotate||0}deg;${st.background?'background:'+st.background:''}">${h}</div>`).join('')}</div>
+  <p class="fridge-hint">Double-tap a photo for the album. Press and hold to rearrange.</p>${HB}`,
+  mount(el){const door=el.querySelector('.fridge-door');let hold,drag,ox,oy,last=0;
+    door.onpointerdown=e=>{const m=e.target.closest('.mag');if(!m)return;
+      if(door.classList.contains('edit')){drag=m;m.setPointerCapture(e.pointerId);ox=e.clientX;oy=e.clientY;return}
+      hold=setTimeout(()=>{door.classList.add('edit');toast('Drag to rearrange, tap outside to finish')},550)};
+    door.onpointermove=e=>{if(!drag)return;const k=door.getBoundingClientRect().width/325;drag.style.left=parseFloat(drag.style.left)+(e.clientX-ox)/k+'px';drag.style.top=parseFloat(drag.style.top)+(e.clientY-oy)/k+'px';ox=e.clientX;oy=e.clientY};
+    door.onpointerup=e=>{clearTimeout(hold);drag=null;const m=e.target.closest('[data-photo]');if(!m||door.classList.contains('edit'))return;
+      const now=Date.now();if(now-last<350){S.photo=m.dataset.photo;go('album')}last=now};
+    el.onclick=e=>{if(door.classList.contains('edit')&&!e.target.closest('.fridge-door'))door.classList.remove('edit')}}};
+
+/* ============ router ============ */
+const app=document.getElementById('app'), qs=new URLSearchParams(location.search);
+let cur=null, hintOn=!qs.has('nohint'), clockT;
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const ORDER=Object.keys(V);
+function go(id,o={}){
+  if(id==='test'||id==='me')return toast(id==='test'?'Couple tests arrive in the next update':'Profile arrives in the next update');
+  if(!V[id])return;
+  const old=app.querySelector('.scr:not(.out)');
+  if(old){old._cleanup?.();if(o.same)old.remove();else{old.classList.add('out');setTimeout(()=>old.remove(),300)}}
+  const back=!o.same&&cur&&ORDER.indexOf(id)<ORDER.indexOf(cur);
+  const el=document.createElement('section');el.className=`scr ${V[id].bg}${o.same?'':' in'}${back?' back':''}`;el.innerHTML=V[id].html();
+  app.append(el);cur=id;V[id].mount?.(el);setTimeout(placeHint,o.same?0:400);
+  document.querySelectorAll('#rail [data-go]').forEach(b=>b.classList.toggle('on',b.dataset.go===id));
+  if(parent!==window)parent.postMessage({screen:id},location.origin);
 }
-// fit the phone to the window (embed: fill the iframe)
-function fit(){const emb=document.documentElement.classList.contains("embed");
-  const h=emb?innerHeight:Math.min(860,innerHeight-48), w=emb?innerWidth:Math.min(400,innerWidth-32);
-  phone.style.setProperty("--w",Math.floor(Math.min(w,h*716/1551))+"px")}
-fit();addEventListener("resize",fit);
-// messages: live screens ask to move on ({go}); the case study can drive it ({jump}, {hint})
-addEventListener("message",e=>{if(e.origin!==location.origin||!e.data)return;
-  if(e.data.go)go(e.data.go);
-  if(e.data.jump&&e.data.jump!==cur)go(e.data.jump);
-  if("hint" in e.data){hintOn=!!e.data.hint;placeHint()}});
-go(S[location.hash.slice(1)]?location.hash.slice(1):"landing");
+app.addEventListener('click',e=>{
+  const c=e.target.closest('[data-close]');if(c&&(e.target===c||c.tagName==='BUTTON')){c.closest('.modal').remove();return}
+  const g=e.target.closest('[data-go]');if(g){e.preventDefault();go(g.dataset.go)}
+});
+function toast(t){let el=app.querySelector('.toast');if(!el){el=document.createElement('div');el.className='toast';app.append(el)}
+  el.textContent=t;el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),1800)}
+function placeHint(sel){app.querySelector('.tap')?.remove();if(!hintOn||!cur)return;const s=V[cur],scr=app.querySelector('.scr:not(.out)');let p=null;
+  if(!sel&&s.tap)p=s.tap.map((v,i)=>v/100*(i?852:393));
+  else{const t=scr?.querySelector(sel||s.hint);if(!t)return;const a=app.getBoundingClientRect(),r=t.getBoundingClientRect(),k=a.width/393;if(!r.width)return;p=[(r.left+r.width/2-a.left)/k,(r.top+r.height/2-a.top)/k]}
+  if(!p)return;app.insertAdjacentHTML('beforeend',`<i class="tap" style="left:${p[0]}px;top:${p[1]}px"></i>`)}
+// live clocks: New York on Home, both cities on the clock screen
+function tick(el){clearTimeout(clockT);const now=new Date(),z=S.city==='lon'?'Europe/London':'America/New_York';
+  const fmt=(tz,o)=>new Intl.DateTimeFormat('en-US',{timeZone:tz,...o}).format(now);
+  el.querySelectorAll('[data-ny]').forEach(n=>n.textContent=fmt('America/New_York',{hour:'2-digit',minute:'2-digit',hourCycle:'h23'}));
+  const dg=el.querySelector('[data-dig]');if(dg){const [h,m,s]=fmt(z,{hour:'numeric',minute:'numeric',second:'numeric',hourCycle:'h23'}).split(':').map(Number);
+    dg.textContent=fmt(z,{hour:'numeric',minute:'2-digit'});el.querySelector('[data-place]').textContent=S.city==='lon'?'London, where Rick’s flight lands':'New York, where Rick is';
+    el.querySelector('[data-w]').textContent=S.city==='lon'?'☁️ 55°F':'☀️ 83°F';
+    el.querySelector('.hh').style.rotate=((h%12)*30+m/2)+'deg';el.querySelector('.mm').style.rotate=(m*6)+'deg';el.querySelector('.ss').style.rotate=(s*6)+'deg'}
+  clockT=setTimeout(()=>{if(el.isConnected)tick(el)},1000)}
+
+/* ============ rail, fit, messages ============ */
+const GROUPS={Start:['welcome','signup','signin','link'],Home:['home','clock','calendar','history','album','photo','phono'],Chat:['chat','voice','ai','argue'],Room:['room','design','tasks','store','fridge']};
+const NAMES={welcome:'Welcome',signup:'Sign up',signin:'Sign in',link:'Link your love',home:'Home',clock:'Time zones',calendar:'Calendar',history:'Chat history',album:'Album',photo:'Edit a photo',phono:'Phonograph',
+  chat:'Chat and SOS',voice:'Voice message',ai:'AI friend',argue:'Argue mode',room:'Our room',design:'Design room',tasks:'Tasks and credits',store:'Store',fridge:'Fridge'};
+const rail=document.getElementById('rail');
+for(const [g,ids] of Object.entries(GROUPS)){rail.insertAdjacentHTML('beforeend',`<span>${g.toUpperCase()}</span>`);ids.forEach(id=>rail.insertAdjacentHTML('beforeend',`<button data-go="${id}">${NAMES[id]}</button>`))}
+rail.insertAdjacentHTML('beforeend','<a href="lovelink.html">← Case study</a>');
+rail.onclick=e=>{const b=e.target.closest('[data-go]');if(b)go(b.dataset.go)};
+function fit(){const emb=document.documentElement.classList.contains('embed');
+  const h=(emb?innerHeight:Math.min(880,innerHeight-48))-20, w=(emb?innerWidth:Math.min(420,innerWidth-32))-20;
+  const W=Math.floor(Math.min(w,h*393/852));document.querySelector('.phone').style.setProperty('--w',W+'px');
+  app.style.transform=`scale(${W/393})`;placeHint()}
+fit();addEventListener('resize',fit);
+addEventListener('message',e=>{if(e.origin!==location.origin||!e.data)return;
+  if(e.data.go)go(e.data.go);if(e.data.jump&&e.data.jump!==cur)go(e.data.jump);if('hint' in e.data){hintOn=!!e.data.hint;placeHint()}});
+go(V[location.hash.slice(1)]?location.hash.slice(1):'welcome');
 </script>
 </body>
 </html>
