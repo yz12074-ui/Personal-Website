@@ -100,6 +100,20 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .intro .lines { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
 .intro { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; padding: 24px 0 8px; position: relative; }
 .intro .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.intro .exp { display: flex; flex-wrap: wrap; gap: 8px; }
+.intro .exp a { font: 13px var(--f-ui); color: inherit; text-decoration: none; background: var(--sunk); border-radius: 8px; padding: 8px 12px; transition: background .2s ease; }
+.intro .exp a:hover, .intro .exp a:focus-visible { background: var(--hi); }
+.intro .exp-item { position: relative; }
+.intro .exp a { display: inline-block; }
+.exp-pop { position: absolute; z-index: 40; top: calc(100% + 10px); left: 0; width: min(360px, 86vw); display: flex; flex-direction: column; gap: 12px; padding: 14px 16px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 18px 40px rgba(0, 0, 0, .16);
+  opacity: 0; visibility: hidden; translate: 0 -6px; transition: opacity .2s ease, translate .3s cubic-bezier(.22, 1, .36, 1), visibility 0s .2s; }
+.exp-item:hover .exp-pop, .exp-item:focus-within .exp-pop, .exp-item.open .exp-pop { opacity: 1; visibility: visible; translate: 0 0; transition-delay: 0s; }
+@media (min-width: 900px) and (hover: hover) { .exp-pop { top: auto; bottom: calc(100% + 10px); translate: 0 6px; } } /* the chip sits low on a desktop screen: open upward */
+@media not ((min-width: 900px) and (hover: hover)) { .intro .exp { position: relative; } .intro .exp-item { position: static; } } /* phones: the card drops below the whole row, not over the other chip */
+.exp-pop p { margin: 0; font: 14px/1.45 var(--f-body); }
+.exp-pop .stack.wide { aspect-ratio: 3 / 2; margin: 4px 6px 2px; width: calc(100% - 12px); }
+.path-cap { font: 12px var(--f-ui); color: var(--dim); min-height: 1.4em; }
+.intro .exp b { font-weight: 700; }
 .intro .tags span { font: 13px var(--f-ui); background: var(--sunk); border-radius: 8px; padding: 8px 12px; }
 .intro .name { font-size: clamp(48px, calc((94vw - 190px) / 6.6), 168px); font-weight: 800; letter-spacing: -.045em; line-height: .86; text-transform: uppercase; margin: 6px 0 4px -.04em; }
 /* 中文名: no letter games (the scribble / cut-paper fonts have no CJK glyphs) */
@@ -382,6 +396,18 @@ a.m:hover, a.m:focus-visible { background: var(--ink); color: var(--bg); }
       <a class="btn" href="foody.html" data-zh="先玩玩 Foody →">Try Foody →</a>
       <span class="size-tag" aria-hidden="true"></span>
     </div>
+    <div class="exp frame quiet" data-frame="Experience">
+      <div class="exp-item">
+        <a href="https://www.instagram.com/uxcnyu/" target="_blank" rel="noopener" aria-describedby="uxcPop"><b>UXC</b> <span data-zh="活动负责人">Event Lead</span> ↗</a>
+        <div class="exp-pop" id="uxcPop" role="group" aria-label="UXC photos">
+          <p data-zh="2026 年 5 月起。这学期策划了 20 多场活动：Design Week、设计马拉松、去 Adobe 和 Duolingo 的办公室参观。">Since May 2026. This semester I planned 20+ events: Design Week, a designathon, and office tours at Adobe and Duolingo.</p>
+          <button type="button" class="stack wide" id="stackUxc" title="Next photo"><img src="images/uxc/team.webp" alt="UXC team photo at the UXC × Base44 event on Nov 13" data-zh-alt="UXC × Base44 活动上的 UXC 团队合影" data-cap="The UXC team, UXC × Base44 event, Nov 13" data-zh-cap="UXC 团队，UXC × Base44 活动，11 月 13 日" loading="lazy"><img src="images/uxc/designweek.webp" alt="UXC Design Week photo booth strip with the UXCNYU × Base44 sign" data-zh-alt="UXC Design Week 的拍立得合影，有 UXCNYU × Base44 牌子" data-cap="Design Week photo booth, UXC × Base44" data-zh-cap="Design Week 拍照亭，UXC × Base44" loading="lazy"><img src="images/uxc/duolingo.webp" alt="UXC members posing with the Duolingo mascot statue on an office tour" data-zh-alt="UXC 成员在 Duolingo 办公室参观时与吉祥物雕像合影" data-cap="Office tour and talk at Duolingo" data-zh-cap="Duolingo 办公室参观和分享" loading="lazy"><img src="images/uxc/adobe.webp" alt="UXC members in front of the #AdobeLife wall on an office tour" data-zh-alt="UXC 成员在 Adobe 办公室 #AdobeLife 墙前合影" data-cap="Office tour at Adobe" data-zh-cap="Adobe 办公室参观" loading="lazy"><img src="images/uxc/organizers.webp" alt="Five UXC organizers, Amanda on the right, in front of the event screen" data-zh-alt="五位 UXC 组织者，Amanda 在右边，背后是活动大屏" data-cap="The organizers, Amanda on the right" data-zh-cap="组织者们，Amanda 在右边" loading="lazy"><img src="images/uxc/detour.webp" alt="Amanda and Luoming Ye presenting Detour, Runners Up" data-zh-alt="Amanda 和 Luoming Ye 在台上展示 Detour，获得亚军" data-cap="Presenting Detour with Luoming Ye, Runners Up" data-zh-cap="和 Luoming Ye 展示 Detour，亚军" loading="lazy"></button>
+          <span class="path-cap" id="uxcCap" aria-live="polite"></span>
+        </div>
+      </div>
+      <a href="https://www.nyusternberkleycenter.com/" target="_blank" rel="noopener"><b>Berkley Center</b> <span data-zh="平面设计助理">Graphic Design Assistant</span> ↗</a>
+      <span class="size-tag" aria-hidden="true"></span>
+    </div>
     <span class="scroll-hint" aria-hidden="true"><svg viewBox="0 0 120 120" width="120" height="120"><path class="chev" d="M10 52l12 12-12 12M28 52l12 12-12 12" /><path d="M86 26c0-8 9-8 9-15s-8-6-8-1" /><rect x="62" y="30" width="48" height="80" rx="24" /><path class="smile" d="M68 82c8 14 28 14 36 0" /><circle class="wheel" cx="86" cy="48" r="4" /></svg></span>
   </section>
 
@@ -447,6 +473,7 @@ a.m:hover, a.m:focus-visible { background: var(--ink); color: var(--bg); }
       <p class="b-lead">A grad student at <span class="m">NYU ITP</span> in Brooklyn, designing products that feel <em class="hl">warm and human.</em></p>
       <p><em class="lead-in">Empathy is where I start.</em> I walk through the experience myself and listen closely to the people living it, until I understand what they actually need.</p>
       <p>I like to stay close to how things get built, so I <span class="m">prototype fast</span> and build with <span class="m">AI-assisted code</span> when needed.</p>
+      <p>On campus, I’m <span class="m">Event Lead</span> at <a class="m" href="https://www.instagram.com/uxcnyu/" target="_blank" rel="noopener">UXC ↗</a> and a graphic design graduate assistant at the <a class="m" href="https://www.nyusternberkleycenter.com/" target="_blank" rel="noopener">Berkley Center for Entrepreneurship ↗</a>.</p>
       <p>Since 2024, I’ve been designing <b>AI products</b>, from an AI music platform at <span class="m">initi:AI</span> to agent features at <span class="m">N7 Interactive</span>. Right now, I’m also <span class="marker">building my own startup.</span></p>
       <p class="closer" data-zh="在这之前，我是一个会&lt;a class=&quot;sewn&quot; href=&quot;fashion.html&quot;&gt;做衣服&lt;/a&gt;的 marketer。">Before this, I was a marketer who <a class="sewn" href="fashion.html">makes clothes</a>.</p>
       <div class="more" tabindex="0">
@@ -460,7 +487,7 @@ a.m:hover, a.m:focus-visible { background: var(--ink); color: var(--bg); }
     <aside class="contact frame" data-frame="Frame / Contact me" aria-labelledby="contact-title">
       <h2 id="contact-title" data-zh="联系我">Contact me</h2>
       <button type="button" class="c-row" id="copyEmail" data-email="yz12074@nyu.edu"><span class="k" data-zh="邮箱（点击复制）">Email (click to copy)</span><b>yz12074@nyu.edu</b><i aria-hidden="true">⧉</i></button>
-      <a class="c-row" href="https://www.linkedin.com/in/yueyan-zhang-32a800358" target="_blank" rel="noopener"><span class="k">LinkedIn</span><b>Yueyan (Amanda) Zhang</b><i aria-hidden="true">↗</i></a>
+      <a class="c-row" href="https://www.linkedin.com/in/amanda-zhang-32a800358" target="_blank" rel="noopener"><span class="k">LinkedIn</span><b>Yueyan (Amanda) Zhang</b><i aria-hidden="true">↗</i></a>
       <a class="c-row" href="https://drive.google.com/file/d/1B6-i2RoIu8FqGo9C3Kq7dGXys6Rky79E/view?usp=sharing" target="_blank" rel="noopener"><span class="k" data-zh="简历">Resume</span><b>CV (EN)</b><i aria-hidden="true">↗</i></a>
       <a class="c-row" href="https://drive.google.com/file/d/184YV-w04FZQ7mF_kf7-CJkpLy2x_W0DA/view?usp=sharing" target="_blank" rel="noopener"><span class="k" data-zh="简历">Resume</span><b>简历（中文）</b><i aria-hidden="true">↗</i></a>
       <a class="c-row" href="wall.html" hidden><span class="k" data-zh="签名墙">Signature wall</span><b data-zh="留个签名 ✎">Leave a signature ✎</b><i aria-hidden="true">→</i></a>
@@ -790,18 +817,29 @@ a.m:hover, a.m:focus-visible { background: var(--ink); color: var(--bg); }
   // if (q.has('door') || (!store.get('door-seen', 0) && !location.hash && !q.has('nodoor'))) openDoor();
   if (q.has('door')) openDoor();
 })();
-  /* photo stack */
-  (() => {
-    const st = document.getElementById('stack'); if (!st) return;
+  /* touch: tapping the UXC chip opens its photo card; a second tap follows the link */
+  document.querySelectorAll('.exp-item').forEach(it => it.querySelector('a').addEventListener('click', e => {
+    if (!matchMedia('(hover: none)').matches || it.classList.contains('open')) return;
+    e.preventDefault(); it.classList.add('open');
+  }));
+  document.addEventListener('click', e => document.querySelectorAll('.exp-item.open').forEach(it => { if (!it.contains(e.target)) it.classList.remove('open'); }));
+
+  /* photo stacks: click (or Enter) sends the top photo to the back; a caption follows the top photo */
+  document.querySelectorAll('.stack').forEach(st => {
     const pose = [['0deg','0','0',1],['-4deg','-10px','6px',1],['5deg','12px','10px',1]];
-    const lay = () => [...st.children].forEach((im, i) => { const p = pose[i] || ['0deg','0','14px',0];
-      im.style.setProperty('--i', i); im.style.setProperty('--r', p[0]); im.style.setProperty('--x', p[1]); im.style.setProperty('--y', p[2]); im.style.setProperty('--o', p[3]); });
+    const cap = st.id === 'stackUxc' ? document.getElementById('uxcCap') : null;
+    const lay = () => {
+      [...st.children].forEach((im, i) => { const p = pose[i] || ['0deg','0','14px',0];
+        im.style.setProperty('--i', i); im.style.setProperty('--r', p[0]); im.style.setProperty('--x', p[1]); im.style.setProperty('--y', p[2]); im.style.setProperty('--o', p[3]); });
+      if (cap) cap.textContent = (document.documentElement.lang === 'zh-CN' ? st.firstElementChild.dataset.zhCap : st.firstElementChild.dataset.cap) || '';
+    };
     lay();
+    if (cap) new MutationObserver(lay).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
     let busy = false;
     st.addEventListener('click', () => { if (busy) return; busy = true;
       const top = st.firstElementChild; top.classList.add('out');
       setTimeout(() => { top.classList.remove('out'); st.append(top); lay(); busy = false; }, 380); });
-  })();
+  });
 </script>
 <script src="assets/i18n.js" defer></script>
 </body>
