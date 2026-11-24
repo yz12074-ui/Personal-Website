@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title data-zh="张玥妍 Amanda — UX 产品设计师">Amanda Zhang — UX &amp; Product Designer</title>
 <meta name="description" content="Amanda (Yueyan) Zhang, UX and product designer at NYU: honest checkouts, AI companions and service systems.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Amanda Zhang — UX & Product Designer">
+<meta property="og:description" content="UX and product designer at NYU: honest checkouts, AI companions and service systems.">
+<meta property="og:image" content="https://amanda.wiki/images/og/index.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=Caveat:wght@700&family=Redaction+35:ital,wght@1,400&display=swap">
@@ -67,6 +72,13 @@ button { font: inherit; color: inherit; cursor: pointer; }
 @media (hover: none) { .navpeg span { opacity: 1; translate: 0 0; } }
 .pegs .lang-toggle { position: fixed; top: 8px; right: 10px; margin: 0; } /* corner, above the clothesline so hanging cards never cover it */
 @media (min-width: 900px) and (hover: hover) { .navpeg { display: none; } }
+/* phones: the three pegs become plain labels in a row under the language toggle, so nothing is clipped or overlaps it */
+@media (max-width: 599px) and (hover: none) {
+  .pegs { top: 44px; right: 10px; gap: 6px; }
+  .navpeg { padding-top: 0; }
+  .navpeg i { display: none; }
+  .navpeg span { position: static; rotate: 0deg; }
+}
 .lang-toggle { font: 12px var(--f-ui); color: var(--dim); background: var(--surface); border: 1px solid var(--line); border-radius: 99px; padding: 5px 12px; margin-left: 6px; white-space: nowrap; }
 .lang-toggle b { color: var(--ink); font-weight: 600; }
 
@@ -361,7 +373,7 @@ a.m:hover, a.m:focus-visible { background: var(--ink); color: var(--bg); }
     <div class="frame quiet lines" data-frame="Text / Tagline"><p class="tagline" data-zh="先在乎，再创造">I care, then I create</p><span class="size-tag" aria-hidden="true"></span></div>
     <div class="cta frame quiet" data-frame="Buttons">
       <a class="btn solid" href="#work" data-zh="看作品 →">See the work →</a>
-      <a class="btn" href="foody-case.html" data-zh="先玩玩 Foody →">Try Foody →</a>
+      <a class="btn" href="foody.html" data-zh="先玩玩 Foody →">Try Foody →</a>
       <span class="size-tag" aria-hidden="true"></span>
     </div>
     <span class="scroll-hint" aria-hidden="true"><svg viewBox="0 0 120 120" width="120" height="120"><path class="chev" d="M10 52l12 12-12 12M28 52l12 12-12 12" /><path d="M86 26c0-8 9-8 9-15s-8-6-8-1" /><rect x="62" y="30" width="48" height="80" rx="24" /><path class="smile" d="M68 82c8 14 28 14 36 0" /><circle class="wheel" cx="86" cy="48" r="4" /></svg></span>
@@ -753,7 +765,9 @@ a.m:hover, a.m:focus-visible { background: var(--ink); color: var(--bg); }
   if (location.hash && wide.matches) setTimeout(() => go(location.hash.slice(1)), 50);
   // First visit opens the door; ?door always does. Returning visitors, deep links (#work…) and ?nodoor go straight in.
   const q = new URLSearchParams(location.search);
-  if (q.has('door') || (!store.get('door-seen', 0) && !location.hash && !q.has('nodoor'))) openDoor();
+  // First visit no longer auto-opens the door; ?door still does. To restore, use the original condition:
+  // if (q.has('door') || (!store.get('door-seen', 0) && !location.hash && !q.has('nodoor'))) openDoor();
+  if (q.has('door')) openDoor();
 })();
   /* photo stack */
   (() => {

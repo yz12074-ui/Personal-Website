@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Foody — Amanda Zhang</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="Foody — Amanda Zhang">
+<meta property="og:description" content="A mobile app that helps you decide what to eat in 60 seconds. Case study and live prototype.">
+<meta property="og:image" content="https://amanda.wiki/images/og/foody.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;600&family=Caveat:wght@600&display=swap">
 <link rel="stylesheet" href="assets/case.css">
@@ -46,6 +51,7 @@
     <nav id="toc">
       <a href="#problem" data-zh="问题">Problem</a>
       <a href="#goals" data-zh="设计目标">Design goals</a>
+      <a href="#decisions" data-zh="设计取舍">Decisions</a>
       <a href="#flows" data-zh="用户流程">User flows</a>
       <a href="#prototype" data-zh="可玩原型">Live prototype</a>
       <a href="#testing" data-zh="用户测试">User testing</a>
@@ -96,6 +102,17 @@
         <div class="rule" data-zh="把决定一路带到吃饭：路线、打卡、下次再来的理由">Carry the decision to the meal: a route, a check-in, a reason to return</div>
       </div>
       <img class="shotimg" src="images/foody/direction.webp" alt="The core flow: home, spin the wheel, the chosen place with a route, then the badge album" data-zh-alt="核心流程：首页、转盘、选中的餐厅和路线、徽章收集册" loading="lazy">
+    </section>
+
+    <section id="decisions">
+      <span class="eyebrow ok" data-zh="设计取舍">Design decisions</span>
+      <h2 data-zh="考虑过 A，选了 B。">Considered A, chose B.</h2>
+      <!-- TODO(Amanda): drafted only from what this page already says; edit to match what actually happened, add any rejected sketches -->
+      <div class="trio ok">
+        <div><b data-zh="更多选项 → 只给 3 个">More choices → only 3</b><span data-zh="Yelp 和 Google Maps 给得越多，越难选。所以反过来：只给 3 个选项、3 次重抽和 60 秒，用完就由 Foody 拍板。">Yelp and Google Maps show more, and more is exactly what makes choosing hard. So Foody does the opposite: 3 options, 3 rerolls and 60 seconds, then it makes the call.</span></div>
+        <div><b data-zh="纯随机 → 按口味倾斜">Pure random → taste-weighted</b><span data-zh="随机类 App 让人觉得随意，会漏店、会重复。所以先问六张口味卡，再让每次抽取偏向你的口味，结果才不陌生。">Randomizers feel arbitrary, with missing places and repeat spins. So six taste cards come first and every draw tilts toward your answers, which keeps results from feeling random.</span></div>
+        <div><b data-zh="列表 → 带到店门口">A list → walk you to the door</b><span data-zh="第一轮测试里，大家选完店就觉得结束了。所以“Eat here”直接开路线，再用打卡和回访把决定带到吃完。这次真实到店，也是餐厅愿意付费的地方。">In the first test, people felt the flow ended once a place was picked. So “Eat here” opens the route, and check-in and a follow-up carry the decision through the meal. That verified visit is also what restaurants pay for.</span></div>
+      </div>
     </section>
 
     <section id="flows" class="wide">
