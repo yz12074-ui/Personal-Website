@@ -16,7 +16,7 @@ function sheet_() {
 const json_ = o => ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);
 
 function doGet() {
-  const rows = sheet_().getDataRange().getValues().slice(1);
+  const rows = sheet_().getDataRange().getValues().slice(1).filter(r => !String(r[0]).startsWith('fb-'));
   const items = rows.map(r => Object.fromEntries(HEAD.map((k, i) => [k, k === 'likes' ? Number(r[i]) || 0 : String(r[i])])));
   return json_({ items });
 }
@@ -37,6 +37,12 @@ function doPost(e) {
       const txt = (s, n) => "'" + String(s || '').slice(0, n);
       sh.appendRow([id, txt(b.name, 20), txt(b.note, 60), color, sig, 0, "'" + new Date().toISOString().slice(0, 10)]);
       return json_({ ok: true, id });
+    }
+    if (b.action === 'feedback') {
+      // private comments & suggestions: stored as 'fb-' rows, never returned by doGet
+      const txt = (s, n) => "'" + String(s || '').slice(0, n);
+      sh.appendRow(['fb-' + Date.now(), txt(b.name, 20), txt(b.note, 500), '', '', 0, "'" + new Date().toISOString().slice(0, 10)]);
+      return json_({ ok: true });
     }
     if (b.action === 'like') {
       const ids = sh.getRange(2, 1, Math.max(sh.getLastRow() - 1, 1), 1).getValues();

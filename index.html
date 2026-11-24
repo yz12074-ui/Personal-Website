@@ -278,6 +278,12 @@ a.m:hover, a.m:focus-visible { background: var(--ink); color: var(--bg); }
 .nomore { margin: 0; font: 800 clamp(56px, 7vw, 112px)/.9 var(--f-display); letter-spacing: -.045em; text-transform: uppercase; }
 .godyou { margin: 0; font: italic 400 clamp(22px, 2.2vw, 32px)/1.25 var(--f-body); color: var(--dim); }
 .godyou em { color: var(--ink); }
+.fb { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; max-width: 460px; }
+.fb-q { margin: 0; font: 600 16px var(--f-ui); }
+.fb textarea, .fb input { font: 15px var(--f-body); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; width: 100%; resize: vertical; }
+.fb-row { display: flex; gap: 10px; }
+.fb-row button { font: 600 14px var(--f-ui); color: #fff; background: var(--ink); border: 0; border-radius: 99px; padding: 8px 20px; }
+.fb-msg { font: 13px var(--f-ui); color: var(--dim); min-height: 1.2em; }
 .foot-side { display: flex; flex-direction: column; gap: 14px; }
 .ipod { margin: 0; display: flex; flex-direction: column; gap: 8px; }
 /* the sketch is a fixed 520 × 820 canvas, shown at 55%; the p5 "full" view adds a 42px header, cropped off the top */
@@ -465,6 +471,15 @@ a.m:hover, a.m:focus-visible { background: var(--ink); color: var(--bg); }
     <div class="the-end">
       <p class="nomore" data-zh="没有更多了！">No more!</p>
       <p class="godyou" data-zh="天哪，你&lt;em&gt;真的&lt;/em&gt;对我很感兴趣！">God, you’re <em>really</em> interested in me!</p>
+      <form class="fb" id="fb">
+        <p class="fb-q" data-zh="你愿意留下你的comments吗？">Would you like to leave your comments?</p>
+        <textarea name="note" required maxlength="500" rows="3" placeholder="Comments or suggestions" aria-label="Comments or suggestions"></textarea>
+        <div class="fb-row">
+          <input name="name" type="text" maxlength="20" autocomplete="nickname" placeholder="Your name (optional)" aria-label="Your name (optional)">
+          <button type="submit" data-zh="发送">Send</button>
+        </div>
+        <span class="fb-msg" id="fbMsg" role="status"></span>
+      </form>
     </div>
     <div class="foot-side">
       <!-- my iPod, made in p5.js: wheel to scroll, centre to pick a song, MENU to go back -->
@@ -600,10 +615,7 @@ a.m:hover, a.m:focus-visible { background: var(--ink); color: var(--bg); }
       const cap = document.createElement('small'); cap.textContent = (mine.has(c.id) ? tr('(you) ', '（你）') : '') + c.name;
       d.append(Object.assign(document.createElement('i'), { className: 'peg' }), img, cap); box.append(d);
     });
-    // an empty card at the end of the line: sign it to hang your own
-    const add = document.createElement('button'); add.type = 'button'; add.className = 'clip add';
-    add.innerHTML = `<i class="peg"></i><b>${tr('Sign ✎', '签个名 ✎')}</b>${tr(`${cards.length} signature${cards.length === 1 ? '' : 's'}`, `已有 ${cards.length} 个签名`)}`;
-    add.onclick = openDoor; box.append(add);
+    // signing moved to the footer as comments & suggestions; the door code stays for ?door
     hangLine();
   }
   // spread the cards along the whole page; the rope sags a little between pegs
@@ -634,6 +646,15 @@ a.m:hover, a.m:focus-visible { background: var(--ink); color: var(--bg); }
     [...xs, ...secXs].sort((a, b) => a - b).concat(W).forEach(x => { const sag = Math.min(22, (x - px) * .04); d += ` Q${(px + x) / 2} ${ROPE_Y + sag * 2} ${x} ${ROPE_Y}`; px = x; });
     $('#rope').setAttribute('d', d);
   }
+
+  /* ---------- comments & suggestions (footer) ---------- */
+  $('#fb').onsubmit = e => {
+    e.preventDefault();
+    const f = e.currentTarget, note = f.note.value.trim(), msg = $('#fbMsg');
+    if (!note) return;
+    if (ENDPOINT) fetch(ENDPOINT, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'feedback', name: f.name.value.trim(), note }) }).catch(() => {});
+    f.reset(); msg.textContent = tr('Thank you, I read every one ♥', '谢谢你，我会认真看每一条 ♥');
+  };
 
   /* ---------- contact: click the email to copy it ---------- */
   $('#copyEmail').onclick = async e => {
